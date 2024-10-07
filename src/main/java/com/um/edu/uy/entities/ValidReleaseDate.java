@@ -1,18 +1,16 @@
 package com.um.edu.uy.entities;
 import jakarta.validation.Constraint;
-
-import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = BirthDateValidator.class)
-@Target({ElementType.FIELD})
+@Constraint(validatedBy = ReleaseDateValidator.class)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidBirthDate {
-    String message() default "El ususario debe ser mayor de 18 años.";
+public @interface ValidReleaseDate {
+    String message() default "La fecha de lanzamiento no puede ser una fecha futura";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

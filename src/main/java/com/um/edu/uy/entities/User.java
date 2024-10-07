@@ -3,7 +3,11 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -14,6 +18,8 @@ import java.time.LocalDate;
 @Entity
 public class User {
     @NotNull
+    @Id
+    @Email
     private String email;
 
     @NotNull
@@ -30,6 +36,7 @@ public class User {
     private CountryCode celCountryCode;
 
     @NotNull
+    @Pattern(regexp = "^[0-9]{10,15}$", message = "El número de teléfono debe contener entre 10 y 15 dígitos y no debe incluir otros caracteres")
     private long celNumber;
 
     @NotNull
@@ -39,6 +46,7 @@ public class User {
     private CountryCode idCountry;
 
     @NotNull
+    @UniqueConstraint
     private long idNumber;
 
     @NotNull

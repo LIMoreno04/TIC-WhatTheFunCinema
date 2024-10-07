@@ -1,6 +1,7 @@
 package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.ScreeningLanguage;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,10 @@ import java.util.List;
 @Builder
 @Entity
 public class Room {
+    @NotNull
     private int rows;
 
+    @NotNull
     private int columns;
 
     private List<Screening> screenings;

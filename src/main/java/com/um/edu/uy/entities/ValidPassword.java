@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPassword {
-    String message() default "Password must be at least 8 characters long, contain letters and digits.";
+    String message() default "La contraseña debe contener al menos 8 dígitos, una mayúscula, una minúscula y un símbolo.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
