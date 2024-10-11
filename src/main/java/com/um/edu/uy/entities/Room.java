@@ -1,6 +1,6 @@
 package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.ScreeningLanguage;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +24,14 @@ public class Room {
     private int columns;
 
     private List<Screening> screenings;
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
+    private int roomNumber;
+
+    @ManyToOne
+    @MapsId("Location")
+    private Theatre theatre;
 
     public Room() {
         this.rows = 10;

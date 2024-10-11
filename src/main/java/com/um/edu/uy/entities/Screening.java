@@ -3,6 +3,8 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.ScreeningLanguage;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Screening {
 
+
     @NotNull
     @ValidReleaseDate
     private final LocalDateTime dateAndTime;
@@ -28,6 +31,10 @@ public class Screening {
 
     @NotNull
     private boolean[][] reservedSeats;
+
+    @ManyToOne
+    @MapsId("roomNumber")
+    private Room room;
 
     public Screening(LocalDateTime dateAndTime, Movie movie, boolean[][] reservedSeats, ScreeningLanguage language) {
         this.dateAndTime = dateAndTime;
