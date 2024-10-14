@@ -1,7 +1,9 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.Card;
 import com.um.edu.uy.entities.Customer;
 import com.um.edu.uy.entities.User;
+import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
@@ -9,6 +11,7 @@ import com.um.edu.uy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Optional;
 
 import static com.um.edu.uy.entities.FieldValidation.*;
@@ -16,6 +19,9 @@ import static com.um.edu.uy.entities.FieldValidation.*;
 public class UserService {
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private CardService cardService;
 
     public User logIn(String email, String password) throws InvalidDataException {
         Optional<User> result = userRepo.findById(email);
@@ -50,6 +56,11 @@ public class UserService {
                 .build();
         // Tarjeta de credito ahora o despues: mejor pedirlo al principio, podemos modificar el dato de tarjeta
         return userRepo.save(customer);
+    }
+
+    public Customer addPaymentMethod(CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
+        Card card = cardService.addCard(cardType,holderName,cardNumber,expirationDate, cvv);
+        return null;
     }
 
 

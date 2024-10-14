@@ -2,10 +2,9 @@ package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.CardType;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.YearMonth;
 
@@ -16,11 +15,13 @@ import java.time.YearMonth;
 @Entity
 public class Card {
 
+    @NotNull
     private CardType cardType;
+
 
     private String holderName;
 
-
+    @Id
     private long cardNumber;
 
     private YearMonth expirationDate;
