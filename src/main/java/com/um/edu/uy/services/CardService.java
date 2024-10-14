@@ -27,8 +27,11 @@ public class CardService {
                 .expirationDate(expirationDate)
                 .holderName(holderName)
                 .build();
-
         return cardRepo.save(card);
+    }
+
+    public void removeCard(long cardNumber) {
+        cardRepo.deleteById(cardNumber);
     }
 
 }

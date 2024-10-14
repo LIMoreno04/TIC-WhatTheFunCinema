@@ -18,14 +18,16 @@ public class Card {
     @NotNull
     private CardType cardType;
 
-
+    @NotNull
     private String holderName;
 
     @Id
     private long cardNumber;
 
+    @NotNull
     private YearMonth expirationDate;
 
+    @NotNull
     private int cvv;
 
     //hay que validar el numero de tarjeta, el formato(como empieza)

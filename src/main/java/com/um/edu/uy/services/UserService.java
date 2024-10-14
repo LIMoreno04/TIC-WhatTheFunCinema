@@ -42,6 +42,9 @@ public class UserService {
         if (isEmailValid(email) || isPasswordValid(password) || firstName == null || lastName == null ||  isBirthDateValid(dateOfBirth) || celCountryCode == null || celNumber == 0 || idType == null || idCountry == null || celCountryCode == null || idNumber == 0) {
             throw new InvalidDataException("Datos incorrectos");
         }
+        if (userRepo.findById(email).isPresent()) {
+            throw new InvalidDataException("Usuario ya registrado");
+        }
         Customer customer = (Customer) User.builder()
                 .email(email)
                 .password(password)
@@ -54,14 +57,21 @@ public class UserService {
                 .idCountry(idCountry)
                 .idCountry(idCountry)
                 .build();
-        // Tarjeta de credito ahora o despues: mejor pedirlo al principio, podemos modificar el dato de tarjeta
         return userRepo.save(customer);
     }
 
-    public Customer addPaymentMethod(CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
+    public void addPaymentMethod(String email, CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
         Card card = cardService.addCard(cardType,holderName,cardNumber,expirationDate, cvv);
-        return null;
+        if (isEmailValid(email) && userRepo.findById(email).isPresent()) {
+            User user = userRepo.findById(email).get();
+            if (user instanceof Customer) {
+                Customer customer = (Customer) user;
+                customer.getPaymentMethods().add(card);
+            }
+        }
     }
+
+
 
 
 }

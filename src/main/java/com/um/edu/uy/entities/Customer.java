@@ -25,4 +25,12 @@ public class Customer extends User{
     public Customer(String email, String firstName, String lastName, LocalDate dateOfBirth, CountryCode celCountryCode, long celNumber, IdDocumentType idType, CountryCode idCountry, long idNumber, String password) {
         super(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
     }
+
+    public List<Card> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    public void setPaymentMethods(List<Card> paymentMethods) {
+        this.paymentMethods = paymentMethods;
+    }
 }
