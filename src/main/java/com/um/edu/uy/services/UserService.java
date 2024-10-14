@@ -62,14 +62,17 @@ public class UserService {
 
     public void addPaymentMethod(String email, CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
         Card card = cardService.addCard(cardType,holderName,cardNumber,expirationDate, cvv);
-        if (isEmailValid(email) && userRepo.findById(email).isPresent()) {
-            User user = userRepo.findById(email).get();
+        Optional<User> result = userRepo.findById(email);
+        if (isEmailValid(email) && result.isPresent()) {
+            User user = result.get();
             if (user instanceof Customer) {
                 Customer customer = (Customer) user;
                 customer.getPaymentMethods().add(card);
             }
         }
     }
+
+
 
 
 

@@ -28,5 +28,8 @@ public class MovieService {
         return movieRepo.save(movie);
     }
 
-
+    public void deleteMovie(String title) {
+        Optional<Movie> result = movieRepo.findByTitle(title);
+        movieRepo.delete(result.get());
+    }
 }
