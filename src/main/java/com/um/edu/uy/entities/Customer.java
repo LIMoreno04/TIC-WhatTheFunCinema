@@ -3,6 +3,7 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
+@PrimaryKeyJoinColumn(name = "email")
 public class Customer extends User{
     @NotNull
     private List<Card> paymentMethods;

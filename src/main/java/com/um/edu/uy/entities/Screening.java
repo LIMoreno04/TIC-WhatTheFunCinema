@@ -2,53 +2,43 @@ package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.ScreeningLanguage;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Screening {
 
-
-    @NotNull
+    @Id
     @ValidReleaseDate
-    private final LocalDateTime dateAndTime;
+    private LocalDateTime dateAndTime;
+
+    @ManyToOne
+    @JoinColumn(name = "roomNumber")
+    private Room room;
 
     @NotNull
-    private final Movie movie;
+    @ManyToOne
+    @JoinColumn(name = "movieId")
+    private Movie movie;
 
     @NotNull
     private ScreeningLanguage language;
 
-    @NotNull
-    private boolean[][] reservedSeats;
-
-    @ManyToOne
-    @MapsId("roomNumber")
-    private Room room;
+    @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservation;
 
     public Screening(LocalDateTime dateAndTime, Movie movie, boolean[][] reservedSeats, ScreeningLanguage language) {
         this.dateAndTime = dateAndTime;
         this.movie = movie;
-        this.reservedSeats = reservedSeats;
         this.language = language;
     }
 
-    public void MakeSingleReservation(int seatRow, int seatColumn) throws InvalidDataException {
-        if (seatRow >= reservedSeats.length || seatRow < 0)
-            throw new InvalidDataException("Invalid row number");
-        else if (seatColumn >= reservedSeats[0].length || seatColumn < 0)
-            throw new InvalidDataException("Invalid column number");
-        else
-            reservedSeats[seatRow][seatColumn] = true;
-    }
 }

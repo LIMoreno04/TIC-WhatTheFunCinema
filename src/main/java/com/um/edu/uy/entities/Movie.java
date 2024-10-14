@@ -3,18 +3,15 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.MovieGenre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 public class Movie {

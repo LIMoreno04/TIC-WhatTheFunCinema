@@ -1,24 +1,23 @@
 package com.um.edu.uy.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 public class Theatre {
 
-    @NotNull
     @Id
-    private String Location;
-
+    private String location;
+    @OneToMany(mappedBy = "theatre", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms;
 
 }

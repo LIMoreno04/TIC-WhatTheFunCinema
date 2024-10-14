@@ -3,8 +3,10 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 @Setter
 @Builder
 @Entity
+@PrimaryKeyJoinColumn(name = "email")
 public class Employee extends User{
     @NotNull
     private String address;

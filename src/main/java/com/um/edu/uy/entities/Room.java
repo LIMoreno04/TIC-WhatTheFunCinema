@@ -2,36 +2,34 @@ package com.um.edu.uy.entities;
 import com.um.edu.uy.enums.ScreeningLanguage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Builder
 @Entity
 public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int roomNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "location")
+    private Theatre theatre;
+
     @NotNull
     private int rows;
 
     @NotNull
     private int columns;
 
+    @OneToMany(mappedBy = "room",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Screening> screenings;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EmbeddedId
-    private int roomNumber;
-
-    @ManyToOne
-    @MapsId("Location")
-    private Theatre theatre;
 
     public Room() {
         this.rows = 10;

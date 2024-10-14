@@ -2,6 +2,7 @@ package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.UniqueConstraint;
@@ -46,7 +47,7 @@ public class User {
     private CountryCode idCountry;
 
     @NotNull
-    @UniqueConstraint
+    @Column(unique = true)
     private long idNumber;
 
     @NotNull
