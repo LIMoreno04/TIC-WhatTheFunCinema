@@ -1,12 +1,15 @@
 package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.CardType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.YearMonth;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +33,7 @@ public class Card {
     @NotNull
     private int cvv;
 
-    //hay que validar el numero de tarjeta, el formato(como empieza)
-
+    @NotNull
+    @ManyToMany(mappedBy = "paymentMethods",cascade = CascadeType.ALL)
+    private List<Customer> customerList;
 }

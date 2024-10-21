@@ -9,5 +9,4 @@ import java.time.LocalDateTime;
 public class ReservationId implements Serializable {
     private Integer row;
     private Integer column;
-    private LocalDateTime dateAndTime;
 }

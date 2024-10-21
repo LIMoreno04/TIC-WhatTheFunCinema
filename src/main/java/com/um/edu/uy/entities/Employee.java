@@ -13,9 +13,9 @@ import lombok.Setter;
 import java.time.LocalDate;
 @Getter
 @Setter
-@Builder
+//@Builder
 @Entity
-@PrimaryKeyJoinColumn(name = "email")
+//@PrimaryKeyJoinColumn(name = "email")
 public class Employee extends User{
     @NotNull
     private String address;

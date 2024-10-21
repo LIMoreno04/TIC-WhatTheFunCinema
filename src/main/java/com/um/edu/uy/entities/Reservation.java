@@ -17,9 +17,11 @@ import lombok.NoArgsConstructor;
 public class Reservation {
     @EmbeddedId
     private ReservationId reservationId;
+
     @ManyToOne
     @JoinColumn(name = "dateAndTime")
     private Screening screening;
+
     @ManyToOne
     @JoinColumn(name = "email")
     private Customer customer;

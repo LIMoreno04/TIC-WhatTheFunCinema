@@ -2,8 +2,7 @@ package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +13,17 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
+//@Builder
 @Entity
-@PrimaryKeyJoinColumn(name = "email")
+//@PrimaryKeyJoinColumn(name = "email")
 public class Customer extends User{
     @NotNull
+    @ManyToMany
+    @JoinTable(
+            name = "customer_card",
+            joinColumns = @JoinColumn(name = "email"),
+            inverseJoinColumns = @JoinColumn(name = "cardNumber")
+    )
     private List<Card> paymentMethods;
 
 
