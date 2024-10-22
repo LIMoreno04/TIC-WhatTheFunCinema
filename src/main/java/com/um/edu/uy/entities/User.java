@@ -2,10 +2,7 @@ package com.um.edu.uy.entities;
 
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -17,7 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "user")
 public class User {
+
     @NotNull
     @Id
     @Email

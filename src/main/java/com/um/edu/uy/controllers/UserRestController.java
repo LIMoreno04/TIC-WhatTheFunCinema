@@ -28,6 +28,8 @@ public class UserRestController {
             return ResponseEntity.badRequest().body("El nombre de usuario ya está en uso.");
         }
         if (!isEmailValid(email) || !isPasswordValid(password) || firstName == null || lastName == null ||  isBirthDateValid(dateOfBirth) || celCountryCode == null || celNumber == 0 || idType == null || idCountry == null || celCountryCode == null || idNumber == 0) {
+            return ResponseEntity.badRequest().body("Los datos no son validos.");
+        } else {
             User newUser = User.builder()
                     .email(email)
                     .password(password)
@@ -42,8 +44,6 @@ public class UserRestController {
                     .build();
             session.setAttribute("user", newUser);
             userRepo.save(newUser);
-        } else {
-            return ResponseEntity.badRequest().body("Los datos no son validos.");
         }
         return ResponseEntity.ok("Usuario registrado con éxito.");
     }
