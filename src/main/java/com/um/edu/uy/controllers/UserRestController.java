@@ -16,7 +16,7 @@ import java.util.Optional;
 import static com.um.edu.uy.entities.FieldValidation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/v1/user")
 public class UserRestController {
 
     @Autowired
