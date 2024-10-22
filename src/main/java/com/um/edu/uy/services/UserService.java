@@ -9,72 +9,31 @@ import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Optional;
 
 import static com.um.edu.uy.entities.FieldValidation.*;
 
+@Service
 public class UserService {
     @Autowired
     private UserRepository userRepo;
 
-    @Autowired
-    private CardService cardService;
-
-    public User logIn(String email, String password) throws InvalidDataException {
-        Optional<User> result = userRepo.findById(email);
-        if(result.isPresent()){
-            if(result.get().getPassword().equals(password)){
-                return result.get();
-            }
-            else{
-                throw new InvalidDataException("Contraseña incorrecta"); //preguntar como lo hacemos
-            }
-        }
-        else{
-            throw new InvalidDataException("Ususario no encontrado.");
-        }
+    public List<User> getAll()
+    {
+        return userRepo.findAll();
     }
 
-    public Customer customerSingUp(String email, String password, String firstName, String lastName, LocalDate dateOfBirth, CountryCode celCountryCode, long celNumber, IdDocumentType idType, CountryCode idCountry, long idNumber) throws InvalidDataException {
-        if (isEmailValid(email) || isPasswordValid(password) || firstName == null || lastName == null ||  isBirthDateValid(dateOfBirth) || celCountryCode == null || celNumber == 0 || idType == null || idCountry == null || celCountryCode == null || idNumber == 0) {
-            throw new InvalidDataException("Datos incorrectos");
-        }
-        if (userRepo.findById(email).isPresent()) {
-            throw new InvalidDataException("Usuario ya registrado");
-        }
-        Customer customer = (Customer) User.builder()
+    public User addUser(String email, String name) {
+        User newUser = User.builder()
                 .email(email)
-                .password(password)
-                .firstName(firstName)
-                .lastName(lastName)
-                .dateOfBirth(dateOfBirth)
-                .celCountryCode(celCountryCode)
-                .celNumber(celNumber)
-                .idType(idType)
-                .idCountry(idCountry)
-                .idCountry(idCountry)
+                .firstName(name)
                 .build();
-        return userRepo.save(customer);
+        return userRepo.save(newUser);
     }
-
-    public void addPaymentMethod(String email, CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
-        Card card = cardService.addCard(cardType,holderName,cardNumber,expirationDate, cvv);
-        Optional<User> result = userRepo.findById(email);
-        if (isEmailValid(email) && result.isPresent()) {
-            User user = result.get();
-            if (user instanceof Customer) {
-                Customer customer = (Customer) user;
-                customer.getPaymentMethods().add(card);
-            }
-        }
-    }
-
-
-
-
-
 
 }
