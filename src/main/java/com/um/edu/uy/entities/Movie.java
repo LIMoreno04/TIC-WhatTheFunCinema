@@ -1,6 +1,6 @@
 package com.um.edu.uy.entities;
 
-import com.um.edu.uy.enums.MovieGenre;
+import com.um.edu.uy.entities.validators.ValidReleaseDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -38,7 +38,9 @@ public class Movie {
     private String director;
 
     @NotNull
-    private List<MovieGenre> genres;
+    @ManyToMany
+    @JoinTable(name = "movies_genres")
+    private List<Genre> genres;
 
 
 }

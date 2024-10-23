@@ -1,9 +1,6 @@
 package com.um.edu.uy.entities;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +10,25 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(ReservationId.class)
 @Entity
 public class Reservation {
-    @EmbeddedId
-    private ReservationId reservationId;
+
+    @Id
+    private Integer col;
+
+    @Id
+    private Integer row;
 
     @ManyToOne
-    @JoinColumn(name = "dateAndTime")
+    @Id
+    @JoinColumns({
+            @JoinColumn(name = "dateAndTime", referencedColumnName = "date_and_time"),
+            @JoinColumn(name = "room_number", referencedColumnName = "room_number"),
+            @JoinColumn(name = "theatre", referencedColumnName = "theatre")
+    })
     private Screening screening;
+
 
     @ManyToOne
     @JoinColumn(name = "email")

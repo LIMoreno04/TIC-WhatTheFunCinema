@@ -4,19 +4,18 @@ import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
-//@Builder
+@Builder(builderMethodName = "customerBuilder")
 @Entity
-//@PrimaryKeyJoinColumn(name = "email")
-public class Customer extends User{
+@NoArgsConstructor
+@AllArgsConstructor
+public class Customer extends User {
     @NotNull
     @ManyToMany
     @JoinTable(
@@ -31,11 +30,6 @@ public class Customer extends User{
         super(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
     }
 
-    public List<Card> getPaymentMethods() {
-        return paymentMethods;
-    }
-
-    public void setPaymentMethods(List<Card> paymentMethods) {
-        this.paymentMethods = paymentMethods;
-    }
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservations;
 }

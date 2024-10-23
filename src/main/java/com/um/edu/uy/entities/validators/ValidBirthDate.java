@@ -1,16 +1,17 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.validators;
 import jakarta.validation.Constraint;
+
 import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = FunctionDateTimeValidator.class)
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+@Constraint(validatedBy = BirthDateValidator.class)
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidFunctionDateTime {
-    String message() default "La fecha y hora de la función no puede estar en el pasado";
+public @interface ValidBirthDate {
+    String message() default "El ususario debe ser mayor de 18 años.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

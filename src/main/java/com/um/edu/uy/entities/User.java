@@ -1,5 +1,7 @@
 package com.um.edu.uy.entities;
 
+import com.um.edu.uy.entities.validators.ValidBirthDate;
+import com.um.edu.uy.entities.validators.ValidPassword;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.*;
@@ -12,44 +14,46 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "user")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "web_user")
 public class User {
 
     @NotNull
     @Id
     @Email
-    private String email;
+    protected String email;
 
     @NotNull
-    private String firstName;
+    protected String firstName;
 
     @NotNull
-    private  String lastName;
+    protected String lastName;
 
     @NotNull
     @ValidBirthDate
-    private LocalDate dateOfBirth;
+    protected LocalDate dateOfBirth;
 
     @NotNull
-    private CountryCode celCountryCode;
+    protected CountryCode celCountryCode;
 
     @NotNull
     @Pattern(regexp = "^[0-9]{10,15}$", message = "El número de teléfono debe contener entre 10 y 15 dígitos y no debe incluir otros caracteres")
-    private long celNumber;
+    protected long celNumber;
 
     @NotNull
-    private IdDocumentType idType;
+    protected IdDocumentType idType;
 
     @NotNull
-    private CountryCode idCountry;
+    protected CountryCode idCountry;
 
     @NotNull
     @Column(unique = true)
-    private long idNumber;
+    protected long idNumber;
 
     @NotNull
     @ValidPassword
-    private String password;
+    protected String password;
 }

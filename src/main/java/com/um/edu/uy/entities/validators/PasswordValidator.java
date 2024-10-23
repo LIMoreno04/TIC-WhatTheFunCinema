@@ -1,4 +1,4 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.validators;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ConstraintValidator;
 

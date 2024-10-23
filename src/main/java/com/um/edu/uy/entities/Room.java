@@ -8,19 +8,22 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @Builder
+@IdClass(RoomID.class)
 @Entity
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int roomNumber;
-
     @ManyToOne
-    @JoinColumn(name = "location")
+    @JoinColumn(name = "theatre", referencedColumnName = "location")
     private Theatre theatre;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int room_number;
 
     @NotNull
     private int rows;
