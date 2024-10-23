@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/user")
 public class UserWebController {
 
-    @GetMapping("/alta")
+    @GetMapping("/signup")
     public String alta(){
-        return "alta";
+        return "signup";
     }
 }
