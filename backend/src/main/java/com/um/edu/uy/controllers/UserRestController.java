@@ -12,13 +12,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("api/user")
 public class UserRestController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<List<User>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
