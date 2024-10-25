@@ -9,26 +9,26 @@ export default function SignupForm() {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
 
   const countries = [
-    { code: "UY", label: "Uruguay", phone: 598 },
-    { code: "US", label: "USA", phone: 1 },
-    { code: "BR", label: "Brasil", phone: 55 },
-    { code: "AR", label: "Argentina", phone: 54 },
-    { code: "CH", label: "Chile", phone: 56 },
-    { code: "CA", label: "Canada", phone: 1 },
-    { code: "MX", label: "Mexico", phone: 52 },
-    { code: "GB", label: "Reino Unido", phone: 44 },
-    { code: "DE", label: "Alemania", phone: 49 },
-    { code: "FR", label: "Francia", phone: 33 },
-    { code: "IT", label: "Italia", phone: 39 },
-    { code: "JP", label: "Japón", phone: 81 },
-    { code: "CN", label: "China", phone: 86 },
-    { code: "IN", label: "India", phone: 91 },
-    { code: "AU", label: "Australia", phone: 61 },
-    { code: "OTHER", label: "Otro", phone: 0 }
+    { code: "UY", label: "Uruguay", phone: '598' },
+    { code: "US", label: "USA", phone: '1' },
+    { code: "BR", label: "Brasil", phone: '55' },
+    { code: "AR", label: "Argentina", phone: '54' },
+    { code: "CH", label: "Chile", phone: '56' },
+    { code: "CA", label: "Canada", phone: '1' },
+    { code: "MX", label: "Mexico", phone: '52' },
+    { code: "GB", label: "Reino Unido", phone: '44' },
+    { code: "DE", label: "Alemania", phone: '49' },
+    { code: "FR", label: "Francia", phone: '33' },
+    { code: "IT", label: "Italia", phone: '39' },
+    { code: "JP", label: "Japón", phone: '81' },
+    { code: "CN", label: "China", phone: '86' },
+    { code: "IN", label: "India", phone: '91' },
+    { code: "AU", label: "Australia", phone: '61' },
+    { code: "OTHER", label: "Otro", phone: '0' }
   ];
 
   const idTypes = [
-    { label: "C.I." },
+    { label: "CI" },
     { label: "Pasaporte" }
   ];
 
@@ -68,11 +68,10 @@ export default function SignupForm() {
     }
     return true;
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validatePasswords(password, confirmPassword)) {
-      const newUser={email,firstName,lastName,dob,selectedPhoneCountry,phoneNumber,selectedIDType,selectedIDCountry,idNumber,password}
+      const newUser={email,firstName,lastName,dateOfBirth: dob,celCountryCode: selectedPhoneCountry.code,celNumber: phoneNumber,idType: selectedIDType,idCountry: selectedIDCountry.code,idNumber,password}
       fetch('http://localhost:8080/api/user/signup', 
         {method: 'POST', 
           headers: {'Content-Type':'application/json'},
@@ -150,7 +149,7 @@ export default function SignupForm() {
           />
           <Typography align='center' my={-1}>Documento de identidad</Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-            <Autocomplete
+          <Autocomplete
               id="country-origin-select"
               options={countries}
               disableClearable
@@ -161,7 +160,7 @@ export default function SignupForm() {
               autoHighlight
               getOptionLabel={(option) => option.label}
               renderOption={(props, option) => (
-                <Box component="li" {...props}>
+                <Box component="li" {...props} key={option.code}> {/* Añade la key explícitamente aquí */}
                   <img
                     loading="lazy"
                     width="20"
@@ -173,7 +172,13 @@ export default function SignupForm() {
                 </Box>
               )}
               renderInput={(params) => (
-                <TextField sx={{ width: '150px' }} {...params} label="País" value={selectedIDCountry} onChange={(e) => setIDCountry(e.target.value)} />
+                <TextField
+                  sx={{ width: '150px' }}
+                  {...params}
+                  label="País"
+                  value={selectedIDCountry}
+                  onChange={(e) => setIDCountry(e.target.value)}
+                />
               )}
             />
             <Autocomplete

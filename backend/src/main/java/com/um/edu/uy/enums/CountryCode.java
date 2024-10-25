@@ -4,13 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum CountryCode {
-    URU("Uruguay", 598),
-    USA("United States", 1),
+    UY("Uruguay", 598),
+    US("United States", 1),
     BR("Brazil", 55),
-    ARG("Argentina", 54),
+    AR("Argentina", 54),
     CH("Chile", 56),
-    CAN("Canada", 1),
-    MEX("Mexico", 52),
+    CA("Canada", 1),
+    MX("Mexico", 52),
     UK("United Kingdom", 44),
     DE("Germany", 49),
     FR("France", 33),
@@ -18,7 +18,7 @@ public enum CountryCode {
     JP("Japan", 81),
     CN("China", 86),
     IN("India", 91),
-    AUS("Australia", 61),
+    AU("Australia", 61),
     OTHER("Other", 0);
 
     private final String countryName;

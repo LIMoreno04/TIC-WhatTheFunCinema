@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.User;
+import com.um.edu.uy.entities.UserDTO;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.services.UserService;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/user")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserRestController {
 
     @Autowired
@@ -25,18 +26,28 @@ public class UserRestController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> addFuncionario(@RequestParam String email,
-                                               @RequestParam String firstName,
-                                               @RequestParam String lastName,
-                                               @RequestParam LocalDate dateOfBirth,
-                                               @RequestParam CountryCode celCountryCode,
-                                               @RequestParam long celNumber,
-                                               @RequestParam IdDocumentType idType,
-                                               @RequestParam CountryCode idCountry,
-                                               @RequestParam long idNumber,
-                                               @RequestParam String password)
-    {
-        User newUser = userService.addUser(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
+    public ResponseEntity<User> addFuncionario(@RequestBody UserDTO userDTO) {
+        System.out.println(userDTO.toString());
+        CountryCode realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase());
+        IdDocumentType realIdType = IdDocumentType.valueOf(userDTO.getIdType());
+        CountryCode realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase());
+        LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
+        Long realCelNumber = Long.valueOf(userDTO.getCelNumber());
+        Long realIdNumber = Long.valueOf(userDTO.getIdNumber());
+
+        User newUser = userService.addUser(
+                userDTO.getEmail(),
+                userDTO.getFirstName(),
+                userDTO.getLastName(),
+                realDateOfBirth,
+                realCelCountryCode,
+                realCelNumber,
+                realIdType,
+                realIdCountryCode,
+                realIdNumber,
+                userDTO.getPassword()
+        );
+
         return ResponseEntity.ok(newUser);
     }
 
