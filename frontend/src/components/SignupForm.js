@@ -40,6 +40,7 @@ export default function SignupForm() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPhoneCountry, setSelectedPhoneCountry] = React.useState(null);
   const [selectedIDType, setSelectedIDType] = useState(null);
+  const [selectedIDCountry, setIDCountry] = useState(null)
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
@@ -71,6 +72,18 @@ export default function SignupForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validatePasswords(password, confirmPassword)) {
+      const newUser={email,firstName,lastName,dob,selectedPhoneCountry,phoneNumber,selectedIDType,selectedIDCountry,idNumber,password}
+      fetch('http://localhost:8080/api/user/signup', 
+        {method: 'POST', 
+          headers: {'Content-Type':'application/json'},
+          body:JSON.stringify(newUser)
+        }).then(()=>{
+          alert('Registro exitoso!')
+          setEmail('')
+          setPassword('')
+          setConfirmPassword('')
+        })
+
       alert('Registro exitoso');
     } else {
       // Reset the form
@@ -141,6 +154,10 @@ export default function SignupForm() {
               id="country-origin-select"
               options={countries}
               disableClearable
+              value={selectedIDCountry}
+              onChange={(event, newValue) => {
+                setIDCountry(newValue);
+              }}
               autoHighlight
               getOptionLabel={(option) => option.label}
               renderOption={(props, option) => (
@@ -156,7 +173,7 @@ export default function SignupForm() {
                 </Box>
               )}
               renderInput={(params) => (
-                <TextField sx={{ width: '150px' }} {...params} label="País" />
+                <TextField sx={{ width: '150px' }} {...params} label="País" value={selectedIDCountry} onChange={(e) => setIDCountry(e.target.value)} />
               )}
             />
             <Autocomplete

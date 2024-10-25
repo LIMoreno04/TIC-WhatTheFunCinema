@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alta Usuario</title>
+</head>
+<body>
+<h1>Nuevo usuario</h1>
+<hr>
+<form action="/api/v1/user/signup" method="POST">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" required>
+
+    <label for="lastName">Last Name:</label>
+    <input type="text" id="lastName" name="lastName" required>
+
+    <label for="dateOfBirth">Date of Birth:</label>
+    <input type="text" id="dateOfBirth" name="dateOfBirth" required>
+
+    <label for="celCountryCode">Cel Country Code:</label>
+    <input type="text" id="celCountryCode" name="celCountryCode" required>
+
+    <label for="celNumber">Cel Number:</label>
+    <input type="text" id="celNumber" name="celNumber" required>
+
+    <label for="idType">Id Type:</label>
+    <input type="text" id="idType" name="idType" required>
+
+    <label for="idCountry">Id Country:</label>
+    <input type="text" id="idCountry" name="idCountry" required>
+
+    <label for="idNumber">Id Number:</label>
+    <input type="text" id="idNumber" name="idNumber" required>
+
+    <label for="password">Password:</label>
+    <input type="text" id="password" name="password" required>
+
+
+    <button type="submit">Sign Up</button>
+</form>
+</body>
+</html>
