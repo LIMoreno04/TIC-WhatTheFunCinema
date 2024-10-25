@@ -37,21 +37,20 @@ public class User {
     protected LocalDate dateOfBirth;
 
     @NotNull
-    protected CountryCode celCountryCode;
+    protected String celCountryCode;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{10,15}$", message = "El número de teléfono debe contener entre 10 y 15 dígitos y no debe incluir otros caracteres")
-    protected long celNumber;
+    protected String celNumber;
 
     @NotNull
-    protected IdDocumentType idType;
+    protected String idType;
 
     @NotNull
-    protected CountryCode idCountry;
+    protected String idCountry;
 
     @NotNull
     @Column(unique = true)
-    protected long idNumber;
+    protected String idNumber;
 
     @NotNull
     @ValidPassword

@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Container, Paper, Typography, Button } from '@mui/material';
+import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function SignupForm() {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
@@ -45,6 +46,8 @@ export default function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [PasswordValidationError, setPasswordValidationError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const passwordErrorMessage = 'Contraseñas no coinciden'
 
   // Check if all fields are filled
@@ -60,6 +63,10 @@ export default function SignupForm() {
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
   };
+  
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
   const validatePasswords = (pass1, pass2) => {
     if (pass1 !== pass2) {
@@ -71,7 +78,7 @@ export default function SignupForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validatePasswords(password, confirmPassword)) {
-      const newUser={email,firstName,lastName,dateOfBirth: dob,celCountryCode: selectedPhoneCountry.code,celNumber: phoneNumber,idType: selectedIDType,idCountry: selectedIDCountry.code,idNumber,password}
+      const newUser={email,firstName,lastName,dateOfBirth: dob,celCountryCode: selectedPhoneCountry.code,celNumber: phoneNumber,idType: selectedIDType.label,idCountry: selectedIDCountry.code,idNumber,password}
       fetch('http://localhost:8080/api/user/signup', 
         {method: 'POST', 
           headers: {'Content-Type':'application/json'},
@@ -79,8 +86,6 @@ export default function SignupForm() {
         }).then(()=>{
           alert('Registro exitoso!')
           setEmail('')
-          setPassword('')
-          setConfirmPassword('')
         })
 
       alert('Registro exitoso');
@@ -120,23 +125,46 @@ export default function SignupForm() {
           <TextField
             id="password"
             label="Contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={handlePasswordChange}
             autoComplete="current-password"
             error={PasswordValidationError}
             helperText={PasswordValidationError ? passwordErrorMessage : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title="Mostrar">
+                    <IconButton onClick={toggleShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             id="verify-password"
             label="Confirmar contraseña"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
             autoComplete="current-password"
             error={PasswordValidationError}
             helperText={PasswordValidationError ? passwordErrorMessage : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title="Mostrar">
+                    <IconButton onClick={toggleShowConfirmPassword} edge="end">
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
           />
+
           <TextField required id="first-name" label="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
           <TextField required id="last-name" label="Apellido(s)" value={lastName} onChange={(e) => setLastName(e.target.value)} />
           <TextField

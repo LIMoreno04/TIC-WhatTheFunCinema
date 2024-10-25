@@ -28,12 +28,12 @@ public class UserRestController {
     @PostMapping("/signup")
     public ResponseEntity<User> addFuncionario(@RequestBody UserDTO userDTO) {
         System.out.println(userDTO.toString());
-        CountryCode realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase());
-        IdDocumentType realIdType = IdDocumentType.valueOf(userDTO.getIdType());
-        CountryCode realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase());
+
+        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
+        String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
+        String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
         LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
-        Long realCelNumber = Long.valueOf(userDTO.getCelNumber());
-        Long realIdNumber = Long.valueOf(userDTO.getIdNumber());
+
 
         User newUser = userService.addUser(
                 userDTO.getEmail(),
@@ -41,10 +41,10 @@ public class UserRestController {
                 userDTO.getLastName(),
                 realDateOfBirth,
                 realCelCountryCode,
-                realCelNumber,
+                userDTO.getCelNumber(),
                 realIdType,
                 realIdCountryCode,
-                realIdNumber,
+                userDTO.getIdNumber(),
                 userDTO.getPassword()
         );
 

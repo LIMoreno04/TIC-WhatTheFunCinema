@@ -24,11 +24,11 @@ public class UserService {
                         String firstName,
                         String lastName,
                         LocalDate dateOfBirth,
-                        CountryCode celCountryCode,
-                        long celNumber,
-                        IdDocumentType idType,
-                        CountryCode idCountry,
-                        long idNumber,
+                        String celCountryCode,
+                        String celNumber,
+                        String idType,
+                        String idCountry,
+                        String idNumber,
                         String password) {
 
         User newUser = User.builder()

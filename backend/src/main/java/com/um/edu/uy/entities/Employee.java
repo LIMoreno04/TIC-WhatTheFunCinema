@@ -18,7 +18,7 @@ public class Employee extends User {
     private String address;
 
     @Builder(builderMethodName = "employeeBuilder")
-    public Employee(String address, String email, String firstName, String lastName, LocalDate dateOfBirth, CountryCode celCountryCode, long celNumber, IdDocumentType idType, CountryCode idCountry, long idNumber, String password) {
+    public Employee(String address, String email, String firstName, String lastName, LocalDate dateOfBirth, String celCountryCode, String celNumber, String idType, String idCountry, String idNumber, String password) {
         super(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
         this.address = address;
     }

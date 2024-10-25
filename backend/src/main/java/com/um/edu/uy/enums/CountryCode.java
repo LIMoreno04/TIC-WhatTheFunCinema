@@ -11,7 +11,7 @@ public enum CountryCode {
     CH("Chile", 56),
     CA("Canada", 1),
     MX("Mexico", 52),
-    UK("United Kingdom", 44),
+    GB("United Kingdom", 44),
     DE("Germany", 49),
     FR("France", 33),
     IT("Italy", 39),
