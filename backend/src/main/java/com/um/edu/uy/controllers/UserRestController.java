@@ -9,6 +9,7 @@ import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,11 +22,6 @@ public class UserRestController {
 
     @Autowired
     private UserService userService;
-
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<User> userSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
