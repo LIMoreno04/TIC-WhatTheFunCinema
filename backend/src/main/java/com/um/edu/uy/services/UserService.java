@@ -3,12 +3,15 @@ package com.um.edu.uy.services;
 import com.um.edu.uy.entities.User;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
+import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.UserRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -46,4 +49,18 @@ public class UserService {
         return userRepo.save(newUser);
     }
 
+    public User findUser(String email, String password) throws InvalidDataException {
+        Optional<User> result = userRepo.findById(email);
+
+        if (result.isPresent()) {
+            User user = result.get();
+            if (user.getPassword().equals(password)) {
+                return user;
+            } else {
+                throw new InvalidDataException("La contrasenia no es correcta");
+            }
+        } else {
+            throw new InvalidDataException("No se encontro el usuario");
+        }
+    }
 }
