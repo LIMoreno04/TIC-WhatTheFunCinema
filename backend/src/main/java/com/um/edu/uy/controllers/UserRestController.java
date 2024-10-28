@@ -4,9 +4,7 @@ import com.um.edu.uy.entities.User;
 import com.um.edu.uy.entities.UserDTO;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
-import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +26,7 @@ public class UserRestController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> userSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
+    public ResponseEntity<User> addFuncionario(@RequestBody UserDTO userDTO) {
         System.out.println(userDTO.toString());
 
         String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
@@ -50,18 +48,7 @@ public class UserRestController {
                 userDTO.getPassword()
         );
 
-        session.setAttribute("user", newUser);
-
         return ResponseEntity.ok(newUser);
-    }
-
-    @GetMapping("/login")
-    public ResponseEntity<User> userLogIn(@RequestBody String email, @RequestBody String password, HttpSession session) throws InvalidDataException {
-        User user = userService.findUser(email, password);
-
-        session.setAttribute("user", user);
-
-        return ResponseEntity.ok(user);
     }
 
 
