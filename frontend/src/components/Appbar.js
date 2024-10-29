@@ -21,14 +21,20 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
+  
   React.useEffect(() => {
-    fetch('http://localhost:8080/api/auth/status', {
+    fetch('http://localhost:8080/api/user/auth', {
       method: 'GET',
       credentials: 'include',
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then((data) => {
-        setIsLoggedIn(data);
+        setIsLoggedIn(data); // data should be a boolean
       })
       .catch((error) => {
         console.error('Error fetching login status:', error);
@@ -51,14 +57,32 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const handleLogout = () => {
+    fetch('http://localhost:8080/api/user/logout', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (response.ok) {
+          setIsLoggedIn(false);
+          handleCloseUserMenu(); // Close the user menu
+        } else {
+          console.error('Logout failed');
+        }
+      })
+      .catch((error) => {
+        console.error('Error during logout:', error);
+      });
+  };
+
   return (
-    <AppBar position="fixed">
-      <Container maxWidth="xl">
+    <AppBar position="fixed" sx={{ height: 80 }}>
+      <Container maxWidth="false" sx={{ mt: -3 }}>
         <Toolbar disableGutters>
           {/* Logo */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 4 }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 / 32 }}>
             <IconButton href='/home'>
-              <img src={logo} alt="Logo" style={{ height: 90, marginRight: 5 }} />
+              <img src={logo} alt="Logo" style={{ height: 80, marginRight: 5 }} />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
@@ -67,7 +91,7 @@ function ResponsiveAppBar() {
             </IconButton>
           </Box>
 
-          {/* Burger menu for small screens, moved to the right */}
+          {/* Burger menu for small screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
             <IconButton
               size="large"
@@ -84,7 +108,7 @@ function ResponsiveAppBar() {
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'right', // Move the burger menu to the right
+                horizontal: 'right', 
               }}
               keepMounted
               transformOrigin={{
@@ -96,7 +120,7 @@ function ResponsiveAppBar() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               <MenuItem key="Home" onClick={handleCloseNavMenu} component="a" href="/home">
-                <Typography textAlign="center">Home</Typography>
+                <Typography textAlign="center">Inicio</Typography>
               </MenuItem>
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
@@ -123,7 +147,7 @@ function ResponsiveAppBar() {
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, mx: 3, color: 'white', display: 'block' }}
+                sx={{ my: 2, mx: '1%', color: 'white', display: 'block' }}
               >
                 <Typography>{page}</Typography>
               </Button>
@@ -156,7 +180,10 @@ function ResponsiveAppBar() {
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <MenuItem 
+                      key={setting} 
+                      onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}
+                    >
                       <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}
@@ -168,7 +195,7 @@ function ResponsiveAppBar() {
                   <Button
                     key={setting}
                     variant='outlined'
-                    sx={{ mx: 2, my: 2, color: 'white', display: 'block'}}
+                    sx={{ mx: 1, my: 2, color: 'white', display: 'block'}}
                     href={setting === 'Iniciar sesión' ? '/login' : '/signup'}
                   >
                     <Typography>{setting}</Typography>

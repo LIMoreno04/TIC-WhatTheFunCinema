@@ -3,50 +3,95 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Container, Paper, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
-  const paperStyle = { padding: '50px 20px', width: 400, margin: '20px auto' };
+  const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState({ email: false, password: false });
+  const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
+    setError({ ...error, email: false });
+    setErrorMessage({ ...errorMessage, email: '' });
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+    setError({ ...error, password: false });
+    setErrorMessage({ ...errorMessage, password: '' });
   };
 
-  const handleSubmit = (e) => {
+  const [prueba, setPrueba] = useState(false)
+  React.useEffect(() => {
+    fetch('http://localhost:8080/api/user/auth', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setPrueba(data); // data should be a boolean
+      })
+      .catch((error) => {
+        console.error('Error fetching login status:', error);
+      });
+  }, []);
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logic to handle form submission
-    if (email === '' || password === '') {
-      setError(true);
-      setErrorMessage('Los campos no pueden estar vacíos');
-    } else {
-      setError(false);
-      setErrorMessage('');
-      alert('Inicio de sesión exitoso!');
-      // Perform login logic
+
+    try {
+      const response = await fetch('http://localhost:8080/api/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        navigate('/home');
+      } else if (response.status === 401) {
+        const responseBody = await response.json();
+        if (responseBody.error === 'email') {
+          setEmail('');
+          setPassword('');
+          setError({ ...error, email: true });
+          setErrorMessage({ ...errorMessage, email: 'No existe una cuenta asociada a ese e-mail.' });
+        } else if (responseBody.error === 'password') {
+          setPassword('');
+          setError({ ...error, password: true });
+          setErrorMessage({ ...errorMessage, password: 'Contraseña incorrecta' });
+        }
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
     }
   };
 
+  const isFormValid = email !== '' && password !== '';
+
   return (
-    <Container sx={{ marginTop: 20 }}> {/* Moves the container down */}
+    <Container>
       <Paper elevation={24} style={paperStyle}>
         <Typography
           variant="h4"
           align="center"
           gutterBottom
           sx={{
-            fontWeight: 'bold', // Makes the text bold
-            fontFamily: 'Monospace', // Adds a distinct font style
-            letterSpacing: '0.15rem', // Spatiation (adds space between letters)
-            marginBottom: 3, // Adjust spacing below the title
-            marginTop: -2, // Moves the text a bit closer to the top
+            fontWeight: 'bold',
+            fontFamily: 'Monospace',
+            letterSpacing: '0.15rem',
+            marginBottom: 3,
+            marginTop: -2,
           }}
         >
           Iniciar sesión
@@ -57,7 +102,7 @@ export default function LoginForm() {
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           noValidate
           autoComplete="off"
-          onSubmit={handleSubmit} // Handle form submission
+          onSubmit={handleSubmit}
         >
           <TextField
             required
@@ -65,8 +110,8 @@ export default function LoginForm() {
             label="e-mail"
             value={email}
             onChange={handleEmailChange}
-            error={error && email === ''} // Show error if email is empty
-            helperText={error && email === '' ? errorMessage : ''}
+            error={error.email}
+            helperText={errorMessage.email}
           />
           <TextField
             required
@@ -75,11 +120,16 @@ export default function LoginForm() {
             type="password"
             value={password}
             onChange={handlePasswordChange}
-            error={error && password === ''} // Show error if password is empty
-            helperText={error && password === '' ? errorMessage : ''}
+            error={error.password}
+            helperText={errorMessage.password}
             autoComplete="current-password"
           />
-          <Button type="submit" variant="contained" color="secondary" disabled={error}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            disabled={!isFormValid}
+          >
             Iniciar sesión
           </Button>
         </Box>

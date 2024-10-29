@@ -24,7 +24,7 @@ public class CustomerRestController {
     @Autowired
     private CustomerService customerService;
 
-    @PostMapping("customer/signup")
+    @PostMapping("/signup")
     public ResponseEntity<Customer> customerSignUp(@RequestBody String email, HttpSession session) throws InvalidDataException {
        Customer newCustomer = customerService.addCustomer(email);
        session.setAttribute("role", "customer");
