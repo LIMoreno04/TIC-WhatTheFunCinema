@@ -1,9 +1,6 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.Customer;
-import com.um.edu.uy.entities.Reservation;
-import com.um.edu.uy.entities.Screening;
-import com.um.edu.uy.entities.User;
+import com.um.edu.uy.entities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.CustomerRepository;
 import com.um.edu.uy.repository.ReservationRepository;
@@ -50,7 +47,7 @@ public class CustomerService {
         }
         Customer customer = customerOpt.get();
 
-        Optional<Screening> screeningOpt = screeningRepo.findById(screening. /////);
+        Optional<Screening> screeningOpt = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time()));
         if (screeningOpt.isEmpty()) {
             throw new InvalidDataException("La función especificada no existe");
         }
