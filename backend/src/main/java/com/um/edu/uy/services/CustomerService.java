@@ -37,24 +37,24 @@ public class CustomerService {
 
             return customerRepo.save(customer);
         } else {
-            throw new InvalidDataException("Usuario no encontrado");
+            throw new InvalidDataException("User not found.");
         }
     }
     public Reservation makeReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
         Optional<Customer> customerOpt = customerRepo.findById(email);
         if (customerOpt.isEmpty()) {
-            throw new InvalidDataException("Cliente no encontrado");
+            throw new InvalidDataException("Customer not found.");
         }
         Customer customer = customerOpt.get();
 
         Optional<Screening> screeningOpt = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time()));
         if (screeningOpt.isEmpty()) {
-            throw new InvalidDataException("La función especificada no existe");
+            throw new InvalidDataException("Screening not found.");
         }
 
         Optional<Reservation> existingReservation = reservationRepo.findByScreeningAndColAndRow(screening, col, row);
         if (existingReservation.isPresent()) {
-            throw new InvalidDataException("El asiento ya está reservado");
+            throw new InvalidDataException("Seat already reserved.");
         }
 
         Reservation reservation = Reservation.builder()
