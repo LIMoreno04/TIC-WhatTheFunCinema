@@ -57,10 +57,10 @@ public class UserService {
             if (user.getPassword().equals(password)) {
                 return user;
             } else {
-                throw new InvalidDataException("La contrasenia no es correcta");
+                throw new InvalidDataException("Wrong password.");
             }
         } else {
-            throw new InvalidDataException("No se encontro el usuario");
+            throw new InvalidDataException("No account registered with this email.");
         }
     }
 }

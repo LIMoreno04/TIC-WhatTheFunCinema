@@ -97,7 +97,7 @@ export default function SignupForm() {
   };
 
   return (
-    <Container sx={{ marginTop: 15 }}> {/* Moves the container down */}
+    <Container> {/* Moves the container down */}
       <Paper elevation={24} style={paperStyle}>
         <Typography
           variant="h4"
@@ -188,7 +188,7 @@ export default function SignupForm() {
               autoHighlight
               getOptionLabel={(option) => option.label}
               renderOption={(props, option) => (
-                <Box component="li" {...props} key={option.code}> {/* Añade la key explícitamente aquí */}
+                <Box component="li" {...props} key={option.code}> 
                   <img
                     loading="lazy"
                     width="20"

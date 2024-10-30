@@ -8,12 +8,12 @@ import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/user")
@@ -32,7 +32,6 @@ public class UserRestController {
         String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
         LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
 
-
         User newUser = userService.addUser(
                 userDTO.getEmail(),
                 userDTO.getFirstName(),
@@ -45,18 +44,46 @@ public class UserRestController {
                 userDTO.getIdNumber(),
                 userDTO.getPassword()
         );
-
         session.setAttribute("user", newUser);
+        session.setAttribute("auth", true);
 
         return ResponseEntity.ok(newUser);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<User> userLogIn(@RequestBody String email, @RequestBody String password, HttpSession session) throws InvalidDataException {
-        User user = userService.findUser(email, password);
+    @PostMapping("/login")
+    public ResponseEntity<?> userLogIn(@RequestBody UserDTO loginDTO, HttpSession session) {
+        try {
+            User user = userService.findUser(loginDTO.getEmail(), loginDTO.getPassword());
 
-        session.setAttribute("user", user);
+            // Store user in session
+            session.setAttribute("user", user);
+            session.setAttribute("auth", true);
+            System.out.println("Session ID: " + session.getId());
 
-        return ResponseEntity.ok(user);
+            return ResponseEntity.ok(user);
+        } catch (InvalidDataException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("email")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "email"));
+            } else if (errorMessage.contains("password")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "password"));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "unknown"));
+            }
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate(); // Invalidate the session
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/auth")
+    public ResponseEntity<Boolean> isAuthenticated(HttpSession session) {
+        System.out.println("Session ID: " + session.getId());
+
+        Boolean isAuthenticated = (Boolean) session.getAttribute("auth");
+        return ResponseEntity.ok(isAuthenticated != null && isAuthenticated);
     }
 }
