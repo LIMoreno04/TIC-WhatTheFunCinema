@@ -13,6 +13,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState({ email: false, password: false });
   const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
+  const [prueba, setPrueba] = useState('')
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -26,9 +27,8 @@ export default function LoginForm() {
     setErrorMessage({ ...errorMessage, password: '' });
   };
 
-  const [prueba, setPrueba] = useState(false)
   React.useEffect(() => {
-    fetch('http://localhost:8080/api/user/auth', {
+    fetch('http://localhost:8080/api/user/prueba', {
       method: 'GET',
       credentials: 'include',
     })
@@ -47,6 +47,7 @@ export default function LoginForm() {
   }, []);
 
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -54,6 +55,7 @@ export default function LoginForm() {
       const response = await fetch('http://localhost:8080/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 

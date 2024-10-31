@@ -52,7 +52,7 @@ public class CustomerService {
             throw new InvalidDataException("La función especificada no existe");
         }
 
-        Optional<Reservation> existingReservation = reservationRepo.findByScreeningAndColAndRow(screening, col, row);
+        Optional<Reservation> existingReservation = reservationRepo.findById(new ReservationId(row,col,new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time())));
         if (existingReservation.isPresent()) {
             throw new InvalidDataException("El asiento ya está reservado");
         }
