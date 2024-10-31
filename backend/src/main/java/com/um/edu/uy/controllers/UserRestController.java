@@ -46,18 +46,29 @@ public class UserRestController {
         );
         session.setAttribute("user", newUser);
         session.setAttribute("auth", true);
+        System.out.println("Session ID: " + session.getId());
 
         return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogIn(@RequestBody UserDTO loginDTO, HttpSession session) {
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("User: " + session.getAttribute("user"));
+
+
         try {
             User user = userService.findUser(loginDTO.getEmail(), loginDTO.getPassword());
 
             // Store user in session
             session.setAttribute("user", user);
             session.setAttribute("auth", true);
+            System.out.println("login");
+
+            User savedUser = (User) session.getAttribute("user");
+
+            System.out.println("Nombre login: " + savedUser.getFirstName());
+
             System.out.println("Session ID: " + session.getId());
 
             return ResponseEntity.ok(user);
@@ -81,6 +92,7 @@ public class UserRestController {
 
     @GetMapping("/auth")
     public ResponseEntity<Boolean> isAuthenticated(HttpSession session) {
+        System.out.println("auth");
         System.out.println("Session ID: " + session.getId());
 
         Boolean isAuthenticated = (Boolean) session.getAttribute("auth");
