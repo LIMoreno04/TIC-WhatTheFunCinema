@@ -1,20 +1,16 @@
 package com.um.edu.uy.controllers;
 
-import com.um.edu.uy.entities.Customer;
-import com.um.edu.uy.entities.User;
-import com.um.edu.uy.entities.UserDTO;
+import com.um.edu.uy.entities.plainEntities.Customer;
+import com.um.edu.uy.entities.DTOs.UserDTO;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
-import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
-import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/customer")

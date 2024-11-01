@@ -1,4 +1,4 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.plainEntities;
 
 
 import jakarta.persistence.Entity;

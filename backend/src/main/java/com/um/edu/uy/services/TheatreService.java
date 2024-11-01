@@ -1,14 +1,13 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.Room;
-import com.um.edu.uy.entities.Theatre;
+import com.um.edu.uy.entities.plainEntities.Room;
+import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.RoomRepository;
 import com.um.edu.uy.repository.TheatreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 @Service
 public class TheatreService {

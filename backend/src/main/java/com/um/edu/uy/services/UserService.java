@@ -1,11 +1,8 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.User;
-import com.um.edu.uy.enums.CountryCode;
-import com.um.edu.uy.enums.IdDocumentType;
+import com.um.edu.uy.entities.plainEntities.User;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.UserRepository;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

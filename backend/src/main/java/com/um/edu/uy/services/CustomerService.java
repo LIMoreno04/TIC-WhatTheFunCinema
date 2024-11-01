@@ -1,6 +1,6 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.*;
+import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.CustomerRepository;
 import com.um.edu.uy.repository.ReservationRepository;

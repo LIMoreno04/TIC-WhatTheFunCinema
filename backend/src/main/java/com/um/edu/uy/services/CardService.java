@@ -1,6 +1,6 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.Card;
+import com.um.edu.uy.entities.plainEntities.Card;
 import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.CardRepository;

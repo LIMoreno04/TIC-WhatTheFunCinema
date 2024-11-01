@@ -1,6 +1,6 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.Snack;
+import com.um.edu.uy.entities.plainEntities.Snack;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.SnackRepository;
 import org.springframework.beans.factory.annotation.Autowired;

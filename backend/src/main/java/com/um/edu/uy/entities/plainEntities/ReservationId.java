@@ -1,11 +1,8 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.plainEntities;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Id;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

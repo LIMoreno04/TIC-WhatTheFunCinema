@@ -1,4 +1,4 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.plainEntities;
 
 import com.um.edu.uy.enums.CardType;
 import jakarta.persistence.CascadeType;

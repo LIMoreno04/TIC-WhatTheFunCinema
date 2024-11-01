@@ -1,6 +1,6 @@
 package com.um.edu.uy.repository;
 
-import com.um.edu.uy.entities.Snack;
+import com.um.edu.uy.entities.plainEntities.Snack;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

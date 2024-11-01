@@ -1,7 +1,5 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.plainEntities;
 
-import com.um.edu.uy.enums.CountryCode;
-import com.um.edu.uy.enums.IdDocumentType;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

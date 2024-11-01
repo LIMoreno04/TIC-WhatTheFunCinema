@@ -1,13 +1,11 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.*;
-import com.um.edu.uy.enums.ScreeningLanguage;
+import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.MovieRepository;
 import com.um.edu.uy.repository.ReservationRepository;
 import com.um.edu.uy.repository.RoomRepository;
 import com.um.edu.uy.repository.ScreeningRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

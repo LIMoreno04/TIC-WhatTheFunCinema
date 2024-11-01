@@ -1,7 +1,7 @@
 package com.um.edu.uy.controllers;
 
-import com.um.edu.uy.entities.User;
-import com.um.edu.uy.entities.UserDTO;
+import com.um.edu.uy.entities.plainEntities.User;
+import com.um.edu.uy.entities.DTOs.UserDTO;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;

@@ -1,11 +1,10 @@
-package com.um.edu.uy.entities;
+package com.um.edu.uy.entities.plainEntities;
 
 import com.um.edu.uy.entities.validators.ValidReleaseDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

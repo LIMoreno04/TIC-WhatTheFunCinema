@@ -1,6 +1,6 @@
 package com.um.edu.uy.controllers;
 
-import com.um.edu.uy.entities.Movie;
+import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,9 @@ public class MovieRestController {
 
     @Autowired
     private MovieService movieService;
+
+    @PostMapping("/addMovie")
+
 
     @GetMapping("/allMovies")
     public ResponseEntity<List<Movie>> allMovies() {

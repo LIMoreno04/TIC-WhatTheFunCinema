@@ -1,7 +1,7 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.Genre;
-import com.um.edu.uy.entities.Movie;
+import com.um.edu.uy.entities.plainEntities.Genre;
+import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
