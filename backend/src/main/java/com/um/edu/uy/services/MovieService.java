@@ -23,7 +23,7 @@ public class MovieService {
                           LocalDate releaseDate,
                           String director,
                           List<Genre> genres,
-                          Boolean isCurrentlyShowing,
+                          Boolean currentlyOnDisplay,
                           byte[] poster) {
 
         Movie movie = Movie.builder()
@@ -33,7 +33,7 @@ public class MovieService {
                 .releaseDate(releaseDate)
                 .director(director)
                 .genres(genres)
-                .currentlyShowing(isCurrentlyShowing)
+                .currentlyOnDisplay(currentlyOnDisplay)
                 .poster(poster)
                 .build();
         return movieRepo.save(movie);
@@ -43,19 +43,18 @@ public class MovieService {
         return movieRepo.findAll();
     }
 
-    public List<Movie> findByTitle(String titule) {
-        List<Movie> moviesFound = new LinkedList<>();
-
-        Optional<List<Movie>> result = movieRepo.findByTitleContainingIgnoreCase(titule);
-
-        if (result.isPresent()) {
-            moviesFound = result.get();
-        }
-
-        return moviesFound;
+    public List<Movie> findByTitle(String title) {
+        return movieRepo.findByTitleContainingIgnoreCase(title).orElse(new LinkedList<>());
     }
     public void deleteMovie(String title) {
         Optional<Movie> result = movieRepo.findByTitle(title);
+
         movieRepo.delete(result.get());
     }
+
+    public List<Movie> showMovieDisplay() {
+        return movieRepo.findByCurrentlyOnDisplayTrue().orElse(new LinkedList<>());
+    }
+
+
 }

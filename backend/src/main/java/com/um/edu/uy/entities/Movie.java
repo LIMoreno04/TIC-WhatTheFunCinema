@@ -44,10 +44,9 @@ public class Movie {
     private List<Genre> genres;
 
     @NotNull
-    private Boolean currentlyShowing;
+    private Boolean currentlyOnDisplay;
 
     @NotNull
     @Lob
     private byte[] poster;
-
 }
