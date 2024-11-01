@@ -9,6 +9,7 @@ import com.um.edu.uy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,17 +29,44 @@ public class CustomerService {
 
     public List<Customer> getAll() {return customerRepo.findAll();}
 
-    public Customer addCustomer(String email) throws InvalidDataException {
-        Optional<User> result = userRepo.findById(email);
+//    public Customer addCustomer(String email) throws InvalidDataException {
+//        Optional<User> result = userRepo.findById(email);
+//
+//        if (result.isPresent()) {
+//            User user = result.get();
+//            Customer customer = (Customer) user;
+//
+//            return customerRepo.save(customer);
+//        } else {
+//            throw new InvalidDataException("User not found.");
+//        }
+//    }
 
-        if (result.isPresent()) {
-            User user = result.get();
-            Customer customer = (Customer) user;
+    public Customer addCustomer(String email,
+                        String firstName,
+                        String lastName,
+                        LocalDate dateOfBirth,
+                        String celCountryCode,
+                        String celNumber,
+                        String idType,
+                        String idCountry,
+                        String idNumber,
+                        String password) {
 
-            return customerRepo.save(customer);
-        } else {
-            throw new InvalidDataException("User not found.");
-        }
+        Customer newCustomer = Customer.customerBuilder()
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .dateOfBirth(dateOfBirth)
+                .celCountryCode(celCountryCode)
+                .celNumber(celNumber)
+                .idType(idType)
+                .idCountry(idCountry)
+                .idNumber(idNumber)
+                .password(password)
+                .build();
+
+        return customerRepo.save(newCustomer);
     }
     public Reservation makeReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
         Optional<Customer> customerOpt = customerRepo.findById(email);

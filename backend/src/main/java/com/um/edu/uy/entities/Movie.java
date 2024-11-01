@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -42,5 +43,11 @@ public class Movie {
     @JoinTable(name = "movies_genres")
     private List<Genre> genres;
 
+    @NotNull
+    private Boolean currentlyShowing;
+
+    @NotNull
+    @Lob
+    private byte[] poster;
 
 }
