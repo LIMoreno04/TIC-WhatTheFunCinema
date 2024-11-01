@@ -52,7 +52,7 @@ public class RoomService {
        if (screeningResult.isEmpty()) {
            throw new InvalidDataException("screening not found.");
        } else {
-           return reservationRepo.findAllByScreening();
+           return reservationRepo.findAllByScreening(screening);
        }
 
     }
