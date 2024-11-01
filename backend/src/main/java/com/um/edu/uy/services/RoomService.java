@@ -27,15 +27,14 @@ public class RoomService {
     @Autowired
     private ReservationRepository reservationRepo;
 
-    public void addScreeningToRoom(String theatreLocation, int roomNumber, long movieID, String language, LocalDateTime date_and_time) throws InvalidDataException{
-        Optional<Room> roomResult = roomRepo.findById(new RoomID(theatreLocation,roomNumber));
+    public void addScreeningToRoom(String theatreLocation, int roomNumber, long movieID, String language, LocalDateTime date_and_time) throws InvalidDataException {
+        Optional<Room> roomResult = roomRepo.findById(new RoomID(theatreLocation, roomNumber));
         Optional<Movie> movieResult = movieRepo.findById(movieID);
-        if (movieResult.isEmpty()){
+        if (movieResult.isEmpty()) {
             throw new InvalidDataException("movie not found.");
         } else if (roomResult.isEmpty()) {
             throw new InvalidDataException("room not found.");
-        }
-        else{
+        } else {
             Room room = roomResult.get();
             Movie movie = movieResult.get();
             Screening newScreening = Screening.builder().
@@ -47,13 +46,14 @@ public class RoomService {
             screeningRepo.save(newScreening);
         }
     }
+
     public List<Reservation> getAllReservations(Screening screening) throws InvalidDataException {
-       Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time()));
-       if (screeningResult.isEmpty()) {
-           throw new InvalidDataException("screening not found.");
-       } else {
-           return reservationRepo.findAllByScreening(screening);
-       }
+        Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
+        if (screeningResult.isEmpty()) {
+            throw new InvalidDataException("screening not found.");
+        } else {
+            return reservationRepo.findAllByScreening(screening);
+        }
 
     }
 
