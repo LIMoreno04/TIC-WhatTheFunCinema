@@ -3,6 +3,8 @@ package com.um.edu.uy.repository;
 import com.um.edu.uy.entities.plainEntities.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface CustomerRepository extends JpaRepository<Customer,String> {
-    Customer findByEmail(String email);
+    Optional<Customer> findByEmail(String email);
 }

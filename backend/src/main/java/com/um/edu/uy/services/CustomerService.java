@@ -100,40 +100,39 @@ public class CustomerService {
         return reservation;
     }
 
-    public void cancelReservation(String email, Reservation reservation) throws InvalidDataException {
-        Optional<Customer> customerOpt = customerRepo.findById(email);
+    public void cancelReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
+        Optional<Customer> customerOpt = customerRepo.findByEmail(email);
         if (customerOpt.isEmpty()) {
             throw new InvalidDataException("Customer not found.");
         }
 
         Customer customer = customerOpt.get();
-        List<Reservation> customerReservations = customer.getReservations();
+        Optional<Reservation> reservationOpt = reservationRepo.findByScreeningAndColAndRow(screening, col, row);
+        if (reservationOpt.isEmpty()) {
+            throw new InvalidDataException("Reservation not found for the given screening and seat.");
+        }
 
-        if (customerReservations.contains(reservation)) {
-            Screening screening = reservation.getScreening();
-            LocalDateTime screeningTime = screening.getDate_and_time();
-            LocalDateTime currentTime = LocalDateTime.now();
-
-            if (currentTime.isAfter(screeningTime.minusHours(2))) {
-                throw new InvalidDataException("Reservations can only be canceled at least 2 hours before the screening.");
-            }
-
-            int row = reservation.getRow();
-            int col = reservation.getCol();
-            int[] seat = new int[]{row, col};
-
-            if (screening.getReservedSeats().contains(seat)) {
-                screening.getReservedSeats().removeIf(s -> s[0] == row && s[1] == col);
-            } else {
-                throw new InvalidDataException("The seat is already free.");
-            }
-            screeningRepo.save(screening);
-            customerReservations.remove(reservation);
-            customerRepo.save(customer);
-        } else {
+        Reservation reservation = reservationOpt.get();
+        if (!customer.getReservations().contains(reservation)) {
             throw new InvalidDataException("Reservation not found in customer reservations.");
         }
+
+        LocalDateTime screeningTime = screening.getDate_and_time();
+        LocalDateTime currentTime = LocalDateTime.now();
+        if (currentTime.isAfter(screeningTime.minusHours(2))) {
+            throw new InvalidDataException("Reservations can only be canceled at least 2 hours before the screening.");
+        }
+
+        screening.getReservation().remove(reservation);
+        customer.getReservations().remove(reservation);
+
+
+        reservationRepo.delete(reservation);
+
+        screeningRepo.save(screening);
+        customerRepo.save(customer);
     }
+
 
 
 }
