@@ -36,15 +36,16 @@ public class Screening {
     private Movie movie;
 
     @NotNull
-    private ScreeningLanguage language;
+    private String language;
 
     @OneToMany(mappedBy = "screening", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservation;
 
-    public Screening(LocalDateTime date_and_time, Movie movie, boolean[][] reservedSeats, ScreeningLanguage language) {
+    public Screening(LocalDateTime date_and_time, Movie movie, boolean[][] reservedSeats, String language) {
         this.date_and_time = date_and_time;
         this.movie = movie;
         this.language = language;
     }
+
 
 }

@@ -71,4 +71,8 @@ public class CustomerService {
         return reservation;
     }
 
+    public void CancelReservation(String email, Reservation reservation) {
+        if () {}
+    }
+
 }

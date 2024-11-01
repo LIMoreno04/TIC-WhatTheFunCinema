@@ -18,7 +18,7 @@ public class TheatreService {
     @Autowired
     private RoomRepository roomRepo;
 
-    private Theatre addTheatre(String location) throws InvalidDataException {
+    public Theatre addTheatre(String location) throws InvalidDataException {
         if (location == null) {
             throw new InvalidDataException("Ingrese la localidad.");
         }
@@ -28,7 +28,7 @@ public class TheatreService {
         return theatreRepo.save(theatre);
     }
 
-    private void addRoomToTheatre(String location, int rows, int cols) {
+    public void addRoomToTheatre(String location, int rows, int cols) {
         Optional<Theatre> result = theatreRepo.findByLocation(location);
         if (result.isPresent()) {
             Theatre theatre = result.get();
@@ -38,6 +38,13 @@ public class TheatreService {
                     .rows(rows)
                     .build();
             theatre.getRooms().add(room);
+        }
+    }
+
+    public void addTheatreWithRooms(String location, int numberOfRooms) throws InvalidDataException {
+        addTheatre(location);
+        for (int i = 0; i < numberOfRooms; i++) {
+            addRoomToTheatre(location,10,15);
         }
     }
 }
