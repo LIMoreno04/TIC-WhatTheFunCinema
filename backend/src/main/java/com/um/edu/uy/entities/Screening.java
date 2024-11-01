@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,6 +21,9 @@ public class Screening {
     @Id
     @ValidReleaseDate
     private LocalDateTime date_and_time;
+
+    @ElementCollection
+    private List<int[]> reservedSeats = new ArrayList<>();
 
     @ManyToOne
     @Id

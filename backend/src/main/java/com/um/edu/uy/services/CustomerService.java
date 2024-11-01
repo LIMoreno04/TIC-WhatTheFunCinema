@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,8 +100,40 @@ public class CustomerService {
         return reservation;
     }
 
-    public void CancelReservation(String email, Reservation reservation) {
-        if () {}
+    public void cancelReservation(String email, Reservation reservation) throws InvalidDataException {
+        Optional<Customer> customerOpt = customerRepo.findById(email);
+        if (customerOpt.isEmpty()) {
+            throw new InvalidDataException("Customer not found.");
+        }
+
+        Customer customer = customerOpt.get();
+        List<Reservation> customerReservations = customer.getReservations();
+
+        if (customerReservations.contains(reservation)) {
+            Screening screening = reservation.getScreening();
+            LocalDateTime screeningTime = screening.getDate_and_time();
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            if (currentTime.isAfter(screeningTime.minusHours(2))) {
+                throw new InvalidDataException("Reservations can only be canceled at least 2 hours before the screening.");
+            }
+
+            int row = reservation.getRow();
+            int col = reservation.getCol();
+            int[] seat = new int[]{row, col};
+
+            if (screening.getReservedSeats().contains(seat)) {
+                screening.getReservedSeats().removeIf(s -> s[0] == row && s[1] == col);
+            } else {
+                throw new InvalidDataException("The seat is already free.");
+            }
+            screeningRepo.save(screening);
+            customerReservations.remove(reservation);
+            customerRepo.save(customer);
+        } else {
+            throw new InvalidDataException("Reservation not found in customer reservations.");
+        }
     }
+
 
 }
