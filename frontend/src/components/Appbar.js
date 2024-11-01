@@ -12,50 +12,39 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../logo.png';
 
-const pages = ['Comparar entradas', 'Cartelera', 'Sucursales', 'Contacto'];
-const settings = ['Detalles', 'Historial de compras', 'Cerrar sesión'];
-const loggedOutSettings = ['Iniciar sesión', 'Registrarse'];
+const pages = ['cartelera', 'sucursales', 'contacto'];
+const settings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
+const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
 
-  
+  React.useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   React.useEffect(() => {
     fetch('http://localhost:8080/api/user/auth', {
       method: 'GET',
       credentials: 'include',
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         return response.json();
       })
-      .then((data) => {
-        setIsLoggedIn(data); // data should be a boolean
-      })
-      .catch((error) => {
-        console.error('Error fetching login status:', error);
-      });
+      .then((data) => setIsLoggedIn(data))
+      .catch((error) => console.error('Error fetching login status:', error));
   }, []);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
+  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
+  const handleCloseNavMenu = () => setAnchorElNav(null);
+  const handleCloseUserMenu = () => setAnchorElUser(null);
 
   const handleLogout = () => {
     fetch('http://localhost:8080/api/user/logout', {
@@ -65,59 +54,42 @@ function ResponsiveAppBar() {
       .then((response) => {
         if (response.ok) {
           setIsLoggedIn(false);
-          handleCloseUserMenu(); // Close the user menu
+          handleCloseUserMenu();
         } else {
           console.error('Logout failed');
         }
       })
-      .catch((error) => {
-        console.error('Error during logout:', error);
-      });
+      .catch((error) => console.error('Error during logout:', error));
   };
 
   return (
-    <AppBar position="fixed" sx={{ height: 80 }}>
-      <Container maxWidth="false" sx={{ mt: -3 }}>
+    <AppBar position="fixed" className={scrolled ? 'scrolled' : ''}>
+      <Container maxWidth="false">
         <Toolbar disableGutters>
-          {/* Logo */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 / 32 }}>
-            <IconButton href='/home'>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }}>
+            <IconButton href="/home">
               <img src={logo} alt="Logo" style={{ height: 80, marginRight: 5 }} />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
-            <IconButton href='/home'>
+            <IconButton href="/home">
               <img src={logo} alt="Logo" style={{ height: 40, marginRight: 5 }} />
             </IconButton>
           </Box>
 
           {/* Burger menu for small screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
+            <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right', 
-              }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
             >
               <MenuItem key="Home" onClick={handleCloseNavMenu} component="a" href="/home">
                 <Typography textAlign="center">Inicio</Typography>
@@ -127,14 +99,8 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-              {/* Add login/signup to the burger menu */}
               {!isLoggedIn && loggedOutSettings.map((setting) => (
-                <MenuItem
-                  key={setting}
-                  onClick={handleCloseNavMenu}
-                  component="a"
-                  href={setting === 'Iniciar sesión' ? '/login' : '/signup'}
-                >
+                <MenuItem key={setting} onClick={handleCloseNavMenu} component="a" href={setting === loggedOutSettings[0] ? '/login' : '/signup'}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
@@ -144,64 +110,50 @@ function ResponsiveAppBar() {
           {/* Full-size menu for medium and large screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, mx: '1%', color: 'white', display: 'block' }}
-              >
-                <Typography>{page}</Typography>
+              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, mx: '1%' }}>
+                {page}
               </Button>
             ))}
           </Box>
 
-          {/* Conditional rendering based on login status */}
+          {/* Login/Logout buttons */}
           <Box sx={{ flexGrow: 0 }}>
             {isLoggedIn ? (
               <>
                 <Tooltip title="Opciones de cuenta">
-                  <Button onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Typography color="white" sx={{ textAlign: 'right' }}>Perfil</Typography>
-                  </Button>
+                  <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA</Button>
                 </Tooltip>
                 <Menu
                   sx={{ mt: '45px' }}
                   id="menu-appbar"
                   anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                   keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((setting) => (
-                    <MenuItem 
-                      key={setting} 
-                      onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}
-                    >
+                    <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
                       <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}
                 </Menu>
               </>
             ) : (
-              <Box sx={{borderRadius:1, flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 {loggedOutSettings.map((setting) => (
                   <Button
                     key={setting}
-                    variant='outlined'
-                    sx={{ mx: 1, my: 2, color: 'white', display: 'block'}}
-                    href={setting === 'Iniciar sesión' ? '/login' : '/signup'}
+                    variant={setting === loggedOutSettings[0] ? "outlinedCyan" : "outlinedPink"}
+                    href={setting === loggedOutSettings[0] ? '/login' : '/signup'}
+                    sx={{ mx: 2, }}
                   >
-                    <Typography>{setting}</Typography>
+                    {setting}
                   </Button>
                 ))}
               </Box>
+
             )}
           </Box>
         </Toolbar>

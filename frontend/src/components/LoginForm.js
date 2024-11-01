@@ -2,18 +2,22 @@ import * as React from 'react';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Container, Paper, Typography, Button } from '@mui/material';
+import { Container, Paper, Typography, Button, InputAdornment, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function LoginForm() {
-  const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
+  const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto'};
   const navigate = useNavigate();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState({ email: false, password: false });
   const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
-  const [prueba, setPrueba] = useState('')
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -28,25 +32,17 @@ export default function LoginForm() {
   };
 
   React.useEffect(() => {
-    fetch('http://localhost:8080/api/user/prueba', {
+    fetch('http://localhost:8080/api/user/auth', {
       method: 'GET',
       credentials: 'include',
     })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
         return response.json();
       })
-      .then((data) => {
-        setPrueba(data); // data should be a boolean
-      })
-      .catch((error) => {
-        console.error('Error fetching login status:', error);
-      });
+      .then((data) => setIsLoggedIn(data))
+      .catch((error) => console.error('Error fetching login status:', error));
   }, []);
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,9 +77,12 @@ export default function LoginForm() {
 
   const isFormValid = email !== '' && password !== '';
 
+
+
+  if (!isLoggedIn) {
   return (
     <Container>
-      <Paper elevation={24} style={paperStyle}>
+      <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
         <Typography
           variant="h4"
           align="center"
@@ -119,23 +118,55 @@ export default function LoginForm() {
             required
             id="password"
             label="Contraseña"
-            type="password"
             value={password}
             onChange={handlePasswordChange}
             error={error.password}
             helperText={errorMessage.password}
             autoComplete="current-password"
+            type={showPassword ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title="Mostrar">
+                    <IconButton onClick={toggleShowPassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button
             type="submit"
             variant="contained"
             color="secondary"
             disabled={!isFormValid}
+            sx={{marginBottom: -1, marginTop: 2, fontFamily: 'monospace'}}
           >
-            Iniciar sesión
+            Enviar
           </Button>
         </Box>
       </Paper>
     </Container>
   );
+}
+else {
+  return (<Container>
+    <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '20px'}}>
+        sesión iniciada
+      </Typography>
+      <Button 
+      variant='contained'
+      color='secondary'
+      href='/home'
+      sx={{marginBottom: -1, marginTop: 2, fontFamily: 'monospace'}}
+      >
+        volver a inicio
+      </Button>
+      </Box>
+    </Paper>
+  </Container>);
+}
 }

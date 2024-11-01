@@ -30,12 +30,6 @@ public class TicWtfcinemaApplication {
 	}
 
 	public void runInCommandLine() throws InvalidDataException {
-		User user = userService.findUser("ignamoreno04@gmail.com", "Abc12345678@");
-		System.out.println("Nombre: " + user.getFirstName());
-
-		UserDTO loginUser = new UserDTO();
-		loginUser.setEmail("ignamoreno04@gmail.com");
-		loginUser.setPassword("Abc12345678@");
 
 	}
 

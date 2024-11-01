@@ -98,7 +98,7 @@ export default function SignupForm() {
   };
 
   return (
-    <Container> {/* Moves the container down */}
+    <Container sx={{mt: '-3%'}}>
       <Paper elevation={24} style={paperStyle}>
         <Typography
           variant="h4"
@@ -259,13 +259,13 @@ export default function SignupForm() {
             />
           </Box>
           <Button
-            sx={{ marginBottom: -1, marginTop: 2 }}
+            sx={{ marginBottom: -1, marginTop: 2, fontFamily: 'monospace'}}
             type="submit"
             variant="contained"
             color="secondary"
             disabled={!isFormValid}
           >
-            <Typography fontFamily={'Monospace'}>Enviar</Typography>
+            Enviar
           </Button>
         </Box>
       </Paper>
