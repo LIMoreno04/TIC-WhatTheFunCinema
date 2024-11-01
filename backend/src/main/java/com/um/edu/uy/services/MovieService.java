@@ -2,6 +2,7 @@ package com.um.edu.uy.services;
 
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.repository.GenreRepository;
 import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepo;
 
+    @Autowired
+    private GenreRepository genreRepo;
+
     public Movie addMovie(String title,
                           LocalTime duration,
                           String description,
@@ -25,6 +29,7 @@ public class MovieService {
                           List<Genre> genres,
                           Boolean currentlyOnDisplay,
                           byte[] poster) {
+
 
         Movie movie = Movie.builder()
                 .title(title)
@@ -36,6 +41,7 @@ public class MovieService {
                 .currentlyOnDisplay(currentlyOnDisplay)
                 .poster(poster)
                 .build();
+
         return movieRepo.save(movie);
     }
 

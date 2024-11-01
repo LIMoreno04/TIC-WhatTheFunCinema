@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 public class Genre {
     @Id
-    private String genre;
+    private String genreName;
 
     @ManyToMany(mappedBy = "genres")
     private List<Movie> movies;
