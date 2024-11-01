@@ -2,8 +2,11 @@ package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.plainEntities.Customer;
 import com.um.edu.uy.entities.DTOs.UserDTO;
+import com.um.edu.uy.entities.plainEntities.Reservation;
+import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
+import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +57,20 @@ public class CustomerRestController {
         System.out.println("Session ID: " + session.getId());
 
         return ResponseEntity.ok(newCustomer);
+    }
+
+    @PostMapping("/makeReservation")
+    public ResponseEntity<Reservation> makeReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) throws InvalidDataException {
+        Reservation reservation = customerService.makeReservation(email, col, row, screening);
+        return ResponseEntity.ok(reservation);
+    }
+    @DeleteMapping("/reservations")
+    public ResponseEntity<String> cancelReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) {
+        try {
+            customerService.cancelReservation(email, col, row, screening);
+            return ResponseEntity.ok("Reservation canceled successfully.");
+        } catch (InvalidDataException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
