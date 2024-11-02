@@ -17,22 +17,24 @@ export default function SignupForm() {
 
   const countries = [
     { code: "UY", label: "Uruguay", phone: '598' },
-    { code: "US", label: "USA", phone: '1' },
-    { code: "BR", label: "Brasil", phone: '55' },
-    { code: "AR", label: "Argentina", phone: '54' },
-    { code: "CL", label: "Chile", phone: '56' },
-    { code: "CA", label: "Canada", phone: '1' },
-    { code: "MX", label: "Mexico", phone: '52' },
-    { code: "GB", label: "Reino Unido", phone: '44' },
     { code: "DE", label: "Alemania", phone: '49' },
+    { code: "AR", label: "Argentina", phone: '54' },
+    { code: "AU", label: "Australia", phone: '61' },
+    { code: "BR", label: "Brasil", phone: '55' },
+    { code: "CA", label: "Canada", phone: '1' },
+    { code: "CL", label: "Chile", phone: '56' },
+    { code: "CN", label: "China", phone: '86' },
+    { code: "ES", label: "España", phone: '34' },
     { code: "FR", label: "Francia", phone: '33' },
+    { code: "IN", label: "India", phone: '91' },
     { code: "IT", label: "Italia", phone: '39' },
     { code: "JP", label: "Japón", phone: '81' },
-    { code: "CN", label: "China", phone: '86' },
-    { code: "IN", label: "India", phone: '91' },
-    { code: "AU", label: "Australia", phone: '61' },
+    { code: "MX", label: "Mexico", phone: '52' },
+    { code: "GB", label: "Reino Unido", phone: '44' },
+    { code: "US", label: "USA", phone: '1' },
     { code: "OTHER", label: "Otro", phone: '0' }
   ];
+  
 
 
   const idTypes = [

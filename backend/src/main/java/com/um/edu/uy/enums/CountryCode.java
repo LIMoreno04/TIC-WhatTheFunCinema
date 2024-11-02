@@ -19,6 +19,7 @@ public enum CountryCode {
     CN("China", "+86"),
     IN("India", "+91"),
     AU("Australia", "+61"),
+    ES("España","+34"),
     OTHER("Other", "+00");
 
     private final String countryName;
