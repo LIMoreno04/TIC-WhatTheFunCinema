@@ -173,8 +173,8 @@ export default function LoginForm() {
       <Container>
         <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '20px'}}>
-              sesión iniciada
+            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '25px'}}>
+              sesión iniciada con exito
             </Typography>
             <Button
               variant='contained'
