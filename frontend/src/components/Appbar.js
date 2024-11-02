@@ -155,7 +155,7 @@ function ResponsiveAppBar() {
                           key={setting}
                           variant={setting === loggedOutSettings[0] ? "outlinedCyan" : "outlinedPink"}
                           href={setting === loggedOutSettings[0] ? '/login' : '/signup'}
-                          sx={{ mx: 2 }}
+                          sx={{ mx: 2}}
                         >
                           {setting}
                         </Button>
