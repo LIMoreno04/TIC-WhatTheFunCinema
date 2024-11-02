@@ -1,4 +1,8 @@
 import * as React from 'react';
+import { DateField } from '@mui/x-date-pickers/DateField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { es } from 'date-fns/locale'; // Use 'es' locale for Spanish
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -16,7 +20,7 @@ export default function SignupForm() {
     { code: "US", label: "USA", phone: '1' },
     { code: "BR", label: "Brasil", phone: '55' },
     { code: "AR", label: "Argentina", phone: '54' },
-    { code: "CH", label: "Chile", phone: '56' },
+    { code: "CL", label: "Chile", phone: '56' },
     { code: "CA", label: "Canada", phone: '1' },
     { code: "MX", label: "Mexico", phone: '52' },
     { code: "GB", label: "Reino Unido", phone: '44' },
@@ -240,21 +244,22 @@ export default function SignupForm() {
             error={!!formErrors.lastName}
             helperText={formErrors.lastName}
             />
-            <TextField
-              id="dob"
-              label="Fecha de nacimiento (DD/MM/YYYY)"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-              disabled={loading}
-              error={!!formErrors.dateOfBirth}
-              helperText={formErrors.dateOfBirth}
-            />
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
+              <DateField
+                label="Fecha de nacimiento (DD/MM/YYYY)"
+                value={dob}
+                onChange={(newValue) => setDob(newValue)}
+                format="dd/MM/yyyy"
+                disabled={loading}
+                error={!!formErrors.dateOfBirth}
+                helperText={formErrors.dateOfBirth}
+              />
+            </LocalizationProvider>
             <Typography align='center' my={-1}>Documento de identidad</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
               <Autocomplete
                 id="country-origin-select"
+                sx={{flex: '0.375'}}
                 options={countries}
                 disableClearable
                 value={selectedIDCountry}
@@ -263,18 +268,31 @@ export default function SignupForm() {
                 }}
                 autoHighlight
                 getOptionLabel={(option) => option.label}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props} key={option.code}> 
+                    <img
+                      loading="lazy"
+                      width="20"
+                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                      alt=""
+                      style={{ marginRight: 10, marginLeft: -10 }}
+                    />
+                    <Typography fontSize={13} marginLeft={-0.5}>{option.label}</Typography>
+                  </Box>
+                )}
                 renderInput={(params) => (
                   <TextField
-                    sx={{ width: '150px' }}
                     {...params}
                     label="País"
-                    disabled={loading}
+                    value={selectedIDCountry}
+                    onChange={(e) => setIDCountry(e.target.value)}
                   />
                 )}
               />
               <Autocomplete
                 id="id-type-select"
                 options={idTypes}
+                sx={{flex: '0.25'}}
                 disableClearable
                 autoHighlight
                 value={selectedIDType}
@@ -282,49 +300,64 @@ export default function SignupForm() {
                   setSelectedIDType(newValue);
                 }}
                 getOptionLabel={(option) => option.label}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props} key={option.code}> 
+                    <Typography fontSize={15} marginLeft={-0.6}>{option.label}</Typography>
+                  </Box>
+                )}
                 renderInput={(params) => (
-                  <TextField sx={{ width: '100px' }} {...params} label="Tipo" disabled={loading} />
+                  <TextField {...params} label="Tipo" disabled={loading}/>
                 )}
               />
               <TextField 
               id="id-number" 
               label="Número" 
-              sx={{ flex: 1 }} 
+              sx={{ flex: '0.375' }} 
               value={idNumber}
               onChange={(e) => setIdNumber(e.target.value)} 
               disabled={loading} 
-              error={!!formErrors.idNumber}
-              helperText={formErrors.idNumber}
               />
             </Box>
+            {!!formErrors.idType && <Typography color="error">{formErrors.idType}</Typography>}
+            {!!formErrors.idNumber && <Typography color="error">{formErrors.idNumber}</Typography>}
+
             <Typography align='center' my={-1}>Teléfono de contacto</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
               <Autocomplete
                 id="phone-country-code-select"
                 options={countries}
+                sx={{flex: '1'}}
                 autoHighlight
                 value={selectedPhoneCountry}
                 onChange={(event, newValue) => {
                   setSelectedPhoneCountry(newValue);
                 }}
-                getOptionLabel={(option) => `${option.label} (+${option.phone})`}
+                getOptionLabel={(option) => `+${option.phone}`}
                 renderOption={(props, option) => (
-                  <li {...props}>
-                    {option.label} (+{option.phone})
-                  </li>
+                  <Box component="li" {...props} key={option.code}> 
+                    <img
+                      loading="lazy"
+                      width="20"
+                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                      alt=""
+                      style={{ marginRight: 10, marginLeft: -10 }}
+                    />
+                    <Typography fontSize={13} marginLeft={-0.5}>{`${option.label} (+${option.phone})`}</Typography>
+                  </Box>
                 )}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Codigo"
-                    sx={{ width: '120px' }}
-                    disabled={loading}
+                    label="Código de país"
+                    value={selectedPhoneCountry}
+                    onChange={(e) => setSelectedPhoneCountry(e.target.value)}
                   />
                 )}
               />
               <TextField
                 id="phone-number"
                 label="Número"
+                sx={{flex: '1'}}
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 disabled={loading}

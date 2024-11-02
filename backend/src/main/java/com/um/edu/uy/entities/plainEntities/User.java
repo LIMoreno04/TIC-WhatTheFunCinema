@@ -46,7 +46,6 @@ public class User {
     protected String idCountry;
 
     @NotNull
-    @Column(unique = true)
     protected String idNumber;
 
     @NotNull

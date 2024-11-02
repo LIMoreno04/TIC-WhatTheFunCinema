@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/customer")
@@ -35,24 +37,37 @@ public class CustomerRestController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
-        if (userService.ExistsById(userDTO.getEmail())) {
+        if (userService.ExistsById(userDTO.getEmail().toLowerCase())) {
             Map<String, String> errors = new HashMap<>();
             errors.put("email","Ya existe una cuenta con ese e-mail.");
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
+        if (Objects.equals(userDTO.getIdType(), "CI") && !Objects.equals(userDTO.getIdCountry().toUpperCase(),"UY")) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("idType","Solo se aceptan cédulas uruguayas. Si no posee una, utilice pasaporte.");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        if ((Objects.equals(userDTO.getIdType(), "CI") && !Pattern.matches("^\\d{7,8}$",userDTO.getIdNumber())) ||
+                (Objects.equals(userDTO.getIdType(), "Pasaporte") && !Pattern.matches("^[A-Z]{1,2}[0-9]{6,7}$",userDTO.getIdNumber()))) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("idNumber","Número de documento inválido. Ingrese sin puntos ni guiones y verifique que el tipo de documento seleccionado coincida.");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        String realCelNumber = (Character.getNumericValue(userDTO.getCelNumber().charAt(0))==0) ? userDTO.getCelNumber().substring(1) : userDTO.getCelNumber();
         // Extract valid enum values to avoid invalid data in the `addCustomer` method
-        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
+        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCelCode();
         String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
         String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
 
         // Call the service to add a new customer
         Customer newCustomer = customerService.addCustomer(
-                userDTO.getEmail(),
+                userDTO.getEmail().toLowerCase(),
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
                 userDTO.getDateOfBirth(),
                 realCelCountryCode,
-                userDTO.getCelNumber(),
+                realCelNumber,
                 realIdType,
                 realIdCountryCode,
                 userDTO.getIdNumber(),
