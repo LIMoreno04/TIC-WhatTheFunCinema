@@ -388,8 +388,8 @@ export default function SignupForm() {
       <Container>
         <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '20px'}}>
-              cuenta creada
+            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '25px'}}>
+              cuenta creada con exito
             </Typography>
             <Button
               variant='contained'

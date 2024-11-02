@@ -1,6 +1,7 @@
 package com.um.edu.uy.entities.DTOs;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public class MovieDTO {
     private String director;
     private List<String> genres;
     private Boolean currentlyOnDisplay;
-    private byte[] poster;
+    private MultipartFile poster;
 }

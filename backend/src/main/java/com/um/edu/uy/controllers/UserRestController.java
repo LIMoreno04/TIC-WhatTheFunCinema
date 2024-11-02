@@ -98,4 +98,11 @@ public class UserRestController {
         String role = (String) session.getAttribute("role");
         return ResponseEntity.ok(Objects.requireNonNullElse(role, "notLoggedIn"));
     }
+
+    @GetMapping("/current")
+    public ResponseEntity<User> getCurrentAccount(HttpSession session) {
+        User user = (User)session.getAttribute("user");
+        System.out.println(user);
+        return ResponseEntity.ok(Objects.requireNonNullElse(user, new User()));
+    }
 }

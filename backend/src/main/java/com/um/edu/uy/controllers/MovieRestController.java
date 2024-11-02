@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -27,10 +28,11 @@ public class MovieRestController {
     private GenreService genreService;
 
     @PostMapping("/addMovie")
-    public ResponseEntity<Movie> addMovie(@RequestBody MovieDTO movieDTO) {
+    public ResponseEntity<Movie> addMovie(@RequestBody MovieDTO movieDTO) throws IOException {
 
         LocalTime duration = LocalTime.parse(movieDTO.getDuration());
         LocalDate releaseDate = LocalDate.parse(movieDTO.getReleaseDate());
+        byte[] poster = movieDTO.getPoster().getBytes();
 
         List<Genre> genres = movieDTO.getGenres().stream()
                 .map(genreName -> genreService.findByGenreName(genreName))
@@ -44,7 +46,7 @@ public class MovieRestController {
                 movieDTO.getDirector(),
                 genres,
                 movieDTO.getCurrentlyOnDisplay(),
-                movieDTO.getPoster()
+                poster
         );
 
         return ResponseEntity.ok(newMovie);
@@ -52,7 +54,7 @@ public class MovieRestController {
     }
 
 
-    @GetMapping("/allMovies")
+    @GetMapping("/all")
     public ResponseEntity<List<Movie>> allMovies() {
         List<Movie> allMovies = movieService.getAllMovies();
 
@@ -63,7 +65,7 @@ public class MovieRestController {
         }
     }
 
-    @GetMapping("/allMoviesOnDisplay")
+    @GetMapping("/allOnDisplay")
     public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() {
         List<Movie> moviesOnDisplay = movieService.showMovieDisplay();
 

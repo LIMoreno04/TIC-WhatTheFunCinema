@@ -11,8 +11,10 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['cartelera', 'sucursales', 'contacto'];
+const paths = ['/movies', '/theatres', '/contact'];
 const settings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
@@ -28,6 +30,21 @@ function ResponsiveAppBar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleMenuItemClick = (setting) => {
+    if (setting === 'Cerrar sesión') {
+      handleLogout();
+    } else if (setting === settings[0]) {
+      navigate('/account');
+      handleCloseUserMenu();
+    } else if (setting === settings[1]) {
+      navigate('/purchase-history');
+      handleCloseUserMenu();
+    } else {
+      handleCloseUserMenu();
+    }
+  };
 
   React.useEffect(() => {
     fetch('http://localhost:8080/api/user/role', {
@@ -57,6 +74,7 @@ function ResponsiveAppBar() {
           setUserRole('notLoggedIn');
           handleCloseUserMenu();
         } else {
+          alert('Error en la conexión con el servidor.')
           console.error('Logout failed');
         }
       })
@@ -64,22 +82,17 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar position="fixed" className={scrolled ? 'scrolled' : ''}>
-      <Container maxWidth="false">
+    <AppBar sx={{height: 110}} position="fixed" className={scrolled ? 'scrolled' : ''}>
+      <Container sx={{mt: 0.5}} maxWidth="false">
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }}>
             <IconButton href="/home">
               <img src={logo} alt="Logo" style={{ height: 80, marginRight: 5 }} />
             </IconButton>
           </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
-            <IconButton href="/home">
-              <img src={logo} alt="Logo" style={{ height: 40, marginRight: 5 }} />
-            </IconButton>
-          </Box>
 
           {/* Burger menu for small screens */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end' }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'left' }}>
             <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
             </IconButton>
@@ -92,26 +105,39 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
             >
-              <MenuItem key="Home" onClick={handleCloseNavMenu} component="a" href="/home">
+              <MenuItem key="Inicio" onClick={handleCloseNavMenu} component="a" href="/home">
                 <Typography textAlign="center">Inicio</Typography>
               </MenuItem>
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+              {pages.map((page, index) => (
+                <MenuItem
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  component="a"
+                  href={
+                    index === 0 ? '/movies' : 
+                    index === 1 ? '/theatres' : 
+                    index === 2 ? '/contact' : 
+                    '#'
+                  }
+                >
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-              {userRole==='notLoggedIn' && loggedOutSettings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseNavMenu} component="a" href={setting === loggedOutSettings[0] ? '/login' : '/signup'}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
             </Menu>
+
           </Box>
 
           {/* Full-size menu for medium and large screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, mx: '1%' }}>
+            {pages.map((page,index) => (
+              <Button 
+              key={page} 
+              onClick={() => {
+                handleCloseNavMenu();
+                navigate(paths[index]);
+              }}
+               sx={{ my: 2, mx: '1%' }}
+               >
                 {page}
               </Button>
             ))}
@@ -123,7 +149,7 @@ function ResponsiveAppBar() {
               switch (userRole) {
                 case 'notLoggedIn':
                   return (
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <Box >
                       {loggedOutSettings.map((setting) => (
                         <Button
                           key={setting}
@@ -140,7 +166,7 @@ function ResponsiveAppBar() {
                   return (
                     <>
                       <Tooltip title="Opciones de cuenta">
-                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA</Button>
+                        <Button onClick={handleOpenUserMenu} variant="outlinedCyan">CUENTA</Button>
                       </Tooltip>
                       <Menu
                         sx={{ mt: '45px' }}
@@ -153,12 +179,13 @@ function ResponsiveAppBar() {
                         onClose={handleCloseUserMenu}
                       >
                         {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
+                          <MenuItem key={setting} onClick={() => handleMenuItemClick(setting)}>
                             <Typography textAlign="center">{setting}</Typography>
                           </MenuItem>
                         ))}
                       </Menu>
                     </>
+
                   );
                 case 'employee':
                   return (
