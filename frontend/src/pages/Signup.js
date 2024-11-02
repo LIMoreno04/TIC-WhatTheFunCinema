@@ -1,9 +1,10 @@
+import { Box } from "@mui/material";
 import SignupForm from "../components/SignupForm";
 
 export default function SignupPage() {
     return (
-      <div>
+      <Box mt={20}>
         <SignupForm/>
-      </div>
+      </Box>
     );
   }

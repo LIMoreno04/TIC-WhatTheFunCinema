@@ -1,9 +1,10 @@
+import { Box } from "@mui/material";
 import LoginForm from "../components/LoginForm";
 
 export default function LoginPage() {
     return (
-      <div>
+      <Box mt={20}>
         <LoginForm/>
-      </div>
+      </Box>
     );
   }

@@ -118,7 +118,7 @@ export default function SignupForm() {
             const errorData = await response.json();
             setFormErrors(errorData);
           } else {
-            setServerError("Error comunicándose con el servidor.");
+            setServerError("Error inesperado.");
           }
         } else {
           window.location.reload();

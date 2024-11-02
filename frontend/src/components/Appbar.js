@@ -19,7 +19,7 @@ const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [userRole, setUserRole] = React.useState('notLoggedIn');
   const [scrolled, setScrolled] = React.useState(false);
 
   React.useEffect(() => {
@@ -28,17 +28,18 @@ function ResponsiveAppBar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+
   React.useEffect(() => {
-    fetch('http://localhost:8080/api/user/auth', {
+    fetch('http://localhost:8080/api/user/role', {
       method: 'GET',
       credentials: 'include',
     })
       .then((response) => {
         if (!response.ok) throw new Error('Network response was not ok');
-        return response.json();
+        return response.text(); // Expecting a string response for the role
       })
-      .then((data) => setIsLoggedIn(data))
-      .catch((error) => console.error('Error fetching login status:', error));
+      .then((role) => setUserRole(role))
+      .catch((error) => console.error('Error fetching user role:', error));
   }, []);
 
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
@@ -53,7 +54,7 @@ function ResponsiveAppBar() {
     })
       .then((response) => {
         if (response.ok) {
-          setIsLoggedIn(false);
+          setUserRole('notLoggedIn');
           handleCloseUserMenu();
         } else {
           console.error('Logout failed');
@@ -99,7 +100,7 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-              {!isLoggedIn && loggedOutSettings.map((setting) => (
+              {userRole==='notLoggedIn' && loggedOutSettings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseNavMenu} component="a" href={setting === loggedOutSettings[0] ? '/login' : '/signup'}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
@@ -116,46 +117,104 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          {/* Login/Logout buttons */}
+          {/* LoggedIn/LoggedOut buttons */}
           <Box sx={{ flexGrow: 0 }}>
-            {isLoggedIn ? (
-              <>
-                <Tooltip title="Opciones de cuenta">
-                  <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA</Button>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  keepMounted
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </>
-            ) : (
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                {loggedOutSettings.map((setting) => (
-                  <Button
-                    key={setting}
-                    variant={setting === loggedOutSettings[0] ? "outlinedCyan" : "outlinedPink"}
-                    href={setting === loggedOutSettings[0] ? '/login' : '/signup'}
-                    sx={{ mx: 2, }}
-                  >
-                    {setting}
-                  </Button>
-                ))}
-              </Box>
-
-            )}
+            {(() => {
+              switch (userRole) {
+                case 'notLoggedIn':
+                  return (
+                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                      {loggedOutSettings.map((setting) => (
+                        <Button
+                          key={setting}
+                          variant={setting === loggedOutSettings[0] ? "outlinedCyan" : "outlinedPink"}
+                          href={setting === loggedOutSettings[0] ? '/login' : '/signup'}
+                          sx={{ mx: 2 }}
+                        >
+                          {setting}
+                        </Button>
+                      ))}
+                    </Box>
+                  );
+                case 'customer':
+                  return (
+                    <>
+                      <Tooltip title="Opciones de cuenta">
+                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA</Button>
+                      </Tooltip>
+                      <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        keepMounted
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                      >
+                        {settings.map((setting) => (
+                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
+                            <Typography textAlign="center">{setting}</Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </>
+                  );
+                case 'employee':
+                  return (
+                    <>
+                      <Tooltip title="Opciones de cuenta">
+                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA DE EMPLEADO</Button>
+                      </Tooltip>
+                      <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        keepMounted
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                      >
+                        {settings.map((setting) => (
+                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
+                            <Typography textAlign="center">{setting}</Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </>
+                  );
+                case 'admin':
+                  return (
+                    <>
+                      <Tooltip title="Opciones de cuenta">
+                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>ADMIN</Button>
+                      </Tooltip>
+                      <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        keepMounted
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                      >
+                        {settings.map((setting) => (
+                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
+                            <Typography textAlign="center">{setting}</Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </>
+                  );
+                default:
+                  console.log('Fatal error: User role not identified.');
+                  return null;
+              }
+            })()}
           </Box>
+
         </Toolbar>
       </Container>
     </AppBar>
