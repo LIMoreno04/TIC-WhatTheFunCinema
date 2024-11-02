@@ -28,6 +28,7 @@ public class UserService {
         return userRepo.findAll();
     }
 
+    public Boolean ExistsById(String email) { return userRepo.existsById(email); }
     public User addUser(String email,
                         String firstName,
                         String lastName,

@@ -172,7 +172,7 @@ export default function SignupForm() {
             onChange={(e) => setEmail(e.target.value)} 
             disabled={loading}
             error={!!formErrors.email}
-            helperText={!!formErrors.email ? 'E-mail inválido.' : ''}
+            helperText={formErrors.email}
              />
             <TextField
               id="password"

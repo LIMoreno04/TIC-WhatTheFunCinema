@@ -8,6 +8,7 @@ import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
+import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,16 @@ public class CustomerRestController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
+        if (userService.ExistsById(userDTO.getEmail())) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("email","Ya existe una cuenta con ese e-mail.");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
         // Extract valid enum values to avoid invalid data in the `addCustomer` method
         String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
         String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
