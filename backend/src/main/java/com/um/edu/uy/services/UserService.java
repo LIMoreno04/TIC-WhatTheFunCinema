@@ -1,7 +1,10 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.plainEntities.Employee;
 import com.um.edu.uy.entities.plainEntities.User;
 import com.um.edu.uy.exceptions.InvalidDataException;
+import com.um.edu.uy.repository.CustomerRepository;
+import com.um.edu.uy.repository.EmployeeRepository;
 import com.um.edu.uy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,11 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepo;
+
+    @Autowired
+    private CustomerRepository customerRepo;
+    @Autowired
+    private EmployeeRepository employeeRepo;
 
     public List<User> getAll()
     {
@@ -60,4 +68,16 @@ public class UserService {
             throw new InvalidDataException("No account registered with this email.");
         }
     }
+
+    public String getRole(String email) throws InvalidDataException {
+        Optional<User> result = userRepo.findById(email);
+        if (result.isEmpty()) { throw new InvalidDataException("User not found."); }
+        else {
+            if (customerRepo.findByEmail(email).isPresent()) { return "customer"; }
+            else if (employeeRepo.findByEmail(email).isPresent()) { return "employee"; }
+            else { return "admin"; }
+
+            }
+    }
+
 }

@@ -9,11 +9,17 @@ import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/customer")
@@ -23,27 +29,20 @@ public class CustomerRestController {
     @Autowired
     private CustomerService customerService;
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<Customer> customerSignUp(@RequestBody String email, HttpSession session) throws InvalidDataException {
-//       Customer newCustomer = customerService.addCustomer(email);
-//       session.setAttribute("role", "customer");
-//       return ResponseEntity.ok(newCustomer);
-//    }
 
     @PostMapping("/signup")
-    public ResponseEntity<Customer> customerSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
-        System.out.println(userDTO.toString());
-
+    public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
+        // Extract valid enum values to avoid invalid data in the `addCustomer` method
         String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
         String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
         String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
-        LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
 
+        // Call the service to add a new customer
         Customer newCustomer = customerService.addCustomer(
                 userDTO.getEmail(),
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
-                realDateOfBirth,
+                userDTO.getDateOfBirth(),
                 realCelCountryCode,
                 userDTO.getCelNumber(),
                 realIdType,
@@ -51,13 +50,15 @@ public class CustomerRestController {
                 userDTO.getIdNumber(),
                 userDTO.getPassword()
         );
+
+        // Set session attributes
         session.setAttribute("user", newCustomer);
         session.setAttribute("role", "customer");
-        session.setAttribute("auth", true);
         System.out.println("Session ID: " + session.getId());
 
         return ResponseEntity.ok(newCustomer);
     }
+
 
     @PostMapping("/makeReservation")
     public ResponseEntity<Reservation> makeReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) throws InvalidDataException {
@@ -72,5 +73,19 @@ public class CustomerRestController {
         } catch (InvalidDataException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    // Exception handler for validation errors
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Collect all field validation errors
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        // Return error map with a BAD_REQUEST status
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,19 +1,25 @@
 package com.um.edu.uy.entities.DTOs;
 
+import com.um.edu.uy.entities.validators.ValidBirthDate;
+import com.um.edu.uy.entities.validators.ValidPassword;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 import java.time.LocalDate;
 @Data
 public class UserDTO {
+    @Email
     private String email;
     private String firstName;
     private String lastName;
-    private String dateOfBirth;
+    @ValidBirthDate
+    private LocalDate dateOfBirth;
     private String celCountryCode;
     private String celNumber;
     private String idType;
     private String idCountry;
     private String idNumber;
+    @ValidPassword
     private String password;
 
 

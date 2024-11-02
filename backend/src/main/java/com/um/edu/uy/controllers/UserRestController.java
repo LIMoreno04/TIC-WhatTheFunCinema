@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/user")
@@ -23,38 +24,35 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<User> userSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
-        System.out.println(userDTO.toString());
-
-        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
-        String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
-        String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
-        LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
-
-        User newUser = userService.addUser(
-                userDTO.getEmail(),
-                userDTO.getFirstName(),
-                userDTO.getLastName(),
-                realDateOfBirth,
-                realCelCountryCode,
-                userDTO.getCelNumber(),
-                realIdType,
-                realIdCountryCode,
-                userDTO.getIdNumber(),
-                userDTO.getPassword()
-        );
-        session.setAttribute("user", newUser);
-        session.setAttribute("auth", true);
-        System.out.println("Session ID: " + session.getId());
-
-        return ResponseEntity.ok(newUser);
-    }
+//    @PostMapping("/signup")
+//    public ResponseEntity<User> userSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
+//        System.out.println(userDTO.toString());
+//
+//        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
+//        String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
+//        String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
+//        LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
+//
+//        User newUser = userService.addUser(
+//                userDTO.getEmail(),
+//                userDTO.getFirstName(),
+//                userDTO.getLastName(),
+//                realDateOfBirth,
+//                realCelCountryCode,
+//                userDTO.getCelNumber(),
+//                realIdType,
+//                realIdCountryCode,
+//                userDTO.getIdNumber(),
+//                userDTO.getPassword()
+//        );
+//        session.setAttribute("user", newUser);
+//        System.out.println("Session ID: " + session.getId());
+//
+//        return ResponseEntity.ok(newUser);
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogIn(@RequestBody UserDTO loginDTO, HttpSession session) {
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("User: " + session.getAttribute("user"));
 
 
         try {
@@ -62,8 +60,10 @@ public class UserRestController {
 
             // Store user in session
             session.setAttribute("user", user);
-            session.setAttribute("auth", true);
+            session.setAttribute("role", userService.getRole(user.getEmail()));
+
             System.out.println("login");
+
 
             User savedUser = (User) session.getAttribute("user");
 
@@ -90,12 +90,12 @@ public class UserRestController {
         return ResponseEntity.ok("Logged out successfully");
     }
 
-    @GetMapping("/auth")
-    public ResponseEntity<Boolean> isAuthenticated(HttpSession session) {
-        System.out.println("auth");
-        System.out.println("Session ID: " + session.getId());
+    @GetMapping("/role")
+    public ResponseEntity<String> getSessionRole(HttpSession session) {
+        System.out.println("getRole");
+        System.out.println("Session ID: " + session.getId() + "\nRole: " + session.getAttribute("role"));
 
-        Boolean isAuthenticated = (Boolean) session.getAttribute("auth");
-        return ResponseEntity.ok(isAuthenticated != null && isAuthenticated);
+        String role = (String) session.getAttribute("role");
+        return ResponseEntity.ok(Objects.requireNonNullElse(role, "notLoggedIn"));
     }
 }

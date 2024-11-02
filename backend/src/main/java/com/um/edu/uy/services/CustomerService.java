@@ -123,7 +123,7 @@ public class CustomerService {
             throw new InvalidDataException("Reservations can only be canceled at least 2 hours before the screening.");
         }
 
-        screening.getReservation().remove(reservation);
+        screening.getReservations().remove(reservation);
         customer.getReservations().remove(reservation);
 
 

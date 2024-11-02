@@ -21,12 +21,12 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Monospace, Arial',
     neonCyan: {
-      fontFamily: 'conthrax',
+      fontFamily: 'monospace',
       color: '#ffffff', // Neon cyan color
       textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc', // Cyan glow
     },
     neonPink: {
-      fontFamily: 'conthrax',
+      fontFamily: 'monospace',
       color: '#ffffff', // Neon pink color
       textShadow: '0 0 5px #ff0090, 0 0 10px #ff0090, 0 0 15px #ff0090', // Pink glow
     },
@@ -182,7 +182,6 @@ function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
         <ResponsiveAppBar/>
-        <Box mt={20}>
         <Routes>
           <Route path='/home' element={<HomePage/>} ></Route>
           <Route path='/' element={<HomePage/>} ></Route>
@@ -192,7 +191,6 @@ function App() {
 
           <Route path='*' element={<NotFound/>}></Route>
         </Routes>
-        </Box>
       </ThemeProvider>
     </div>
   );

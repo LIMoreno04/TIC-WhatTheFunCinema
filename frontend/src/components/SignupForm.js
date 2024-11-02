@@ -2,12 +2,14 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip } from '@mui/material';
+import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip, CircularProgress } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
+
 export default function SignupForm() {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
+
 
   const countries = [
     { code: "UY", label: "Uruguay", phone: '598' },
@@ -28,10 +30,16 @@ export default function SignupForm() {
     { code: "OTHER", label: "Otro", phone: '0' }
   ];
 
+
   const idTypes = [
     { label: "CI" },
     { label: "Pasaporte" }
   ];
+
+  const [userRole, setUserRole] = useState('notLoggedIn');
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
 
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -39,236 +47,327 @@ export default function SignupForm() {
   const [dob, setDob] = useState('');
   const [idNumber, setIdNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [selectedPhoneCountry, setSelectedPhoneCountry] = React.useState(null);
+  const [selectedPhoneCountry, setSelectedPhoneCountry] = useState(null);
   const [selectedIDType, setSelectedIDType] = useState(null);
-  const [selectedIDCountry, setIDCountry] = useState(null)
+  const [selectedIDCountry, setIDCountry] = useState(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
-  const [PasswordValidationError, setPasswordValidationError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const passwordErrorMessage = 'Contraseñas no coinciden'
 
-  // Check if all fields are filled
   useEffect(() => {
     const allFieldsFilled = email && firstName && lastName && dob && idNumber && phoneNumber && selectedPhoneCountry && selectedIDType && password && confirmPassword;
     setIsFormValid(allFieldsFilled);
   }, [email, firstName, lastName, dob, idNumber, phoneNumber, selectedPhoneCountry, selectedIDType, password, confirmPassword]);
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-  };
-  
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
   const toggleShowPassword = () => setShowPassword(!showPassword);
-
   const toggleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
 
-  const validatePasswords = (pass1, pass2) => {
-    if (pass1 !== pass2) {
-      setPasswordValidationError(true);
+  const validatePasswords = () => {
+    if (password !== confirmPassword) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        confirmPassword: "Las contraseñas no coinciden.",
+      }));
       return false;
     }
     return true;
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validatePasswords(password, confirmPassword)) {
-      const newUser={email,firstName,lastName,dateOfBirth: dob,celCountryCode: selectedPhoneCountry.code,celNumber: phoneNumber,idType: selectedIDType.label,idCountry: selectedIDCountry.code,idNumber,password}
-      fetch('http://localhost:8080/api/user/signup', 
-        {method: 'POST', 
-          headers: {'Content-Type':'application/json'},
-          body:JSON.stringify(newUser),
-          credentials:'include'
-        }).then(()=>{
-          alert('Registro exitoso!')
-          setEmail('')
-        })
 
-      alert('Registro exitoso');
-    } else {
-      // Reset the form
-      setPassword('');
-      setConfirmPassword('');
+  React.useEffect(() => {
+    fetch('http://localhost:8080/api/user/role', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text(); // Expecting a string response for the role
+      })
+      .then((role) => setUserRole(role))
+      .catch((error) => console.error('Error fetching user role:', error));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormErrors({});
+    setServerError('');
+
+    if (validatePasswords()) {
+      setLoading(true);
+
+      const newUser = {
+        email, firstName, lastName, dateOfBirth: dob,
+        celCountryCode: selectedPhoneCountry?.code,
+        celNumber: phoneNumber, idType: selectedIDType?.label,
+        idCountry: selectedIDCountry?.code, idNumber, password,
+      };
+
+      try {
+        const response = await fetch('http://localhost:8080/api/customer/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser),
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          if (response.status === 400) {
+            const errorData = await response.json();
+            setFormErrors(errorData);
+          } else {
+            setServerError("Error comunicándose con el servidor.");
+          }
+        } else {
+          window.location.reload();
+          alert('Registro exitoso!');
+        }
+      } catch (error) {
+        console.error('Error during signup:', error);
+        setServerError("Error comunicándose con el servidor.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    else {
+      setFormErrors({password: 'Las contraseñas no coinciden.'})
     }
   };
 
-  return (
-    <Container sx={{mt: '-3%'}}>
-      <Paper elevation={24} style={paperStyle}>
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          sx={{
-            fontWeight: 'bold',
-            fontFamily: 'Monospace',
-            letterSpacing: '0.15rem',
-            marginBottom: 2,
-            marginTop: -3,
-          }}
-        >
-          Registrar cuenta
-        </Typography>
 
-        <Box
-          component="form"
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-          noValidate
-          autoComplete="off"
-          onSubmit={handleSubmit} // Handle form submission
-        >
-          <TextField required id="email" label="e-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <TextField
-            id="password"
-            label="Contraseña"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={handlePasswordChange}
-            autoComplete="current-password"
-            error={PasswordValidationError}
-            helperText={PasswordValidationError ? passwordErrorMessage : ''}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title="Mostrar">
-                    <IconButton onClick={toggleShowPassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            id="verify-password"
-            label="Confirmar contraseña"
-            type={showConfirmPassword ? "text" : "password"}
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            autoComplete="current-password"
-            error={PasswordValidationError}
-            helperText={PasswordValidationError ? passwordErrorMessage : ''}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title="Mostrar">
-                    <IconButton onClick={toggleShowConfirmPassword} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-          />
 
-          <TextField required id="first-name" label="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-          <TextField required id="last-name" label="Apellido(s)" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-          <TextField
-            id="dob"
-            label="Fecha de nacimiento (DD/MM/YYYY)"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-          />
-          <Typography align='center' my={-1}>Documento de identidad</Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-          <Autocomplete
-              id="country-origin-select"
-              options={countries}
-              disableClearable
-              value={selectedIDCountry}
-              onChange={(event, newValue) => {
-                setIDCountry(newValue);
+  if (userRole === 'notLoggedIn') {
+    return (
+      <Container sx={{ mt: '-3%' }}>
+        <Paper elevation={24} style={paperStyle}>
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              fontFamily: 'Monospace',
+              letterSpacing: '0.15rem',
+              marginBottom: 2,
+              marginTop: -3,
+            }}
+          >
+            Registrar cuenta
+          </Typography>
+
+
+          <Box
+            component="form"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+            noValidate
+            autoComplete="off"
+            onSubmit={handleSubmit}
+          >
+            <TextField required 
+            id="email" 
+            label="e-mail" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            disabled={loading}
+            error={!!formErrors.email}
+            helperText={!!formErrors.email ? 'E-mail inválido.' : ''}
+             />
+            <TextField
+              id="password"
+              label="Contraseña"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
+              autoComplete="current-password"
+              error={!!formErrors.password}
+              helperText={formErrors.password}
+              disabled={loading}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="Mostrar">
+                      <IconButton onClick={toggleShowPassword} edge="end" disabled={loading}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
               }}
-              autoHighlight
-              getOptionLabel={(option) => option.label}
-              renderOption={(props, option) => (
-                <Box component="li" {...props} key={option.code}> 
-                  <img
-                    loading="lazy"
-                    width="20"
-                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                    alt=""
-                    style={{ marginRight: 10, marginLeft: -10 }}
-                  />
-                  <Typography fontSize={13} marginLeft={-0.5}>{option.label}</Typography>
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  sx={{ width: '150px' }}
-                  {...params}
-                  label="País"
-                  value={selectedIDCountry}
-                  onChange={(e) => setIDCountry(e.target.value)}
-                />
-              )}
-            />
-            <Autocomplete
-              id="id-type-select"
-              options={idTypes}
-              disableClearable
-              autoHighlight
-              value={selectedIDType}
-              onChange={(event, newValue) => {
-                setSelectedIDType(newValue);
-              }}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => (
-                <TextField sx={{ width: '100px' }} {...params} label="Tipo" />
-              )}
-            />
-            <TextField id="id-number" label="Número" sx={{ flex: 1 }} value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
-          </Box>
-          <Typography align='center' my={-1}>Teléfono de contacto</Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
-            <Autocomplete
-              id="phone-country-code-select"
-              options={countries}
-              autoHighlight
-              value={selectedPhoneCountry}
-              onChange={(event, newValue) => {
-                setSelectedPhoneCountry(newValue);
-              }}
-              getOptionLabel={(option) => `+${option.phone}`}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Código"
-                  sx={{ width: 120 }}
-                />
-              )}
             />
             <TextField
-              id="phone-number"
-              label="Número de teléfono"
-              sx={{ flex: 1 }}
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              id="verify-password"
+              label="Confirmar contraseña"
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              autoComplete="current-password"
+              error={!!formErrors.password}
+              helperText={formErrors.password}
+              disabled={loading}
               InputProps={{
-                startAdornment: selectedPhoneCountry ? (
-                  <Box sx={{ paddingRight: 1 }}>+{selectedPhoneCountry.phone}</Box>
-                ) : null,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="Mostrar">
+                      <IconButton onClick={toggleShowConfirmPassword} edge="end" disabled={loading}>
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
               }}
             />
+
+
+            <TextField 
+            required 
+            id="first-name" 
+            label="Nombre(s)" 
+            value={firstName} 
+            onChange={(e) => setFirstName(e.target.value)} 
+            disabled={loading} 
+            error={!!formErrors.firstName}
+            helperText={formErrors.firstName}
+            />
+            <TextField 
+            required 
+            id="last-name" 
+            label="Apellido(s)" 
+            value={lastName} 
+            onChange={(e) => setLastName(e.target.value)} 
+            disabled={loading} 
+            error={!!formErrors.lastName}
+            helperText={formErrors.lastName}
+            />
+            <TextField
+              id="dob"
+              label="Fecha de nacimiento (DD/MM/YYYY)"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              disabled={loading}
+              error={!!formErrors.dateOfBirth}
+              helperText={formErrors.dateOfBirth}
+            />
+            <Typography align='center' my={-1}>Documento de identidad</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+              <Autocomplete
+                id="country-origin-select"
+                options={countries}
+                disableClearable
+                value={selectedIDCountry}
+                onChange={(event, newValue) => {
+                  setIDCountry(newValue);
+                }}
+                autoHighlight
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    sx={{ width: '150px' }}
+                    {...params}
+                    label="País"
+                    disabled={loading}
+                  />
+                )}
+              />
+              <Autocomplete
+                id="id-type-select"
+                options={idTypes}
+                disableClearable
+                autoHighlight
+                value={selectedIDType}
+                onChange={(event, newValue) => {
+                  setSelectedIDType(newValue);
+                }}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField sx={{ width: '100px' }} {...params} label="Tipo" disabled={loading} />
+                )}
+              />
+              <TextField 
+              id="id-number" 
+              label="Número" 
+              sx={{ flex: 1 }} 
+              value={idNumber}
+              onChange={(e) => setIdNumber(e.target.value)} 
+              disabled={loading} 
+              error={!!formErrors.idNumber}
+              helperText={formErrors.idNumber}
+              />
+            </Box>
+            <Typography align='center' my={-1}>Teléfono de contacto</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+              <Autocomplete
+                id="phone-country-code-select"
+                options={countries}
+                autoHighlight
+                value={selectedPhoneCountry}
+                onChange={(event, newValue) => {
+                  setSelectedPhoneCountry(newValue);
+                }}
+                getOptionLabel={(option) => `${option.label} (+${option.phone})`}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    {option.label} (+{option.phone})
+                  </li>
+                )}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Codigo"
+                    sx={{ width: '120px' }}
+                    disabled={loading}
+                  />
+                )}
+              />
+              <TextField
+                id="phone-number"
+                label="Número"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                disabled={loading}
+                error={!!formErrors.celNumber}
+                helperText={formErrors.celNumber}
+              />
+            </Box>
+
+            {serverError && <Typography color="error">{serverError}</Typography>}
+
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={!isFormValid || loading}
+              sx={{ fontWeight: 'bold', fontSize: 17 }}
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Enviar'}
+            </Button>
           </Box>
-          <Button
-            sx={{ marginBottom: -1, marginTop: 2, fontFamily: 'monospace'}}
-            type="submit"
-            variant="contained"
-            color="secondary"
-            disabled={!isFormValid}
-          >
-            Enviar
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
-  );
+        </Paper>
+      </Container>
+    );
+  } else {
+    return (
+      <Container>
+        <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '20px'}}>
+              cuenta creada
+            </Typography>
+            <Button
+              variant='contained'
+              color='secondary'
+              href='/home'
+              sx={{ marginBottom: -1, marginTop: 2, fontFamily: 'monospace' }}
+            >
+              volver a inicio
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    );
+
+  }
 }

@@ -9,7 +9,7 @@ public class BirthDateValidator implements ConstraintValidator<ValidBirthDate, L
     @Override
     public boolean isValid(LocalDate birthdate, ConstraintValidatorContext context) {
         if (birthdate == null) {
-            return false; // O manejar el caso de nulo de otra manera según tus requisitos
+            return false;
         }
         return Period.between(birthdate, LocalDate.now()).getYears() >= 18;
     }
