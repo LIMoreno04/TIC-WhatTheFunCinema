@@ -14,12 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@RestController("/api/employee")
 public class EmployeeRestController {
     @Autowired
     private UserService userService;
@@ -27,7 +29,7 @@ public class EmployeeRestController {
     @Autowired
     private EmployeeService employeeService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> addEmployee(@Valid @RequestBody EmployeeDTO employeeDTO, HttpSession session) {
         if (!Objects.equals((String) session.getAttribute("role"),"admin")) {
             return new ResponseEntity<>("Acción no permitida",HttpStatus.FORBIDDEN);

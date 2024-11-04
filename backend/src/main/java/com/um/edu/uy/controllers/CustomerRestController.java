@@ -88,7 +88,7 @@ public class CustomerRestController {
         Reservation reservation = customerService.makeReservation(email, col, row, screening);
         return ResponseEntity.ok(reservation);
     }
-    @DeleteMapping("/reservations")
+    @DeleteMapping("/cancelReservation")
     public ResponseEntity<String> cancelReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) {
         try {
             customerService.cancelReservation(email, col, row, screening);
