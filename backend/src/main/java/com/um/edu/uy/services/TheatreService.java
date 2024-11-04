@@ -8,6 +8,7 @@ import com.um.edu.uy.repository.TheatreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class TheatreService {
@@ -16,6 +17,10 @@ public class TheatreService {
     private TheatreRepository theatreRepo;
     @Autowired
     private RoomRepository roomRepo;
+
+    public List<Theatre> findAll() { return theatreRepo.findAll(); }
+
+    public List<Room> findAllRooms(String location) {return roomRepo.findAllByTheatre(location); }
 
     public Theatre addTheatre(String location) throws InvalidDataException {
         if (location == null) {
