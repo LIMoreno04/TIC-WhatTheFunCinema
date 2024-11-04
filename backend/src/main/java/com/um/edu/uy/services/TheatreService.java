@@ -18,6 +18,13 @@ public class TheatreService {
     @Autowired
     private RoomRepository roomRepo;
 
+    public Theatre findByLocation(String location) throws InvalidDataException {
+        if(theatreRepo.findById(location).isEmpty()) {
+        throw new InvalidDataException("Theatre not found.");
+        } else {
+            return theatreRepo.findById(location).get();
+        }
+    }
     public List<Theatre> findAll() { return theatreRepo.findAll(); }
 
     public List<Room> findAllRooms(String location) {return roomRepo.findAllByTheatre(location); }
