@@ -17,10 +17,11 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     @Autowired
-    CustomerRepository customerRepo;
+    private CustomerRepository customerRepo;
 
     @Autowired
-    UserRepository userRepo;
+    private UserService userService;
+
     @Autowired
     private ScreeningRepository screeningRepo;
 
@@ -29,6 +30,21 @@ public class CustomerService {
 
 
     public List<Customer> getAll() {return customerRepo.findAll();}
+
+    public Customer findCustomer(String email, String password) throws InvalidDataException {
+        Optional<Customer> result = customerRepo.findById(email);
+
+        if (result.isPresent()) {
+            Customer customer = result.get();
+            if (customer.getPassword().equals(password)) {
+                return customer;
+            } else {
+                throw new InvalidDataException("Wrong password.");
+            }
+        } else {
+            throw new InvalidDataException("No account registered with this email.");
+        }
+    }
 
 //    public Customer addCustomer(String email) throws InvalidDataException {
 //        Optional<User> result = userRepo.findById(email);
@@ -133,8 +149,10 @@ public class CustomerService {
         customerRepo.save(customer);
     }
 
-    public void deleteCustomer(String email) {}
-
-
+    public void deleteCustomer(String email, String password) throws InvalidDataException {
+        Customer customer = findCustomer(email, password);
+        customerRepo.delete(customer);
+        userService.deleteUser(email, password);
+    }
 
 }

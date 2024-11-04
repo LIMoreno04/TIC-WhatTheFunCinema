@@ -62,5 +62,24 @@ public class MovieService {
         return movieRepo.findByCurrentlyOnDisplayTrue().orElse(new LinkedList<>());
     }
 
+    public List<Movie> getByGenre(List<Genre> genres) {
+        List<Movie> foundMovies = getAllMovies();
+
+        for (int i = 0; i < foundMovies.size(); i++) {
+            Movie movie = foundMovies.get(i);
+            List<Genre> movieGenres = movie.getGenres();
+            for (int j = 0; j < genres.size(); j++) {
+                Genre genre = genres.get(j);
+                if (!movieGenres.contains(genre)) {
+                    foundMovies.remove(movie);
+                }
+            }
+        }
+        return foundMovies;
+    }
+
+    public List<Movie> getByDirector(String direcor) {
+        return movieRepo.findByDirector(direcor).orElse(new LinkedList<>());
+    }
 
 }

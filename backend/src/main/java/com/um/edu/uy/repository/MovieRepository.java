@@ -13,4 +13,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     public Optional<List<Movie>> findByTitleContainingIgnoreCase(String title);
 
     public Optional<List<Movie>> findByCurrentlyOnDisplayTrue();
+
+    public Optional<List<Movie>> findByDirector(String director);
 }
