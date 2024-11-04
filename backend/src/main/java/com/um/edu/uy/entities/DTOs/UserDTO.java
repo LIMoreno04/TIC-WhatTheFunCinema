@@ -11,19 +11,19 @@ import java.time.LocalDate;
 @Data
 public class UserDTO {
     @Email(message = "E-mail inválido.")
-    private String email;
-    private String firstName;
-    private String lastName;
+    protected String email;
+    protected String firstName;
+    protected String lastName;
     @ValidBirthDate
-    private LocalDate dateOfBirth;
-    private String celCountryCode;
+    protected LocalDate dateOfBirth;
+    protected String celCountryCode;
     @Pattern(regexp = "^([0-9][1-9]\\d{0,13})| ([1-9]\\d{1,14})$", message = "Número de teléfono inválido.")
-    private String celNumber;
-    private String idType;
-    private String idCountry;
-    private String idNumber;
+    protected String celNumber;
+    protected String idType;
+    protected String idCountry;
+    protected String idNumber;
     @ValidPassword
-    private String password;
+    protected String password;
 
 
 }
