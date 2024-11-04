@@ -15,4 +15,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     public Optional<List<Movie>> findByCurrentlyOnDisplayTrue();
 
     public Optional<List<Movie>> findByDirector(String director);
+
+    public Optional<List<Movie>> findByPGRating(String pgrating);
 }

@@ -46,19 +46,6 @@ public class CustomerService {
         }
     }
 
-//    public Customer addCustomer(String email) throws InvalidDataException {
-//        Optional<User> result = userRepo.findById(email);
-//
-//        if (result.isPresent()) {
-//            User user = result.get();
-//            Customer customer = (Customer) user;
-//
-//            return customerRepo.save(customer);
-//        } else {
-//            throw new InvalidDataException("User not found.");
-//        }
-//    }
-
     public Customer addCustomer(String email,
                         String firstName,
                         String lastName,

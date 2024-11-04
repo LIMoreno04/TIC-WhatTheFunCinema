@@ -3,6 +3,8 @@ package com.um.edu.uy.controllers;
 import com.um.edu.uy.entities.DTOs.MovieDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.enums.PGRating;
+import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.GenreService;
 import com.um.edu.uy.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +68,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/allOnDisplay")
-    public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() {
+    public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() throws InvalidDataException {
         List<Movie> moviesOnDisplay = movieService.showMovieDisplay();
 
         if (moviesOnDisplay.isEmpty()) {
@@ -77,13 +79,52 @@ public class MovieRestController {
     }
 
     @GetMapping("/title")
-    public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) {
+    public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) throws InvalidDataException {
         List<Movie> moviesByTitle = movieService.findByTitle(title);
 
         if (moviesByTitle.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(moviesByTitle);
+        }
+    }
+
+    @GetMapping("/director")
+    public ResponseEntity<List<Movie>> showMoviesByDirector(@RequestBody String director) throws InvalidDataException {
+        List<Movie> moviesByDirector = movieService.getByDirector(director);
+
+        if (moviesByDirector.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(moviesByDirector);
+        }
+    }
+
+    @GetMapping("/genre")
+    public ResponseEntity<List<Movie>> showMoviesByGenre(@RequestBody List<String> stringGenres) throws InvalidDataException {
+        List<Genre> genres = stringGenres.stream()
+                .map(genreName -> genreService.findByGenreName(genreName))
+                .collect(Collectors.toList());
+
+        List<Movie> moviesByGenre = movieService.getByGenre(genres);
+
+        if (moviesByGenre.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(moviesByGenre);
+        }
+    }
+
+    @GetMapping("/pgrating")
+    public ResponseEntity<List<Movie>> showByPGRating(@RequestBody String pgrating) throws InvalidDataException {
+        String realPgrating = PGRating.valueOf(pgrating).getPgrating();
+
+        List<Movie> moviesByPGRating = movieService.getByPGRating(realPgrating);
+
+        if(moviesByPGRating.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(moviesByPGRating);
         }
     }
 

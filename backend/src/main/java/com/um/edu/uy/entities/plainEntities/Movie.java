@@ -48,4 +48,7 @@ public class Movie {
     @NotNull
     @Lob
     private byte[] poster;
+
+    @NotNull
+    private String PGRating;
 }
