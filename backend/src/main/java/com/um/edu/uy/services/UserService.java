@@ -2,6 +2,8 @@ package com.um.edu.uy.services;
 
 import com.um.edu.uy.entities.plainEntities.Employee;
 import com.um.edu.uy.entities.plainEntities.User;
+import com.um.edu.uy.entities.validators.PasswordValidator;
+import com.um.edu.uy.entities.validators.BirthDateValidator;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.CustomerRepository;
 import com.um.edu.uy.repository.EmployeeRepository;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.boot.context.properties.source.ConfigurationPropertyName.isValid;
 
 @Service
 public class UserService {
@@ -81,4 +85,43 @@ public class UserService {
             }
     }
 
+    public User updateFirstName(String email, String password, String nFirstname) throws InvalidDataException {
+        User user = findUser(email, password);
+        user.setFirstName(nFirstname);
+        return userRepo.save(user);
+    }
+
+    public User updateLastName(String email, String password, String nLastName) throws InvalidDataException {
+        User user = findUser(email, password);
+        user.setLastName(nLastName);
+        return userRepo.save(user);
+    }
+
+    public User updateDateOfBirth(String email, String password, LocalDate nDateOfBirth) throws InvalidDataException {
+        User user = findUser(email, password);
+        user.setDateOfBirth(nDateOfBirth);
+        return userRepo.save(user);
+    }
+
+    public User updateCelCountryCode(String email, String password, String nCelCountryCode) throws InvalidDataException {
+        User user = findUser(email, password);
+        user.setCelCountryCode(nCelCountryCode);
+        return userRepo.save(user);
+    }
+
+    public User updateCelNumber(String email, String password, String nCelNumber) throws InvalidDataException {
+        User user = findUser(email, password);
+        user.setCelNumber(nCelNumber);
+        return userRepo.save(user);
+    }
+    public User updatePassword(String email, String oPassword, String nPassword) throws InvalidDataException {
+        User user = findUser(email, oPassword);
+        user.setPassword(nPassword);
+        return userRepo.save(user);
+    }
+
+    public void deleteUser(String email, String password) throws InvalidDataException {
+        User user = findUser(email, password);
+        userRepo.delete(user);
+    }
 }
