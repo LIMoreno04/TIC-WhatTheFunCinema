@@ -52,38 +52,20 @@ public class MovieService {
     }
 
     public Movie findByExactTitle(String title) throws InvalidDataException {
-        Optional<Movie> result = movieRepo.findByTitle(title);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new InvalidDataException("No movies found.");
-        }
+        return movieRepo.findByTitle(title).orElse(null);
     }
 
     public List<Movie> findByTitle(String title) throws InvalidDataException {
-        Optional<List<Movie>> result = movieRepo.findByTitleContainingIgnoreCase(title);
-
-        if (result.isPresent()) {
-            return result.get();
-        }else {
-            throw new InvalidDataException("No movies found.");
-        }
+        return movieRepo.findByTitleContainingIgnoreCase(title).orElse(new LinkedList<>());
     }
+
     public void deleteMovie(String title) {
         Optional<Movie> result = movieRepo.findByTitle(title);
         movieRepo.delete(result.get());
     }
 
     public List<Movie> showMovieDisplay() throws InvalidDataException {
-        Optional<List<Movie>> result = movieRepo.findByCurrentlyOnDisplayTrue();
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new InvalidDataException("No movies on display.");
-        }
-
+        return movieRepo.findByCurrentlyOnDisplayTrue().orElse(new LinkedList<>());
     }
 
     public List<Movie> getByGenre(List<Genre> genres) throws InvalidDataException {
@@ -100,31 +82,14 @@ public class MovieService {
             }
         }
 
-        if (!foundMovies.isEmpty()) {
-            return foundMovies;
-        } else {
-            throw new InvalidDataException("No movies found.");
-        }
+        return foundMovies;
     }
 
-    public List<Movie> getByDirector(String direcor) throws InvalidDataException {
-        Optional<List<Movie>> result = movieRepo.findByDirector(direcor);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new InvalidDataException("No movies found.");
-        }
+    public List<Movie> getByDirector(String director) throws InvalidDataException {
+        return movieRepo.findByDirector(director).orElse(new LinkedList<>());
     }
 
     public List<Movie> getByPGRating(String pgrating) throws InvalidDataException {
-        Optional<List<Movie>> result = movieRepo.findByPGRating(pgrating);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new InvalidDataException("No movies found.");
-        }
+        return movieRepo.findByPGRating(pgrating).orElse(new LinkedList<>());
     }
-
 }
