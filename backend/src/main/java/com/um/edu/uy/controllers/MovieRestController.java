@@ -68,7 +68,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/allOnDisplay")
-    public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() throws InvalidDataException {
+    public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() {
         List<Movie> moviesOnDisplay = movieService.showMovieDisplay();
 
         if (moviesOnDisplay.isEmpty()) {
@@ -79,7 +79,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/title")
-    public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) throws InvalidDataException {
+    public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) {
         List<Movie> moviesByTitle = movieService.findByTitle(title);
 
         if (moviesByTitle.isEmpty()) {
@@ -90,7 +90,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/director")
-    public ResponseEntity<List<Movie>> showMoviesByDirector(@RequestBody String director) throws InvalidDataException {
+    public ResponseEntity<List<Movie>> showMoviesByDirector(@RequestBody String director) {
         List<Movie> moviesByDirector = movieService.getByDirector(director);
 
         if (moviesByDirector.isEmpty()) {
@@ -101,7 +101,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/genre")
-    public ResponseEntity<List<Movie>> showMoviesByGenre(@RequestBody List<String> stringGenres) throws InvalidDataException {
+    public ResponseEntity<List<Movie>> showMoviesByGenre(@RequestBody List<String> stringGenres) {
         List<Genre> genres = stringGenres.stream()
                 .map(genreName -> genreService.findByGenreName(genreName))
                 .collect(Collectors.toList());
@@ -116,7 +116,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/pgrating")
-    public ResponseEntity<List<Movie>> showByPGRating(@RequestBody String pgrating) throws InvalidDataException {
+    public ResponseEntity<List<Movie>> showByPGRating(@RequestBody String pgrating) {
         String realPgrating = PGRating.valueOf(pgrating).getPgrating();
 
         List<Movie> moviesByPGRating = movieService.getByPGRating(realPgrating);
@@ -125,6 +125,18 @@ public class MovieRestController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(moviesByPGRating);
+        }
+    }
+
+    @PostMapping("/deleteMovie")
+    public ResponseEntity<Movie> deleteMovie(@RequestBody String title) {
+        Movie movie = movieService.findByExactTitle(title);
+
+        if (movie == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            movieService.deleteMovie(movie);
+            return ResponseEntity.ok(movie);
         }
     }
 

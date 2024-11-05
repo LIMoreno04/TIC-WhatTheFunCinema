@@ -51,24 +51,23 @@ public class MovieService {
         return movieRepo.findAll();
     }
 
-    public Movie findByExactTitle(String title) throws InvalidDataException {
+    public Movie findByExactTitle(String title) {
         return movieRepo.findByTitle(title).orElse(null);
     }
 
-    public List<Movie> findByTitle(String title) throws InvalidDataException {
+    public List<Movie> findByTitle(String title) {
         return movieRepo.findByTitleContainingIgnoreCase(title).orElse(new LinkedList<>());
     }
 
-    public void deleteMovie(String title) {
-        Optional<Movie> result = movieRepo.findByTitle(title);
-        movieRepo.delete(result.get());
+    public void deleteMovie(Movie movie) {
+        movieRepo.delete(movie);
     }
 
-    public List<Movie> showMovieDisplay() throws InvalidDataException {
+    public List<Movie> showMovieDisplay() {
         return movieRepo.findByCurrentlyOnDisplayTrue().orElse(new LinkedList<>());
     }
 
-    public List<Movie> getByGenre(List<Genre> genres) throws InvalidDataException {
+    public List<Movie> getByGenre(List<Genre> genres) {
         List<Movie> foundMovies = getAllMovies();
 
         for (int i = 0; i < foundMovies.size(); i++) {
@@ -85,11 +84,11 @@ public class MovieService {
         return foundMovies;
     }
 
-    public List<Movie> getByDirector(String director) throws InvalidDataException {
+    public List<Movie> getByDirector(String director) {
         return movieRepo.findByDirector(director).orElse(new LinkedList<>());
     }
 
-    public List<Movie> getByPGRating(String pgrating) throws InvalidDataException {
+    public List<Movie> getByPGRating(String pgrating) {
         return movieRepo.findByPGRating(pgrating).orElse(new LinkedList<>());
     }
 }
