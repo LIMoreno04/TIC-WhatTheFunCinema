@@ -6,11 +6,9 @@ import com.um.edu.uy.entities.plainEntities.Snack;
 import com.um.edu.uy.services.SnackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/snacks")
@@ -42,7 +40,7 @@ public class SnackRestController {
         }
     }
 
-    @GetMapping("/findBySnackName")
+    @GetMapping("/snackName")
     public ResponseEntity<List<Snack>> showAllSnacksByName(@RequestBody String name) {
         List<Snack> snacksFound = snackService.findSnackByName(name);
 
@@ -53,7 +51,7 @@ public class SnackRestController {
         }
     }
 
-    @GetMapping("/findBySnackPrice")
+    @GetMapping("/price")
     public ResponseEntity<List<Snack>> showAllSnacksByPrice(@RequestBody int price) {
         List<Snack> snacksFound = snackService.findSnackByPrice(price);
 

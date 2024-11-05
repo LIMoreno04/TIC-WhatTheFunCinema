@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SnackRepository extends JpaRepository<Snack, Long> {
-    Optional<Snack> findById(long snackId);
     Optional<Snack> findBySnackName(String name);
     Optional<List<Snack>> findBySnackNameContainingIgnoreCase(String name);
     Optional<List<Snack>> findByPriceLessThanEqual(int price);

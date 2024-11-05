@@ -4,11 +4,15 @@ import lombok.Getter;
 
 @Getter
 public enum PGRating {
-    E("E"),
+    G("G"),
+
+    PG("PG"),
 
     PG13("PG13"),
 
-    PG18("PG18");
+    R("R"),
+
+    NC17("NC17");
 
     private final String pgrating;
 

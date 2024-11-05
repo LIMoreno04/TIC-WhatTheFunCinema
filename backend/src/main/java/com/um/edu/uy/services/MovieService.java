@@ -30,7 +30,8 @@ public class MovieService {
                           String director,
                           List<Genre> genres,
                           Boolean currentlyOnDisplay,
-                          byte[] poster) {
+                          byte[] poster,
+                          String PGRating) {
 
 
         Movie movie = Movie.builder()
@@ -42,6 +43,7 @@ public class MovieService {
                 .genres(genres)
                 .currentlyOnDisplay(currentlyOnDisplay)
                 .poster(poster)
+                .PGRating(PGRating)
                 .build();
 
         return movieRepo.save(movie);

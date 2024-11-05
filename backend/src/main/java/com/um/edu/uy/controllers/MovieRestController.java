@@ -4,23 +4,30 @@ import com.um.edu.uy.entities.DTOs.MovieDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.enums.PGRating;
-import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.GenreService;
 import com.um.edu.uy.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/movies")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-
 public class MovieRestController {
 
     @Autowired
@@ -30,15 +37,36 @@ public class MovieRestController {
     private GenreService genreService;
 
     @PostMapping("/addMovie")
-    public ResponseEntity<Movie> addMovie(@RequestBody MovieDTO movieDTO) throws IOException {
+    public ResponseEntity<?> addMovie(@RequestBody MovieDTO movieDTO) throws IOException {
+        Map<String, String> errors = new HashMap<>();
+
+        if (movieService.findByExactTitle(movieDTO.getTitle()) != null) {
+            errors.put("title", "Ya existe una película con ese título y fecha de lanzamiento.");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            LocalTime.parse(movieDTO.getDuration());
+        } catch (Exception e) {
+            errors.put("duration", "Formato de duración inválido. Use el formato HH:mm:ss.");
+        }
+
+        if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", movieDTO.getPGRating())) {
+            errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R o NC-17.");
+        }
+
+        if (!errors.isEmpty()) {
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
+        List<Genre> genres = movieDTO.getGenres().stream()
+                .map(genreService::findByGenreName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         LocalTime duration = LocalTime.parse(movieDTO.getDuration());
         LocalDate releaseDate = LocalDate.parse(movieDTO.getReleaseDate());
         byte[] poster = movieDTO.getPoster().getBytes();
-
-        List<Genre> genres = movieDTO.getGenres().stream()
-                .map(genreName -> genreService.findByGenreName(genreName))
-                .collect(Collectors.toList());
 
         Movie newMovie = movieService.addMovie(
                 movieDTO.getTitle(),
@@ -48,13 +76,12 @@ public class MovieRestController {
                 movieDTO.getDirector(),
                 genres,
                 movieDTO.getCurrentlyOnDisplay(),
-                poster
+                poster,
+                movieDTO.getPGRating()
         );
 
         return ResponseEntity.ok(newMovie);
-
     }
-
 
     @GetMapping("/all")
     public ResponseEntity<List<Movie>> allMovies() {
