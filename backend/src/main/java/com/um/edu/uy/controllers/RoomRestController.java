@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.UserDTO;
+import com.um.edu.uy.entities.plainEntities.Reservation;
 import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/rooms")
@@ -34,7 +36,24 @@ public class RoomRestController {
         }
     }
     @PostMapping("/getAllReservations")
-    public ResponseEntity<?> getAllReservations(@RequestParam Screening screening){
-
+    public ResponseEntity<List<Reservation>> getAllReservations(@RequestBody Screening screening) {
+        try {
+            List<Reservation> reservations = roomService.getAllReservations(screening);
+            return ResponseEntity.ok(reservations);
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
+
+    @PostMapping("/checkIfAvailable")
+    public ResponseEntity<Boolean> checkIfAvailable(@RequestBody Screening screening, @RequestParam int col, @RequestParam int row) {
+        try {
+            boolean available = roomService.checkIfAvailable(screening, col, row);
+            return ResponseEntity.ok(available);
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
 }
