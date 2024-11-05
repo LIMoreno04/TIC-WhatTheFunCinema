@@ -1,12 +1,15 @@
 package com.um.edu.uy.controllers;
 
+import com.um.edu.uy.entities.plainEntities.Card;
 import com.um.edu.uy.entities.plainEntities.Customer;
 import com.um.edu.uy.entities.DTOs.UserDTO;
 import com.um.edu.uy.entities.plainEntities.Reservation;
 import com.um.edu.uy.entities.plainEntities.Screening;
+import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
+import com.um.edu.uy.services.CardService;
 import com.um.edu.uy.services.CustomerService;
 import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +38,9 @@ public class CustomerRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CardService cardService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -108,5 +115,22 @@ public class CustomerRestController {
 
         // Return error map with a BAD_REQUEST status
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @PostMapping("/addCard")
+    public ResponseEntity<?> addCard(@RequestParam CardType cardType, @RequestParam String holderName, @RequestParam long cardNumber, @RequestParam YearMonth expirationDate, @RequestParam int cvv) {
+        try {
+            Card newCard = cardService.addCard(cardType, holderName, cardNumber, expirationDate, cvv);
+            return new ResponseEntity<>(newCard, HttpStatus.CREATED);
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/removeCard")
+    public ResponseEntity<?> removeCard(@PathVariable long cardNumber) {
+        cardService.removeCard(cardNumber);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
