@@ -55,12 +55,11 @@ public class CustomerRestController {
         }
 
         String realCelNumber = (Character.getNumericValue(userDTO.getCelNumber().charAt(0))==0) ? userDTO.getCelNumber().substring(1) : userDTO.getCelNumber();
-        // Extract valid enum values to avoid invalid data in the `addCustomer` method
         String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCelCode();
         String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
         String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
 
-        // Call the service to add a new customer
+
         Customer newCustomer = customerService.addCustomer(
                 userDTO.getEmail().toLowerCase(),
                 userDTO.getFirstName(),
@@ -74,7 +73,6 @@ public class CustomerRestController {
                 userDTO.getPassword()
         );
 
-        // Set session attributes
         session.setAttribute("user", newCustomer);
         session.setAttribute("role", "customer");
         System.out.println("Session ID: " + session.getId());

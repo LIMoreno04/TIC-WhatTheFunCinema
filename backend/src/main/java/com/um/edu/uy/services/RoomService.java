@@ -55,4 +55,19 @@ public class RoomService {
 
     }
 
+    public boolean checkIfAvailable(Screening screening, int col, int row) throws InvalidDataException{
+        Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
+        if (screeningResult.isEmpty()) {
+            throw new InvalidDataException("screening not found.");
+        } else {
+            Optional<Reservation> reservationResult = reservationRepo.findByScreeningAndColAndRow(screening, col, row);
+            if (reservationResult.isEmpty()){
+                return true;}
+            else {
+                return false;}
+            }}
+
+    }
+
+
 }
