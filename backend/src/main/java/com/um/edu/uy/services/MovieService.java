@@ -10,6 +10,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,6 @@ public class MovieService {
                           LocalDate releaseDate,
                           String director,
                           List<Genre> genres,
-                          Boolean currentlyOnDisplay,
                           byte[] poster,
                           String PGRating) {
 
@@ -41,7 +41,6 @@ public class MovieService {
                 .releaseDate(releaseDate)
                 .director(director)
                 .genres(genres)
-                .currentlyOnDisplay(currentlyOnDisplay)
                 .poster(poster)
                 .PGRating(PGRating)
                 .build();
@@ -65,8 +64,12 @@ public class MovieService {
         movieRepo.delete(movie);
     }
 
-    public List<Movie> showMovieDisplay() {
-        return movieRepo.findByCurrentlyOnDisplayTrue().orElse(new LinkedList<>());
+    public List<Movie> findAllMoviesOnDisplay() {
+        return movieRepo.findAllOnDisplay(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
+    }
+
+    public List<Movie> findAllMoviesComingSoon() {
+        return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()).orElse(new LinkedList<>());
     }
 
     public List<Movie> getByGenre(List<Genre> genres) {

@@ -15,12 +15,12 @@ public class CardService {
     @Autowired
     private CardRepository cardRepo;
 
-    public Card addCard(CardType cardType, String holderName, long cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
+    public Card addCard(String cardType, String holderName, String cardNumber, YearMonth expirationDate, int cvv) throws InvalidDataException {
         Card card = Card.builder()
                 .cardType(cardType)
                 .cardNumber(cardNumber)
                 .cvv(cvv)
-                .expirationDate(expirationDate)
+                .expirationDate(expirationDate.toString())
                 .holderName(holderName)
                 .build();
         return cardRepo.save(card);

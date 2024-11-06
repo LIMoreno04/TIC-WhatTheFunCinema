@@ -43,8 +43,6 @@ public class Movie {
     @JoinTable(name = "movies_genres")
     private List<Genre> genres;
 
-    @NotNull
-    private Boolean currentlyOnDisplay;
 
     @NotNull
     @Lob
@@ -52,6 +50,9 @@ public class Movie {
 
     @NotNull
     private String PGRating;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<Screening> screenings;
 
 
 }

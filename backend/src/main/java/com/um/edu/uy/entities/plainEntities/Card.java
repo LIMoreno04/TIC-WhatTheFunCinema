@@ -20,16 +20,16 @@ import java.util.List;
 public class Card {
 
     @NotNull
-    private CardType cardType;
+    private String cardType;
 
     @NotNull
     private String holderName;
 
     @Id
-    private long cardNumber;
+    private String cardNumber;
 
     @NotNull
-    private YearMonth expirationDate;
+    private String expirationDate;
 
     @NotNull
     private int cvv;

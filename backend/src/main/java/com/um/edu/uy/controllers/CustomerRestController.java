@@ -1,5 +1,6 @@
 package com.um.edu.uy.controllers;
 
+import com.um.edu.uy.entities.DTOs.CardDTO;
 import com.um.edu.uy.entities.plainEntities.Card;
 import com.um.edu.uy.entities.plainEntities.Customer;
 import com.um.edu.uy.entities.DTOs.UserDTO;
@@ -119,9 +120,15 @@ public class CustomerRestController {
 
 
     @PostMapping("/addCard")
-    public ResponseEntity<?> addCard(@RequestParam CardType cardType, @RequestParam String holderName, @RequestParam long cardNumber, @RequestParam YearMonth expirationDate, @RequestParam int cvv) {
+    public ResponseEntity<?> addCard(@Valid @RequestBody CardDTO cardDTO) {
+        YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate());
+        String cardType = CardType.valueOf(cardDTO.getCardType()).getType();
+
+        //Chequear que sea valido y tirar errores si no (longitudes de los numeros, si no expiró, etc)
+
+
         try {
-            Card newCard = cardService.addCard(cardType, holderName, cardNumber, expirationDate, cvv);
+            Card newCard = cardService.addCard(cardType, cardDTO.getHolderName(), cardDTO.getCardNumber(), expirationDate, cardDTO.getCvv());
             return new ResponseEntity<>(newCard, HttpStatus.CREATED);
         } catch (InvalidDataException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

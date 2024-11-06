@@ -16,7 +16,6 @@ public class MovieDTO {
     private String releaseDate;
     private String director;
     private List<String> genres;
-    private Boolean currentlyOnDisplay;
     private MultipartFile poster;
     private String PGRating;
 }

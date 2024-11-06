@@ -75,7 +75,6 @@ public class MovieRestController {
                 releaseDate,
                 movieDTO.getDirector(),
                 genres,
-                movieDTO.getCurrentlyOnDisplay(),
                 poster,
                 movieDTO.getPGRating()
         );
@@ -96,7 +95,7 @@ public class MovieRestController {
 
     @GetMapping("/allOnDisplay")
     public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() {
-        List<Movie> moviesOnDisplay = movieService.showMovieDisplay();
+        List<Movie> moviesOnDisplay = movieService.findAllMoviesOnDisplay();
 
         if (moviesOnDisplay.isEmpty()) {
             return ResponseEntity.notFound().build();
