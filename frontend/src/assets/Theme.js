@@ -61,6 +61,7 @@ const neonTheme = createTheme({
             },
           },
           contained: {
+            fontFamily: 'InfinityRegular',
             backgroundColor: '#a805ad', // Neon purple
             color: '#ffffff', // Neon cyan text
             textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc',

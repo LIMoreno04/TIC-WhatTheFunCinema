@@ -15,7 +15,8 @@ import { useNavigate } from 'react-router-dom';
 
 const pages = ['cartelera', 'sucursales', 'contacto'];
 const paths = ['/movies', '/theatres', '/contact'];
-const settings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
+const customerSettings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
+const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado', 'Cerrar sesión']
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar() {
@@ -32,19 +33,39 @@ function ResponsiveAppBar() {
 
   const navigate = useNavigate();
 
-  const handleMenuItemClick = (setting) => {
+  const handleCustomerMenuItemClick = (setting) => {
     if (setting === 'Cerrar sesión') {
       handleLogout();
-    } else if (setting === settings[0]) {
+    } else if (setting === customerSettings[0]) {
       navigate('/account');
       handleCloseUserMenu();
-    } else if (setting === settings[1]) {
+    } else if (setting === customerSettings[1]) {
       navigate('/purchase-history');
       handleCloseUserMenu();
     } else {
       handleCloseUserMenu();
     }
   };
+
+  const handleEmployeeMenuItemClick = (setting) => {
+    if (setting === 'Cerrar sesión') {
+      handleLogout();
+    } else if (setting === employeeSettings[0]) {
+      navigate('/addScreening');
+      handleCloseUserMenu();
+    } else if (setting === employeeSettings[1]) {
+      navigate('/addMovie');
+      handleCloseUserMenu();
+    } else if (setting === employeeSettings[2]) {
+      navigate('/addEmployee');
+      handleCloseUserMenu();
+    }
+     else {
+      handleCloseUserMenu();
+     }
+  };
+
+
 
   React.useEffect(() => {
     fetch('http://localhost:8080/api/user/role', {
@@ -180,8 +201,8 @@ function ResponsiveAppBar() {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                       >
-                        {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={() => handleMenuItemClick(setting)}>
+                        {customerSettings.map((setting) => (
+                          <MenuItem key={setting} onClick={() => handleCustomerMenuItemClick(setting)}>
                             <Typography textAlign="center">{setting}</Typography>
                           </MenuItem>
                         ))}
@@ -192,8 +213,8 @@ function ResponsiveAppBar() {
                 case 'employee':
                   return (
                     <>
-                      <Tooltip title="Opciones de cuenta">
-                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>CUENTA DE EMPLEADO</Button>
+                      <Tooltip title="Opciones">
+                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>OPCIONES DE EMPLEADO</Button>
                       </Tooltip>
                       <Menu
                         sx={{ mt: '45px' }}
@@ -205,32 +226,8 @@ function ResponsiveAppBar() {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                       >
-                        {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
-                            <Typography textAlign="center">{setting}</Typography>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </>
-                  );
-                case 'admin':
-                  return (
-                    <>
-                      <Tooltip title="Opciones de cuenta">
-                        <Button onClick={handleOpenUserMenu} variant='outlinedCyan'>ADMIN</Button>
-                      </Tooltip>
-                      <Menu
-                        sx={{ mt: '45px' }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        keepMounted
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
-                      >
-                        {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={setting === 'Cerrar sesión' ? handleLogout : handleCloseUserMenu}>
+                        {employeeSettings.map((setting) => (
+                          <MenuItem key={setting} onClick={() => handleEmployeeMenuItemClick(setting)}>
                             <Typography textAlign="center">{setting}</Typography>
                           </MenuItem>
                         ))}

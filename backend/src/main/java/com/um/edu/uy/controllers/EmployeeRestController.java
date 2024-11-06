@@ -12,16 +12,17 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-@RestController("/api/employee")
+@RestController("api/employee")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class EmployeeRestController {
     @Autowired
     private UserService userService;
@@ -31,7 +32,7 @@ public class EmployeeRestController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addEmployee(@Valid @RequestBody EmployeeDTO employeeDTO, HttpSession session) {
-        if (!Objects.equals((String) session.getAttribute("role"),"admin")) {
+        if (!Objects.equals((String) session.getAttribute("role"),"employee")) {
             return new ResponseEntity<>("Acción no permitida",HttpStatus.FORBIDDEN);
         }
         else {
@@ -71,13 +72,21 @@ public class EmployeeRestController {
                     employeeDTO.getAddress()
             );
 
-            // Set session attributes
-            session.setAttribute("user", newEmployee);
-            session.setAttribute("role", "employee");
-            System.out.println("Session ID: " + session.getId());
 
             return ResponseEntity.ok(newEmployee);
         }
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Collect all field validation errors
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        // Return error map with a BAD_REQUEST status
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 }

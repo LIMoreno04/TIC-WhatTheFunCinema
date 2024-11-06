@@ -30,8 +30,7 @@ public class EmployeeService {
         Optional<Employee> result = employeeRepo.findById(email);
 
         if (result.isPresent()) {
-            Employee emplyee = result.get();
-            return emplyee;
+            return result.get();
         } else {
             throw new InvalidDataException("No account registered with this email.");
         }

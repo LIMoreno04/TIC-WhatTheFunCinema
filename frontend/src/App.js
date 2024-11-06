@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 import MoviesPage from './pages/Movies';
 import MyAccountPage from './pages/Account';
 import neonTheme from './assets/Theme';
+import AddEmployeePage from './pages/AddEmployee';
 
 function App() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
           <Route path='/login' element={<LoginPage />} />
           <Route path='/movies' element={<MoviesPage />} />
           <Route path='/account' element={<MyAccountPage />} />
+          <Route path='/addEmployee' element={<AddEmployeePage/>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </ThemeProvider>

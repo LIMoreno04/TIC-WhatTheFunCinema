@@ -9,9 +9,10 @@ import TextField from '@mui/material/TextField';
 import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip, CircularProgress } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import NotFound from '../pages/NotFound';
 
 
-export default function SignupForm() {
+export default function NewEmployeeForm() {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
 
 
@@ -61,6 +62,7 @@ export default function SignupForm() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [address, setAddress] = useState('');
 
   useEffect(() => {
     const allFieldsFilled = email && firstName && lastName && dob && idNumber && phoneNumber && selectedPhoneCountry && selectedIDType && password && confirmPassword;
@@ -104,18 +106,18 @@ export default function SignupForm() {
     if (validatePasswords()) {
       setLoading(true);
 
-      const newUser = {
+      const newEmployee = {
         email, firstName, lastName, dateOfBirth: dob,
         celCountryCode: selectedPhoneCountry?.code,
         celNumber: phoneNumber, idType: selectedIDType?.label,
-        idCountry: selectedIDCountry?.code, idNumber, password,
+        idCountry: selectedIDCountry?.code, idNumber, password, address,
       };
 
       try {
-        const response = await fetch('http://localhost:8080/api/customer/signup', {
+        const response = await fetch('http://localhost:8080/api/employee/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newUser),
+          body: JSON.stringify(newEmployee),
           credentials: 'include',
         });
 
@@ -144,7 +146,7 @@ export default function SignupForm() {
 
 
 
-  if (userRole === 'notLoggedIn') {
+  if (userRole === 'employee') {
     return (
       <Container sx={{ mt: '-3%' }}>
         <Paper elevation={24} style={paperStyle}>
@@ -160,7 +162,7 @@ export default function SignupForm() {
               marginTop: -3,
             }}
           >
-            Registrar cuenta
+            Agregar un empleado
           </Typography>
 
 
@@ -245,6 +247,16 @@ export default function SignupForm() {
             disabled={loading} 
             error={!!formErrors.lastName}
             helperText={formErrors.lastName}
+            />
+            <TextField 
+            required 
+            id="address" 
+            label="Dirección" 
+            value={address} 
+            onChange={(e) => setAddress(e.target.value)} 
+            disabled={loading} 
+            error={!!formErrors.address}
+            helperText={formErrors.address}
             />
             <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
               <DateField
@@ -385,23 +397,7 @@ export default function SignupForm() {
     );
   } else {
     return (
-      <Container>
-        <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }} alignItems={'center'}>
-            <Typography variant='neonCyan' fontFamily='InfinityThin' sx={{fontSize: '35px'}}>
-              cuenta creada con exito
-            </Typography>
-            <Button
-              variant='contained'
-              color='secondary'
-              href='/home'
-              sx={{ marginBottom: -1, marginTop: 2 }}
-            >
-              volver a inicio
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
+      <NotFound></NotFound>
     );
 
   }

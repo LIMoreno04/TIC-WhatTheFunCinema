@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public User findUser(String email, String password) throws InvalidDataException {
-        Optional<User> result = userRepo.findById(email);
+        Optional<User> result = userRepo.findById(email.toLowerCase());
 
         if (result.isPresent()) {
             User user = result.get();
@@ -80,7 +80,7 @@ public class UserService {
         else {
             if (customerRepo.findByEmail(email).isPresent()) { return "customer"; }
             else if (employeeRepo.findByEmail(email).isPresent()) { return "employee"; }
-            else { return "admin"; }
+            else { throw new RuntimeException("Fatal error: User not registered as neither customer nor employee."); }
 
             }
     }

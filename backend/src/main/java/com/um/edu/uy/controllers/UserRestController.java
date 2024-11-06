@@ -24,32 +24,6 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<User> userSignUp(@RequestBody UserDTO userDTO, HttpSession session) {
-//        System.out.println(userDTO.toString());
-//
-//        String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCountryName();
-//        String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
-//        String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
-//        LocalDate realDateOfBirth = LocalDate.parse(userDTO.getDateOfBirth());
-//
-//        User newUser = userService.addUser(
-//                userDTO.getEmail(),
-//                userDTO.getFirstName(),
-//                userDTO.getLastName(),
-//                realDateOfBirth,
-//                realCelCountryCode,
-//                userDTO.getCelNumber(),
-//                realIdType,
-//                realIdCountryCode,
-//                userDTO.getIdNumber(),
-//                userDTO.getPassword()
-//        );
-//        session.setAttribute("user", newUser);
-//        System.out.println("Session ID: " + session.getId());
-//
-//        return ResponseEntity.ok(newUser);
-//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogIn(@RequestBody UserDTO loginDTO, HttpSession session) {

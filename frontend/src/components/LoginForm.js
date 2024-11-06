@@ -172,15 +172,15 @@ export default function LoginForm() {
     return (
       <Container>
         <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <Typography variant='neonCyan' fontFamily='Monospace' sx={{fontSize: '25px'}}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }} alignItems={'center'}>
+            <Typography variant='neonCyan' fontFamily={'InfinityThin'} sx={{fontSize: '35px'}}>
               sesión iniciada con exito
             </Typography>
             <Button
               variant='contained'
               color='secondary'
               href='/home'
-              sx={{ marginBottom: -1, marginTop: 2, fontFamily: 'monospace' }}
+              sx={{ marginBottom: -1, marginTop: 2 }}
             >
               volver a inicio
             </Button>
