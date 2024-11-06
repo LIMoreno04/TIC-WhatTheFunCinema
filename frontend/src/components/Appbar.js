@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import logo from '../logo.png';
+import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['cartelera', 'sucursales', 'contacto'];
@@ -82,12 +82,14 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <AppBar sx={{height: 110}} position="fixed" className={scrolled ? 'scrolled' : ''}>
+    <AppBar sx={{height: 130}} position="fixed" className={scrolled ? 'scrolled' : ''}>
       <Container sx={{mt: 0.5}} maxWidth="false">
         <Toolbar disableGutters>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 2 }}>
-            <IconButton href="/home">
-              <img src={logo} alt="Logo" style={{ height: 80, marginRight: 5 }} />
+            <IconButton href="/home" style={{ transition: 'transform 0.2s ease-in-out' }} 
+            onMouseEnter={(e) => e.currentTarget.firstChild.style.transform = 'scale(1.1)'}
+            onMouseLeave={(e) => e.currentTarget.firstChild.style.transform = 'scale(1)'}>
+              <img src={logo} alt="Logo" style={{ height: 200, marginTop: -60, marginLeft: -40, marginRight: -20, transition: 'transform 0.2s ease-in-out' }} />
             </IconButton>
           </Box>
 
@@ -128,7 +130,7 @@ function ResponsiveAppBar() {
           </Box>
 
           {/* Full-size menu for medium and large screens */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box mt={-4} sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page,index) => (
               <Button 
               key={page} 
@@ -144,7 +146,7 @@ function ResponsiveAppBar() {
           </Box>
 
           {/* LoggedIn/LoggedOut buttons */}
-          <Box sx={{ flexGrow: 0 }}>
+          <Box mt={-4} sx={{ flexGrow: 0 }}>
             {(() => {
               switch (userRole) {
                 case 'notLoggedIn':

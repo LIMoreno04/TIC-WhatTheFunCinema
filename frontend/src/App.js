@@ -15,7 +15,6 @@ function App() {
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
   return (
-    <div className={`App ${isHomePage ? 'home-background' : ''}`}>
       <ThemeProvider theme={neonTheme}>
         <ResponsiveAppBar />
         <Routes>
@@ -28,7 +27,6 @@ function App() {
           <Route path='*' element={<NotFound />} />
         </Routes>
       </ThemeProvider>
-    </div>
   );
 }
 
