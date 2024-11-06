@@ -1,4 +1,6 @@
 import { createTheme } from "@mui/material";
+import './MADEINFINITYRegular.otf'
+import './MADEINFINITYThin.otf'
 
 const neonTheme = createTheme({
     palette: {
@@ -15,14 +17,14 @@ const neonTheme = createTheme({
       },
     },
     typography: {
-      fontFamily: 'Monospace, Arial',
+      fontFamily: 'InfinityThin, InfinityRegular, Monospace, Arial',
       neonCyan: {
-        fontFamily: 'monospace',
+        fontFamily: 'InfinityThin, InfinityRegular',
         color: '#ffffff', // Neon cyan color
         textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc', // Cyan glow
       },
       neonPink: {
-        fontFamily: 'monospace',
+        fontFamily: 'InfinityThin, InfinityRegular',
         color: '#ffffff', // Neon pink color
         textShadow: '0 0 5px #ff0090, 0 0 10px #ff0090, 0 0 15px #ff0090', // Pink glow
       },
@@ -40,7 +42,7 @@ const neonTheme = createTheme({
         styleOverrides: {
           root: {
             fontSize: '1.2rem', // Larger button font size
-            fontFamily: 'monospace', // Button font family
+            fontFamily: 'InfinityThin, InfinityRegular', // Button font family
             padding: '12px 24px',
             textTransform: 'none',
             color: '#ffffff', // White color
@@ -73,7 +75,7 @@ const neonTheme = createTheme({
           },
           outlinedPink: {
             fontSize: '1rem',
-            fontFamily: 'monospace',
+            fontFamily: 'InfinityThin, InfinityRegular',
             borderRadius: '50px',
             border: `3px solid #fa87c8`, // Neon pink outline
             boxShadow: `
@@ -93,7 +95,7 @@ const neonTheme = createTheme({
           },
           outlinedCyan: {
             fontSize: '1rem',
-            fontFamily: 'monospace',
+            fontFamily: 'InfinityThin, InfinityRegular',
             borderRadius: '50px',
             border: `3px solid #9df8fc`, 
             boxShadow: `

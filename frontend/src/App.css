@@ -13,6 +13,20 @@
   }
 }
 
+/* In App.css or a similar file */
+@font-face {
+  font-family: 'InfinityRegular';
+  src: url('./assets/MADEINFINITYRegular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'InfinityThin';
+  src: url('./assets/MADEINFINITYThin.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
