@@ -21,7 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-@RestController("api/employee")
+@RestController
+@RequestMapping("api/employee")
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class EmployeeRestController {
     @Autowired

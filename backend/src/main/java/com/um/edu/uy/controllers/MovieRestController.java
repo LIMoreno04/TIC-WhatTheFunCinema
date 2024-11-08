@@ -149,16 +149,14 @@ public class MovieRestController {
         }
     }
 
-//    @PostMapping("/deleteMovie")
-//    public ResponseEntity<Movie> deleteMovie(@RequestBody String title) {
-//        Movie movie = movieService.findByExactTitle(title);
-//
-//        if (movie == null) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            movieService.deleteMovie(movie);
-//            return ResponseEntity.ok(movie);
-//        }
-//    }
+    @DeleteMapping("/deleteMovie")
+    public ResponseEntity<Movie> deleteMovie(@RequestBody Movie movie) {
+        if (movie == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            movieService.deleteMovie(movie);
+            return ResponseEntity.ok(movie);
+        }
+    }
 
 }
