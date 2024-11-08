@@ -55,7 +55,7 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Screening> screenings;
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MovieCustomerRank> ratings = new HashSet<>();
+    @OneToMany(mappedBy = "movieId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MovieCustomerRank> ratings;
 
 }

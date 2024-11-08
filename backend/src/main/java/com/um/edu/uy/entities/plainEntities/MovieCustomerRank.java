@@ -1,22 +1,29 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.um.edu.uy.entities.ids.CustomerRankID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@IdClass(CustomerRankID.class)
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MovieCustomerRank {
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "movie_id", nullable = false)
-    private int movieId;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private String customerEmail;
+    private Movie movieId;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @ManyToOne
+    private Customer customerEmail;
 
-    @Column(nullable = false)
+    @NotNull
     private int rank;
 }

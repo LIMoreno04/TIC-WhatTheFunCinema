@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.validators.ValidReleaseDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

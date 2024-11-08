@@ -31,7 +31,7 @@ public class Customer extends User {
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MovieCustomerRank> ratings = new HashSet<>();
+    @OneToMany(mappedBy = "customerEmail", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MovieCustomerRank> ratings;
 
 }

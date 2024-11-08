@@ -1,5 +1,7 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.ids.RoomID;
+import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.MovieRepository;

@@ -1,11 +1,13 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.ids.ReservationId;
+import com.um.edu.uy.entities.ids.RoomID;
+import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.CustomerRepository;
 import com.um.edu.uy.repository.ReservationRepository;
 import com.um.edu.uy.repository.ScreeningRepository;
-import com.um.edu.uy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

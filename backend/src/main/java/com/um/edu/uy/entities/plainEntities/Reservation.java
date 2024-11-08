@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.um.edu.uy.entities.ids.ReservationId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

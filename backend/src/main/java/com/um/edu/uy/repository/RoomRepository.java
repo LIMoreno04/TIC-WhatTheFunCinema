@@ -1,7 +1,7 @@
 package com.um.edu.uy.repository;
 
 import com.um.edu.uy.entities.plainEntities.Room;
-import com.um.edu.uy.entities.plainEntities.RoomID;
+import com.um.edu.uy.entities.ids.RoomID;
 import com.um.edu.uy.entities.plainEntities.Theatre;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package com.um.edu.uy.entities.plainEntities;
+package com.um.edu.uy.entities.ids;
 
 import lombok.*;
 

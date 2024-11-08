@@ -1,10 +1,9 @@
 package com.um.edu.uy.entities.plainEntities;
-import com.um.edu.uy.enums.ScreeningLanguage;
+import com.um.edu.uy.entities.ids.RoomID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 

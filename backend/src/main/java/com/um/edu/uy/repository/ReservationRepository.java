@@ -1,7 +1,7 @@
 package com.um.edu.uy.repository;
 
 import com.um.edu.uy.entities.plainEntities.Reservation;
-import com.um.edu.uy.entities.plainEntities.ReservationId;
+import com.um.edu.uy.entities.ids.ReservationId;
 import com.um.edu.uy.entities.plainEntities.Screening;
 import org.springframework.data.jpa.repository.JpaRepository;
 
