@@ -25,7 +25,11 @@ public class RoomService {
     @Autowired
     private ReservationRepository reservationRepo;
 
-    public void addScreeningToRoom(String theatreLocation, int roomNumber, long movieID, String language, LocalDateTime date_and_time) throws InvalidDataException {
+    public void addScreeningToRoom(String theatreLocation, int roomNumber, long movieID, String language, LocalDateTime date_and_time, int screeningPrice) throws InvalidDataException {
+        if (screeningPrice < 0) {
+            throw new InvalidDataException("Screening price cannot be negative.");
+        }
+
         Optional<Room> roomResult = roomRepo.findById(new RoomID(theatreLocation, roomNumber));
         Optional<Movie> movieResult = movieRepo.findById(movieID);
         if (movieResult.isEmpty()) {
@@ -40,6 +44,7 @@ public class RoomService {
                     room(room).
                     language(language).
                     date_and_time(date_and_time).
+                    screeningPrice(screeningPrice).
                     build();
             screeningRepo.save(newScreening);
         }

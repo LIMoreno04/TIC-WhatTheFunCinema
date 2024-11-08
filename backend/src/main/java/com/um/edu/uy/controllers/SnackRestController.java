@@ -20,6 +20,10 @@ public class SnackRestController {
 
     @PostMapping("/addSnack")
     public ResponseEntity<Snack> addSnack(@RequestBody SnackDTO snackDTO) {
+
+        if (snackDTO.getPrice() <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
         Snack snack = Snack.builder()
                 .snackName(snackDTO.getSnackName())
                 .snackDescription(snackDTO.getSnackDescription())

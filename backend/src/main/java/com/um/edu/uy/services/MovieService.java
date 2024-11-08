@@ -52,10 +52,6 @@ public class MovieService {
         return movieRepo.findAll();
     }
 
-    public Movie findByExactTitle(String title) {
-        return movieRepo.findByTitle(title).orElse(null);
-    }
-
     public List<Movie> findByTitle(String title) {
         return movieRepo.findByTitleContainingIgnoreCase(title).orElse(new LinkedList<>());
     }

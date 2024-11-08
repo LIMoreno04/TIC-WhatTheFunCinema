@@ -20,6 +20,9 @@ public class Screening {
     @ValidReleaseDate
     private LocalDateTime date_and_time;
 
+    @NotNull
+    private int screeningPrice;
+
 
     @ManyToOne
     @Id

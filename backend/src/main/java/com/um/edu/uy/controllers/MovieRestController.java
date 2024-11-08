@@ -40,11 +40,6 @@ public class MovieRestController {
     public ResponseEntity<?> addMovie(@RequestBody MovieDTO movieDTO) throws IOException {
         Map<String, String> errors = new HashMap<>();
 
-        if (movieService.findByExactTitle(movieDTO.getTitle()) != null) {
-            errors.put("title", "Ya existe una película con ese título y fecha de lanzamiento.");
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
-
         try {
             LocalTime.parse(movieDTO.getDuration());
         } catch (Exception e) {
@@ -154,16 +149,16 @@ public class MovieRestController {
         }
     }
 
-    @PostMapping("/deleteMovie")
-    public ResponseEntity<Movie> deleteMovie(@RequestBody String title) {
-        Movie movie = movieService.findByExactTitle(title);
-
-        if (movie == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            movieService.deleteMovie(movie);
-            return ResponseEntity.ok(movie);
-        }
-    }
+//    @PostMapping("/deleteMovie")
+//    public ResponseEntity<Movie> deleteMovie(@RequestBody String title) {
+//        Movie movie = movieService.findByExactTitle(title);
+//
+//        if (movie == null) {
+//            return ResponseEntity.notFound().build();
+//        } else {
+//            movieService.deleteMovie(movie);
+//            return ResponseEntity.ok(movie);
+//        }
+//    }
 
 }

@@ -23,11 +23,11 @@ public class RoomRestController {
     private RoomService roomService;
 
     @PostMapping("/addScreeningToRoom")
-    public ResponseEntity<?> addScreeningToRoom(@RequestParam String theatreLocation, @RequestParam int roomNumber, @RequestParam long movieID, @RequestParam String language, @RequestParam String dateTime) {
+    public ResponseEntity<?> addScreeningToRoom(@RequestParam String theatreLocation, @RequestParam int roomNumber, @RequestParam long movieID, @RequestParam String language, @RequestParam String dateTime, @RequestParam int screeningPrice) {
 
         try {
             LocalDateTime date_and_time = LocalDateTime.parse(dateTime);
-            roomService.addScreeningToRoom(theatreLocation, roomNumber, movieID, language, date_and_time);
+            roomService.addScreeningToRoom(theatreLocation, roomNumber, movieID, language, date_and_time, screeningPrice);
             return ResponseEntity.status(HttpStatus.CREATED).body("Screening added successfully.");
         } catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
