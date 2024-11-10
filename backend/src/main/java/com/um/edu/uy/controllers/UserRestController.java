@@ -79,4 +79,60 @@ public class UserRestController {
         System.out.println(user);
         return ResponseEntity.ok(Objects.requireNonNullElse(user, new User()));
     }
+
+    @PutMapping("/change-firstname")
+    public User updateFirstName(
+            HttpSession session,
+            @RequestBody Map<String,String> payload) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        String password = ((User) session.getAttribute("user")).getPassword();
+        return userService.updateFirstName(email, password, payload.get("newFirstName"));
+    }
+
+    @PutMapping("/change-lastname")
+    public User updateLastName(
+            HttpSession session,
+            @RequestBody Map<String,String> payload) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        String password = ((User) session.getAttribute("user")).getPassword();
+        return userService.updateLastName(email, password, payload.get("newLastName"));
+    }
+
+    @PutMapping("/change-dateofbirth")
+    public User updateDateOfBirth(
+            HttpSession session,
+            @RequestBody Map<String,String> payload) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        String password = ((User) session.getAttribute("user")).getPassword();
+        return userService.updateDateOfBirth(email, password, LocalDate.parse(payload.get("newDateOfBirth")));
+    }
+
+    @PutMapping("/change-celcountrycode")
+    public User updateCelCountryCode(
+            HttpSession session,
+            @RequestBody Map<String,String> payload) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        String password = ((User) session.getAttribute("user")).getPassword();
+        return userService.updateCelCountryCode(email, password, payload.get("newCelCountryCode"));
+    }
+
+    @PutMapping("/change-celnumber")
+    public User updateCelNumber(
+            HttpSession session,
+            @RequestBody Map<String,String> payload) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        String password = ((User) session.getAttribute("user")).getPassword();
+        return userService.updateCelNumber(email, password, payload.get("newCelNumber"));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> updatePassword(
+            HttpSession session, @RequestParam String oldPassword,
+            @RequestParam String newPassword) throws InvalidDataException {
+        String email = ((User) session.getAttribute("user")).getEmail();
+        if (!Objects.equals(oldPassword, ((User) session.getAttribute("user")).getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "password"));
+        }
+        return ResponseEntity.ok(userService.updatePassword(email, oldPassword, newPassword));
+    }
 }

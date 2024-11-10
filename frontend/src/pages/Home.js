@@ -1,7 +1,10 @@
 import background from '../assets/background.png';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery } from '@mui/material';
 
 export default function HomePage() {
+  // Media query for small screens
+  const isSmallScreen = useMediaQuery('(max-width:900px)');
+
   return (
     <div
       style={{
@@ -21,18 +24,19 @@ export default function HomePage() {
           width: '100%',
           height: '100%',
           backgroundImage: `url(${background})`,
-          backgroundSize: '100vw auto',
-          backgroundPosition: 'top center',
+          backgroundSize: 'cover', 
+          backgroundPosition: isSmallScreen ? 'top left 56%' : 'top center',
           backgroundRepeat: 'no-repeat',
         }}
       />
 
       {/* Tickets Content Box */}
       <Box
-        mt={30}
-        ml={5}
-        maxWidth={400}
-        minHeight={500}
+        mt={isSmallScreen ? '41vh' : '25vh'}  // Center vertically on small screens
+        ml={isSmallScreen ? 'auto' : '2vw'}   // Center horizontally on small screens
+        mr={isSmallScreen ? 'auto' : 0}
+        maxWidth={isSmallScreen ? '80vw' : '20vw'}  // Width is more flexible on small screens
+        minHeight="60vh"
         display="flex"
         justifyContent="center"
         alignItems="top"
@@ -40,16 +44,21 @@ export default function HomePage() {
           position: 'relative',
           zIndex: 1,
           backgroundColor: 'rgba(0, 0, 0, 0.9)',
-          padding: 3,
-          borderRadius: 5,
+          padding: '3vh',
+          borderRadius: '2vw',
         }}
       >
-        <Typography variant="neonCyan" fontSize={45}>Comprar entradas</Typography>
+        <Typography
+          variant="neonCyan"
+          fontSize={isSmallScreen ? '8vw' : '2vw'}
+        >
+          Comprar entradas
+        </Typography>
         {/* Add additional content here */}
       </Box>
 
       {/* Spacer to push the footer down */}
-      <Box flexGrow={1} minHeight={120} />
+      <Box flexGrow={1} minHeight="10vh" />
 
       {/* Footer */}
       <Box
@@ -59,15 +68,23 @@ export default function HomePage() {
         alignItems="center"
         sx={{
           width: '100%',
-          padding: 2,
+          padding: '2vh 4vw',
           backgroundColor: '#0e0d1a',
           color: 'white',
           zIndex: 1,
+          flexDirection: isSmallScreen ? 'column' : 'row', // Stack vertically on small screens
+          textAlign: 'center',
         }}
       >
-        <Typography variant="body2">Contact us: info@whatthefuncinema.com</Typography>
-        <Typography variant="body2">Phone: +1 (123) 456-7890</Typography>
-        <Typography variant="body2" mr={2}>© 2024 What The Fun Cinema</Typography>
+        <Typography variant="body2" fontSize={isSmallScreen ? '3vw' : '1vw'}>
+          Contact us: info@whatthefuncinema.com
+        </Typography>
+        <Typography variant="body2" fontSize={isSmallScreen ? '3vw' : '1vw'}>
+          Phone: +1 (123) 456-7890
+        </Typography>
+        <Typography variant="body2" fontSize={isSmallScreen ? '3vw' : '1vw'} mr={isSmallScreen ? 0 : '2vw'}>
+          © 2024 What The Fun Cinema
+        </Typography>
       </Box>
     </div>
   );

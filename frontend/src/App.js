@@ -13,7 +13,6 @@ import AddEmployeePage from './pages/AddEmployee';
 
 function App() {
   const location = useLocation();
-  const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
   return (
       <ThemeProvider theme={neonTheme}>

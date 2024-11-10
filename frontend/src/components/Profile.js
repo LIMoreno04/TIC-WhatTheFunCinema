@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, CircularProgress, Typography, Box } from '@mui/material';
+import { TextField, CircularProgress, Typography, Box, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Button, Paper } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
+import { Edit as EditIcon } from '@mui/icons-material';
 import neonTheme from '../assets/Theme';
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [currentField, setCurrentField] = useState('');
+    const [newFieldValue, setNewFieldValue] = useState('');
+    const [newCelCountryCode, setNewCelCountryCode] = useState('');
+    const [newCelNumber, setNewCelNumber] = useState('');
 
-    // Fetch user data from backend
+    const fieldLabels = {
+        firstName: 'Nombre',
+        lastName: 'Apellido',
+        dateOfBirth: 'Fecha de nacimiento',
+        password: 'Contraseña',
+        celular: 'Celular'
+    };
+
     useEffect(() => {
         fetch('http://localhost:8080/api/user/current', {
             method: 'GET',
@@ -18,147 +31,186 @@ const Profile = () => {
         .catch(error => console.error('Error fetching user data:', error));
     }, []);
 
-    const handleFieldChange = (field, value) => {
-        setUserData(prevData => ({ ...prevData, [field]: value }));
+    const handleEditClick = (field) => {
+        setCurrentField(field);
+        if (field === 'celular') {
+            setNewCelCountryCode(userData.celCountryCode || '');
+            setNewCelNumber(userData.celNumber || '');
+        } else {
+            setNewFieldValue(userData[field] || '');
+        }
+        setOpenDialog(true);
     };
 
-    const handleFieldBlur = (field) => {
-        // Map of endpoints for each editable field
-        const endpointMap = {
-            firstName: 'change-firstname',
-            lastName: 'change-lastname',
-            dateOfBirth: 'change-dateofbirth',
-            celCountryCode: 'change-celcountrycode',
-            celNumber: 'change-celnumber',
-            password: 'change-password',
-        };
-
-        const endpoint = endpointMap[field];
-        if (!endpoint) return;
-
+    const handleConfirmChange = () => {
         setLoading(true);
 
-        fetch(`http://localhost:8080/api/user/${endpoint}`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ [field]: userData[field] })
-        })
-        .then(response => {
-            setLoading(false);
-            if (!response.ok) {
-                console.error(`Error updating ${field}:`, response.statusText);
+        const updateUserField = (endpoint, body) => {
+            return fetch(`http://localhost:8080/api/user/${endpoint}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+        };
+
+        const requests = [];
+        if (currentField === 'celular') {
+            requests.push(updateUserField('change-celcountrycode', { newCelCountryCode }));
+            requests.push(updateUserField('change-celnumber', { newCelNumber }));
+        } else {
+            const endpointMap = {
+                firstName: 'change-firstname',
+                lastName: 'change-lastname',
+                dateOfBirth: 'change-dateofbirth',
+                password: 'change-password',
+            };
+            const endpoint = endpointMap[currentField];
+            if (endpoint) {
+                requests.push(updateUserField(endpoint, { [`new${currentField.charAt(0).toUpperCase()}${currentField.slice(1)}`]: newFieldValue }));
             }
-        })
-        .catch(error => {
-            setLoading(false);
-            console.error('Error updating field:', error);
-        });
+        }
+
+        Promise.all(requests)
+            .then(() => {
+                setLoading(false);
+                setUserData(prevData => ({
+                    ...prevData,
+                    celCountryCode: newCelCountryCode,
+                    celNumber: newCelNumber,
+                    [currentField]: newFieldValue
+                }));
+                setOpenDialog(false);
+            })
+            .catch(error => {
+                setLoading(false);
+                console.error('Error updating field:', error);
+                setOpenDialog(false);
+            });
     };
 
     return !userData ? (
         <CircularProgress size={64} color="inherit" />
     ) : (
         <ThemeProvider theme={neonTheme}>
-            <Box sx={{ p: 3, backgroundColor: '#191331', borderRadius: '10px' }}>
-                <Typography variant="h2" sx={{ mb: 2, ...neonTheme.typography.neonPink }}>
+            <Paper
+                sx={{
+                    width: '70vw',
+                    minWidth: '800px',
+                    margin: '20px auto',
+                    padding: 4,
+                    backgroundColor: '#191331',
+                    textAlign: 'center',
+                    boxShadow: 'inset 0 0 15px #a805ad, 0 0 25px #a805ad, 0 0 45px #0ff0fc',
+                    borderRadius: '80px',
+                    border: `3px solid #9df8fc`,
+                }}
+            >
+                <Typography variant="neonPink" fontSize={'6vh'}>
                     Perfil
                 </Typography>
-                
-                <TextField
-                    label="Email"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.email}
-                    InputProps={{ readOnly: true }}
-                />
-                <TextField
-                    label="Nombre"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.firstName}
-                    onChange={(e) => handleFieldChange('firstName', e.target.value)}
-                    onBlur={() => handleFieldBlur('firstName')}
-                />
-                <TextField
-                    label="Apellido"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.lastName}
-                    onChange={(e) => handleFieldChange('lastName', e.target.value)}
-                    onBlur={() => handleFieldBlur('lastName')}
-                />
-                <TextField
-                    label="Fecha de nacimiento"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.dateOfBirth}
-                    onChange={(e) => handleFieldChange('dateOfBirth', e.target.value)}
-                    onBlur={() => handleFieldBlur('dateOfBirth')}
-                />
-                <TextField
-                    label="Código de país"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.celCountryCode}
-                    onChange={(e) => handleFieldChange('celCountryCode', e.target.value)}
-                    onBlur={() => handleFieldBlur('celCountryCode')}
-                />
-                <TextField
-                    label="Número de celular"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.celNumber}
-                    onChange={(e) => handleFieldChange('celNumber', e.target.value)}
-                    onBlur={() => handleFieldBlur('celNumber')}
-                />
-                <TextField
-                    label="Tipo de ID"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.idType}
-                    InputProps={{ readOnly: true }}
-                />
-                <TextField
-                    label="País de ID"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.idCountry}
-                    InputProps={{ readOnly: true }}
-                />
-                <TextField
-                    label="Número de ID"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    value={userData.idNumber}
-                    InputProps={{ readOnly: true }}
-                />
-                <TextField
-                    label="Contraseña"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    type="password"
-                    value={userData.password}
-                    onChange={(e) => handleFieldChange('password', e.target.value)}
-                    onBlur={() => handleFieldBlur('password')}
-                />
-                
+
+                {['firstName', 'lastName', 'dateOfBirth', 'password'].map((field) => (
+                    <Box key={field} sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+                        <Typography sx={{ width: '15vw' }} variant="neonCyan">
+                            {fieldLabels[field]}:
+                        </Typography>
+                        <Paper
+                            sx={{
+                                width: '20vw',
+                                minWidth: '230px',
+                                padding: 1,
+                                marginX: '2vw',
+                                backgroundColor: '#18181c',
+                                textAlign: 'center',
+                                boxShadow: 'inset 0 0 2px #a805ad, 0 0 5px #a805ad, 0 0 10px #0ff0fc',
+                                borderRadius: '40px',
+                                border: `1px solid #9df8fc`,
+                            }}
+                        >
+                            <Typography variant="neonPink">
+                                {userData[field]}
+                            </Typography>
+                        </Paper>
+                        <IconButton onClick={() => handleEditClick(field)} sx={{ ml: 1 }}>
+                            <EditIcon color="primary" />
+                        </IconButton>
+                    </Box>
+                ))}
+
+                <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+                    <Typography sx={{ width: '15vw' }} variant="neonCyan">
+                        {fieldLabels['celular']}:
+                    </Typography>
+                    <Paper
+                        sx={{
+                            width: '20vw',
+                            minWidth: '230px',
+                            padding: 1,
+                            marginX: '2vw',
+                            backgroundColor: '#18181c',
+                            textAlign: 'center',
+                            boxShadow: 'inset 0 0 2px #a805ad, 0 0 5px #a805ad, 0 0 10px #0ff0fc',
+                            borderRadius: '40px',
+                            border: `1px solid #9df8fc`,
+                        }}
+                    >
+                        <Typography variant="neonPink">
+                            {userData.celCountryCode} {userData.celNumber}
+                        </Typography>
+                    </Paper>
+                    <IconButton onClick={() => handleEditClick('celular')} sx={{ ml: 1 }}>
+                        <EditIcon color="primary" />
+                    </IconButton>
+                </Box>
+
+                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                    <DialogTitle>Edit {currentField === 'celular' ? 'Celular' : fieldLabels[currentField]}</DialogTitle>
+                    <DialogContent sx={{ display: 'flex', gap: 2 }}>
+                        {currentField === 'celular' ? (
+                            <>
+                                <TextField
+                                    label="Código de país"
+                                    fullWidth
+                                    margin="normal"
+                                    variant="outlined"
+                                    value={newCelCountryCode}
+                                    onChange={(e) => setNewCelCountryCode(e.target.value)}
+                                />
+                                <TextField
+                                    label="Número de celular"
+                                    fullWidth
+                                    margin="normal"
+                                    variant="outlined"
+                                    value={newCelNumber}
+                                    onChange={(e) => setNewCelNumber(e.target.value)}
+                                />
+                            </>
+                        ) : (
+                            <TextField
+                                label="New Value"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                value={newFieldValue}
+                                onChange={(e) => setNewFieldValue(e.target.value)}
+                            />
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog(false)} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleConfirmChange} color="primary" disabled={loading}>
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
                 {loading && <CircularProgress size={24} sx={{ mt: 2 }} />}
-            </Box>
+            </Paper>
         </ThemeProvider>
     );
-}
+};
 
 export default Profile;
