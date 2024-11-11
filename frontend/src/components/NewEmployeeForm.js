@@ -119,7 +119,7 @@ export default function NewEmployeeForm() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newEmployee),
           credentials: 'include',
-        });
+        }); 
 
         if (!response.ok) {
           if (response.status === 400) {
