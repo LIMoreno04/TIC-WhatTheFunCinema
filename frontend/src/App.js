@@ -11,22 +11,43 @@ import MyAccountPage from './pages/Account';
 import neonTheme from './assets/Theme';
 import AddEmployeePage from './pages/AddEmployee';
 import NewTheatrePage from './pages/AddTheatre';
+import { useEffect, useState } from 'react';
+import TheatresPage from './pages/Theatres';
 
 function App() {
   const location = useLocation();
+  const [userRole, setUserRole] = useState('notLoggedIn')
+
+  const fetchRole = () => {
+    fetch('http://localhost:8080/api/user/role', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text(); // Expecting a string response for the role
+      })
+      .then((role) => setUserRole(role))
+      .catch((error) => console.error('Error fetching user role:', error));
+  };
+
+  useEffect(() => {
+    fetchRole();
+    }, []);
 
   return (
       <ThemeProvider theme={neonTheme}>
-        <ResponsiveAppBar />
+        <ResponsiveAppBar userRole={userRole} onUpdate={fetchRole}/>
         <Routes>
           <Route path='/home' element={<HomePage />} />
           <Route path='/' element={<HomePage />} />
           <Route path='/signup' element={<SignupPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/movies' element={<MoviesPage />} />
-          <Route path='/account' element={<MyAccountPage />} />
-          <Route path='/addEmployee' element={<AddEmployeePage/>} />
-          <Route path='/addTheatre' element={<NewTheatrePage/>} />
+          <Route path='/account' element={<MyAccountPage userRole={userRole}/>} />
+          <Route path='/theatres' element={<TheatresPage userRole={userRole}/>}/>
+          <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
+          <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </ThemeProvider>

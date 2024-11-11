@@ -34,7 +34,7 @@ public class TheatreService {
         if (location == null) {
             throw new InvalidDataException("Ingrese la localidad.");
         }
-        if (theatreRepo.existsById(location)) {
+        if (theatreRepo.findByLocationIgnoreCase(location).isPresent()) {
             throw new InvalidDataException("Ya se tiene registro de esa sucursal.");
         }
         Theatre theatre = Theatre.builder()
@@ -45,7 +45,7 @@ public class TheatreService {
     }
 
     public void addRoomToTheatre(String location, int rows, int cols) throws InvalidDataException {
-        Optional<Theatre> result = theatreRepo.findByLocation(location);
+        Optional<Theatre> result = theatreRepo.findByLocationIgnoreCase(location);
         if (result.isPresent()) {
             Theatre theatre = result.get();
             int roomNumber = theatre.getRooms()!=null ? theatre.getRooms().size()+1 : 1;

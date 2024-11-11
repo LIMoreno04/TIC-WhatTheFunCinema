@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface TheatreRepository extends JpaRepository<Theatre,String> {
 
-    public Optional<Theatre> findByLocation(String location);
+    public Optional<Theatre> findByLocationIgnoreCase(String location);
 }

@@ -3,21 +3,8 @@ import * as React from 'react';
 import Profile from "../components/Profile";
 import NotLoggedInPage from "./NotLoggedInPage";
 
-export default function MyAccountPage() {
+export default function MyAccountPage({userRole}) {
 
-    const [userRole, setUserRole] = React.useState('notLoggedIn')
-    React.useEffect(() => {
-        fetch('http://localhost:8080/api/user/role', {
-          method: 'GET',
-          credentials: 'include',
-        })
-          .then((response) => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.text(); // Expecting a string response for the role
-          })
-          .then((role) => setUserRole(role))
-          .catch((error) => console.error('Error fetching user role:', error));
-      }, []);
 
       if (userRole==='notLoggedIn') {
         return (
