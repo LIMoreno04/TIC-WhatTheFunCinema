@@ -71,8 +71,8 @@ public class UserRestController {
 
     @GetMapping("/role")
     public ResponseEntity<String> getSessionRole(HttpSession session) {
-        System.out.println("getRole");
-        System.out.println("Session ID: " + session.getId() + "\nRole: " + session.getAttribute("role"));
+        System.out.println("\ngetRole");
+        System.out.println("Session ID: " + session.getId() + "\nRole: " + session.getAttribute("role") + "\n");
 
         String role = (String) session.getAttribute("role");
         return ResponseEntity.ok(Objects.requireNonNullElse(role, "notLoggedIn"));
@@ -83,7 +83,7 @@ public class UserRestController {
     public ResponseEntity<?> updateFirstName(
             HttpSession session,
             @RequestBody Map<String,String> payload) throws InvalidDataException {
-        String newFirstName = payload.get("newFirstName");
+        String newFirstName = payload.get("firstName");
         if (newFirstName.isBlank()) {
             HashMap<String,String> errors = new HashMap<>();
             errors.put("firstName", "El campo no puede estar vacío.");
@@ -105,7 +105,7 @@ public class UserRestController {
     public ResponseEntity<?> updateLastName(
             HttpSession session,
             @RequestBody Map<String,String> payload) throws InvalidDataException {
-        String newLastName = payload.get("newLastName");
+        String newLastName = payload.get("lastName");
         if (newLastName.isBlank()) {
             HashMap<String, String> errors = new HashMap<>();
             errors.put("firstName", "El campo no puede estar vacío.");

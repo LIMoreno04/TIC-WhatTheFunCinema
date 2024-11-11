@@ -76,7 +76,7 @@ public class CustomerService {
                 .idNumber(idNumber)
                 .password(password)
                 .build();
-
+        newCustomer.setPaymentMethods(new LinkedList<>());
         return customerRepo.save(newCustomer);
     }
 

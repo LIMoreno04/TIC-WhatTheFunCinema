@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const PaymentMethodsDisplay = ({ cards }) => {
+const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -79,11 +79,7 @@ const PaymentMethodsDisplay = ({ cards }) => {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-      const newCardWithLabel = {
-        ...newCard,
-        cardType: cardTypeOptions.find(option => option.value === newCard.cardType)?.label || "", // Get label from cardTypeOptions
-      };
-      cards.push(newCardWithLabel);
+      onUpdate();
       handleCloseDialog();
     } catch (error) {
       console.error('Error adding new card:', error);
@@ -116,11 +112,7 @@ const PaymentMethodsDisplay = ({ cards }) => {
         if (!response.ok) {
           throw new Error('Failed to delete card');
         }
-        const selectedCardWithLabel = {
-            ...selectedCard,
-            cardType: cardTypeOptions.find(option => option.value === selectedCard.cardType)?.label || "", // Get label from cardTypeOptions
-          };
-        cards.splice(cards.indexOf(selectedCardWithLabel),1)
+        onUpdate();
         handleCloseDeleteDialog();
       } catch (error) {
         console.error('Error deleting card:', error);
@@ -141,7 +133,7 @@ const PaymentMethodsDisplay = ({ cards }) => {
         py: 5,
         px: 5,
         backgroundColor: 'rgba(0,0,0,0.3)',
-        maxHeight: '600px',
+        maxHeight: '51vh',
         overflowY: 'auto',
         // Hiding the scrollbar
         '&::-webkit-scrollbar': {
@@ -181,17 +173,25 @@ const PaymentMethodsDisplay = ({ cards }) => {
                 <Typography variant="neonCyan">Exp: {card.expirationDate}</Typography>
               </Box>
               <Box flex={1} display={'flex'} flexDirection={'column'} alignItems={'flex-end'}>
-                <IconButton onClick={() => handleOpenDeleteDialog(card)} sx={{ color: '#a805ad' }}>
-                  <DeleteIcon />
+                <IconButton onClick={() => handleOpenDeleteDialog(card)}>
+                  <DeleteIcon sx={{ 
+                    color: '#a805ad',
+                    transition: 'color 0.3s ease',
+                      '&:hover': {
+                          transform:'scale(1.02)',
+                          color: '#00ffff',}
+                  }}/>
                 </IconButton>
               </Box>
             </Box>
           </Paper>
         ))
       ) : (
-        <Typography variant="body1" color="textSecondary" align="center">
-          No cards available
-        </Typography>
+        <Box mt={'-1.5vh'} mb={'3.5vh'}>
+          <Typography variant="neonCyan" fontSize={'1.8vh'} align="center">
+            Aquí aparecerán sus métodos de pago
+          </Typography>
+        </Box>
       )}
 
 

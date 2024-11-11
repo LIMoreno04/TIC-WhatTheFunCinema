@@ -60,7 +60,7 @@ export default function MyAccountPage() {
       else {
         return (
             
-            <Box mt={20}>
+            <Box mt={16}>
                 <Profile></Profile>
             </Box>
         )

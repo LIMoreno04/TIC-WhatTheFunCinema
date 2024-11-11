@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -74,18 +75,19 @@ public class CustomerRestController {
                 userDTO.getIdNumber(),
                 userDTO.getPassword()
         );
-
-        session.setAttribute("user", newCustomer);
-        session.setAttribute("role", "customer");
-        System.out.println("Session ID: " + session.getId());
-
+        try {
+            session.setAttribute("user", customerService.findCustomer(newCustomer.getEmail(), newCustomer.getPassword()));
+            session.setAttribute("role", "customer");
+            System.out.println("Session ID: " + session.getId());
+        } catch (InvalidDataException e) {
+            System.out.println("FATAL ERROR");
+        }
         return ResponseEntity.ok(newCustomer);
     }
 
     @GetMapping("/current")
     public ResponseEntity<Customer> getCurrentAccount(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
-        System.out.println(customer.getEmail());
         return ResponseEntity.ok(customer);
     }
 
@@ -151,6 +153,7 @@ public class CustomerRestController {
                     expirationDate,
                     cardDTO.getCvv()
             );
+            session.setAttribute("user",customerService.findCustomer(customer.getEmail(), customer.getPassword()));
             return ResponseEntity.ok(newCard);
         } catch (InvalidDataException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -161,7 +164,9 @@ public class CustomerRestController {
     @DeleteMapping("/removeCard")
     public ResponseEntity<?> removeCard(@RequestBody CardDTO cardDTO, HttpSession session) {
         try {
-            customerService.removeCard(((Customer) session.getAttribute("user")).getEmail(), cardDTO.getCardNumber());
+            Customer customer = (Customer) session.getAttribute("user");
+            customerService.removeCard(customer.getEmail(), cardDTO.getCardNumber());
+            session.setAttribute("user",customerService.findCustomer(customer.getEmail(), customer.getPassword()));
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
          catch (InvalidDataException e) {

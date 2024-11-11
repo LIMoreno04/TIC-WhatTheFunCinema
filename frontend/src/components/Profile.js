@@ -54,17 +54,27 @@ const countries = [
         cel: 'Número de celular',
         password: 'Contraseña',
     };
-
     useEffect(() => {
+        fetchUserData();
+    }, []);
+
+
+    const fetchUserData = () => {
+        setLoading(true);
         fetch('http://localhost:8080/api/customer/current', {
             method: 'GET',
             credentials: 'include',
         })
         .then(response => response.json())
-        .then(data => setUserData(data))
-        .catch(error => console.error('Error fetching user data:', error));
-        console.log(userData);
-    }, []);
+        .then(data => {
+            setUserData(data);
+            setLoading(false);
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            setLoading(false);
+        });
+    };
 
     const handleEditClick = (field) => {
         setCurrentField(field);
@@ -81,12 +91,12 @@ const countries = [
         }
         setOpenDialog(true);
     };
+
     const handleDialogClose = () => {
         setOpenDialog(false);
         setShowNewPassword(false); 
         setShowOldPassword(false);
     };
-    
 
     const handleConfirmChange = () => {
         setErrors({});
@@ -116,7 +126,7 @@ const countries = [
             endpoint = endpointMap[currentField];
             bodyData = { [currentField]: newFieldValue };
         }
-        console.log(newFieldValue)
+
         fetch(`http://localhost:8080/api/user/${endpoint}`, {
             method: 'PUT',
             credentials: 'include',
@@ -128,18 +138,7 @@ const countries = [
         .then(async response => {
             setLoading(false);
             if (response.ok) {
-                setUserData(prevData => {
-                    if (currentField === 'cel') {
-                        return { ...prevData, celCountryCode: newCelData.celCountryCode, celNumber: newCelData.celNumber };
-                    } else if (currentField === 'password') {
-                        return prevData;
-                    } else if (currentField === 'dateOfBirth') {
-                        return {...prevData,dateOfBirth: newFieldValue}
-                    } else {
-                        return { ...prevData, [currentField]: newFieldValue };
-                    }
-                });
-                alert("Información actualizada.")
+                fetchUserData(); // Fetch user data again to ensure consistency
                 setOpenDialog(false);
                 setShowNewPassword(false);
                 setShowOldPassword(false);
@@ -147,47 +146,53 @@ const countries = [
                 const errorData = await response.json();
                 setErrors(errorData);
                 console.log(errorData);
-            }    
-            else {
+            } else {
                 console.error(`Error updating ${currentField}:`, response.statusText);
-                alert("Error inesperado.")
+                alert("Error inesperado.");
                 setOpenDialog(false);
                 setShowNewPassword(false);
                 setShowOldPassword(false);
             }
-            
         })
         .catch(error => {
-            alert("Error conectándose con el servidor.")
+            alert("Error conectándose con el servidor.");
             console.error('Error updating field:', error);
             setOpenDialog(false);
             setShowNewPassword(false);
             setShowOldPassword(false);
         });
-        setLoading(false);
     };
 
     const toggleShowNewPassword = () => setShowNewPassword(!showNewPassword);
     const toggleShowOldPassword = () => setShowOldPassword(!showOldPassword);
     
+    
     return !userData ? (
-        <CircularProgress size={64} color="inherit" />
-    ) : (
+        <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100vh' 
+        }}>
+            <CircularProgress size={64} sx={{ color: 'primary' }} />
+        </div>
+        ) : (
         <ThemeProvider theme={neonTheme}>
             <Paper 
             sx={{
                 width: '70vw',
                 minWidth: '925px',
                 margin: '20px auto',
-                padding: 4,
+                paddingX: '2.5vw',
+                paddingY: '4vh',
                 backgroundColor: '#191331',
                 textAlign: 'center',
                 boxShadow: 'inset 0 0 15px #a805ad, 0 0 25px #a805ad, 0 0 45px #0ff0fc',
                 borderRadius: '80px',
                 border: `3px solid #9df8fc`,
                 }}>
-                <Typography variant="neonPink" fontSize={'6vh'}>
-                    Perfil
+                <Typography variant="neonPink" fontSize={'60px'}>
+                    Perfil {console.log(userData)}
                 </Typography>
                 
                 <Box display={'flex'} flexDirection={'row'}>
@@ -196,8 +201,8 @@ const countries = [
                     <Box flex={1} display={'flex'} flexDirection={'column'}>
                         <Box display={'flex'} flexDirection={'column'} width={'35vw'} minWidth={'462.5px'}>
 
-                            <Typography variant='neonCyan' fontSize={'3vh'} mb={3}>Datos de cuenta</Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                            <Typography variant='neonCyan' fontSize={'30px'} mb={3}>Datos de cuenta</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                     <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                         <Typography variant="neonCyan">
                                             Correo electrónico:
@@ -221,7 +226,7 @@ const countries = [
                                         </Typography>
                                     </Paper>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                     <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                         <Typography variant="neonCyan">
                                             Contraseña:
@@ -271,10 +276,10 @@ const countries = [
                         />      
 
                         <Box display={'flex'} flexDirection={'column'} width={'35vw'} minWidth={'462.5px'}>
-                            <Typography variant='neonCyan' fontSize={'3vh'} mb={3}>Datos personales</Typography>
+                            <Typography variant='neonCyan' fontSize={'30px'} mb={3}>Datos personales</Typography>
 
                             {['firstName', 'lastName', 'dateOfBirth'].map((field) => (
-                                <Box key={field} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                                <Box key={field} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                     <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                         <Typography variant="neonCyan">
                                             {fieldLabels[field]}:
@@ -311,7 +316,7 @@ const countries = [
                             ))}
 
                             {/* Cel Country Code and Cel Number Display */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                 <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                     <Typography variant="neonCyan">
                                         {fieldLabels.celNumber}:
@@ -345,7 +350,7 @@ const countries = [
                                         }}/>
                                     </IconButton>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                 <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                     <Typography variant="neonCyan">
                                         Documento de Identidad:
@@ -370,7 +375,7 @@ const countries = [
                                 </Paper>
                             </Box>
 
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', my: '1.1vh' }}>
                                 <Box sx={{ alignItems: 'center', display: 'flex', width: '15vw', minWidth: '190px' }}>
                                     <Typography variant="neonCyan">
                                         País de origen:
@@ -412,8 +417,8 @@ const countries = [
                     
                     {/*tarjetas - card*/}
                     <Box flex={1} display={'flex'} flexDirection={'column'}>
-                            <Typography marginBottom={'3vh'} variant='neonCyan' fontSize={'3vh'}>Métodos de pago</Typography>
-                            <PaymentMethodsDisplay cards={userData.paymentMethods ? userData.paymentMethods : []}/>
+                            <Typography marginBottom={'3vh'} variant='neonCyan' fontSize={'30px'}>Métodos de pago</Typography>
+                            <PaymentMethodsDisplay cards={userData.paymentMethods ? userData.paymentMethods : []} onUpdate={fetchUserData}/>
                     </Box>
                 
                 </Box>

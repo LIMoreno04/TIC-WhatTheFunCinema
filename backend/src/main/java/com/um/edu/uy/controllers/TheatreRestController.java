@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +46,9 @@ public class TheatreRestController {
                 theatreService.addTheatreWithRooms(theatre.getLocation(), theatre.getNumberOfRooms());
                 return ResponseEntity.ok(theatreService.findByLocation(theatre.getLocation()));
             } catch (InvalidDataException e) {
-                return ResponseEntity.badRequest().body(e.getMessage());
+                HashMap<String,String> error = new HashMap<>();
+                error.put("message",e.getMessage());
+                return ResponseEntity.badRequest().body(error);
             }
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acceso denegado.");

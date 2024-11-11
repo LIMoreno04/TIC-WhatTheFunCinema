@@ -11,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer extends User {

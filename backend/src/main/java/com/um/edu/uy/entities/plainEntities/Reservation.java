@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.um.edu.uy.entities.ids.ReservationId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,8 @@ public class Reservation {
     private Screening screening;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "email")
+    @JsonBackReference
     private Customer customer;
 }

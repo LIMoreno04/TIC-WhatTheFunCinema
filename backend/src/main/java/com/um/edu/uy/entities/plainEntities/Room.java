@@ -1,4 +1,5 @@
 package com.um.edu.uy.entities.plainEntities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.um.edu.uy.entities.ids.RoomID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,12 +12,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @Builder
+@ToString
 @IdClass(RoomID.class)
 @Entity
 public class Room {
 
     @Id
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "theatre", referencedColumnName = "location")
     private Theatre theatre;
 

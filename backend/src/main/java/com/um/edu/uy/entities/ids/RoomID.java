@@ -14,6 +14,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RoomID implements Serializable {
     private String theatre;
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int room_number;
 }

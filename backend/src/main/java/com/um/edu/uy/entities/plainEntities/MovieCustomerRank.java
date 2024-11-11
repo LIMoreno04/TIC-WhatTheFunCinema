@@ -21,7 +21,7 @@ public class MovieCustomerRank {
     private Movie movieId;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customerEmail;
 
     @NotNull

@@ -61,7 +61,7 @@ const neonTheme = createTheme({
             },
           },
           contained: {
-            fontFamily: 'InfinityRegular',
+            fontFamily: 'InfinityThin',
             backgroundColor: '#a805ad', // Neon purple
             color: '#ffffff', // Neon cyan text
             textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc',
@@ -112,6 +112,16 @@ const neonTheme = createTheme({
               color: '#52566a',
               borderColor: '#52566a',
               boxShadow: 'none',
+            },
+          },
+          superFancy: {
+            background: 'linear-gradient(45deg, cyan, pink)',
+            color: 'white',
+            fontWeight: 'bold',
+            boxShadow: '0 0 5px cyan, 0 0 10px pink',
+            '&:hover': {
+              background: 'linear-gradient(45deg, pink, cyan)',
+              boxShadow: '0 0 10px pink, 0 0 15px cyan',
             },
           },
         },
