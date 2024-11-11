@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Container, Paper, Typography, Button, InputAdornment, IconButton, Tooltip, CircularProgress } from '@mui/material';
+import { Container, Paper, Typography, Button, InputAdornment, IconButton, Tooltip, CircularProgress, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -98,7 +98,7 @@ export default function LoginForm() {
   if (userRole==='notLoggedIn') {
     return (
       <Container>
-        <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
+        <Paper elevation={24} style={paperStyle} sx={{borderRadius:'10px', border:'2px solid #9df8fc',backgroundColor: '#191331'}}>
           <Typography
             variant="h4"
             align="center"
@@ -165,13 +165,52 @@ export default function LoginForm() {
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Enviar'}
             </Button>
           </Box>
+          <Divider
+          sx={{
+            height: '1px',
+            backgroundColor: '#ffffff', // Neon cyan color
+            boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff', // Neon glow effect
+            marginTop: 5,
+            marginBottom: 1,
+          }}
+        />
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={7}
+          mt={3}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography
+              variant="neonPink"
+              fontSize={'0.9rem'}
+              mb={1}
+              sx={{
+                color: '#ffffff',
+                textShadow: '0 0 5px #0ff0fc',
+              }}
+            >
+              ¿Aún no estás registrado?
+            </Typography>
+
+            <Button
+              onClick={() => navigate('/signup')}
+              variant='contained' sx={{width:'170px', padding:'7px', fontSize:'1rem'}}
+            >
+              Registrarse
+            </Button>
+          </Box>
+        </Box>
+
         </Paper>
       </Container>
     );
   } else {
     return (
       <Container>
-        <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
+        <Paper elevation={24} style={paperStyle} sx={{border:'2px solid #9df8fc',backgroundColor: '#191331'}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }} alignItems={'center'}>
             <Typography variant='neonCyan' fontFamily={'InfinityThin'} sx={{fontSize: '35px'}}>
               sesión iniciada con exito

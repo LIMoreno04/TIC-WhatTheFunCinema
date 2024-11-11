@@ -28,6 +28,8 @@ public class TheatreService {
     }
     public List<Theatre> findAll() { return theatreRepo.findAll(); }
 
+    public List<String> findAllLocations() {return theatreRepo.findAllLocations();}
+
     public List<Room> findAllRooms(String location) throws InvalidDataException {return roomRepo.findAllByTheatre(findByLocation(location)).orElse(new LinkedList<>()); }
 
     public Theatre addTheatre(String location) throws InvalidDataException {

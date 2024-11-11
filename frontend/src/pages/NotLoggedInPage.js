@@ -33,10 +33,10 @@ function NotLoggedInPage() {
 
         <Divider
           sx={{
-            height: '2px',
+            height: '1px',
             backgroundColor: '#ffffff', // Neon cyan color
             boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff', // Neon glow effect
-            marginTop: 10,
+            marginTop: 15,
             marginBottom: 1,
           }}
         />

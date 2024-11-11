@@ -84,7 +84,7 @@ const NewTheatreForm = () => {
           <CircularProgress color="primary" />
         </Overlay>
       )}
-      <Paper sx={{ padding: '50px', paddingTop: '30px', display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400, margin: 'auto', opacity: loading ? 0.5 : 1 }}>
+      <Paper sx={{minWidth:'420px', border:'2px solid #9df8fc', borderRadius:'30px', padding: '70px', paddingTop: '50px', display: 'flex', flexDirection: 'column', gap: 5, maxWidth: 500, margin: 'auto', opacity: loading ? 0.5 : 1 }}>
         <Typography variant='neonPink' fontSize={'40px'}>Agregar sucursal</Typography>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <TextField

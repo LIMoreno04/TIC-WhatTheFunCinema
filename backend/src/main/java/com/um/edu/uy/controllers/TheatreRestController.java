@@ -22,8 +22,8 @@ public class TheatreRestController {
     @Autowired
     TheatreService theatreService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Theatre>> findAll() { return ResponseEntity.ok(theatreService.findAll()); }
+    @GetMapping("/allLocations")
+    public ResponseEntity<List<String>> findAll() { return ResponseEntity.ok(theatreService.findAllLocations()); }
 
 
     @PostMapping("/add")

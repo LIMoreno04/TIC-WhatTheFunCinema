@@ -6,14 +6,15 @@ import { es } from 'date-fns/locale'; // Use 'es' locale for Spanish
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip, CircularProgress } from '@mui/material';
+import { Container, Paper, Typography, Button, IconButton, InputAdornment, Tooltip, CircularProgress, Divider } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function SignupForm() {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto' };
-
+  const navigate = useNavigate();
 
   const countries = [
     { code: "UY", label: "Uruguay", phone: '598' },
@@ -147,7 +148,7 @@ export default function SignupForm() {
   if (userRole === 'notLoggedIn') {
     return (
       <Container sx={{ mt: '-3%' }}>
-        <Paper elevation={24} style={paperStyle}>
+        <Paper elevation={24} style={paperStyle} sx={{border:'2px solid #9df8fc'}}>
           <Typography
             variant="h4"
             align="center"
@@ -380,13 +381,52 @@ export default function SignupForm() {
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Enviar'}
             </Button>
           </Box>
+
+          <Divider
+          sx={{
+            height: '1px',
+            backgroundColor: '#ffffff', // Neon cyan color
+            boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff', // Neon glow effect
+            marginTop: 5,
+            marginBottom: 1,
+          }}
+        />
+          <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          gap={7}
+          mt={3}
+        >
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography
+              variant="neonPink"
+              fontSize={'0.9rem'}
+              mb={1}
+              sx={{
+                color: '#ffffff',
+                textShadow: '0 0 5px #0ff0fc',
+              }}
+            >
+              ¿Ya tienes cuenta?
+            </Typography>
+
+            <Button
+              onClick={() => navigate('/login')}
+              variant='contained' sx={{width:'170px', padding:'7px', fontSize:'1rem'}}
+            >
+              Iniciar sesión
+            </Button>
+          </Box>
+        </Box>
+
         </Paper>
       </Container>
     );
   } else {
     return (
       <Container>
-        <Paper elevation={24} style={paperStyle} sx={{backgroundColor: '#191331'}}>
+        <Paper elevation={24} style={paperStyle} sx={{border:'2px solid #9df8fc',backgroundColor: '#191331'}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }} alignItems={'center'}>
             <Typography variant='neonCyan' fontFamily='InfinityThin' sx={{fontSize: '35px'}}>
               cuenta creada con exito

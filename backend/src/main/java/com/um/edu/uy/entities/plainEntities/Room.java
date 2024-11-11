@@ -18,7 +18,7 @@ import java.util.List;
 public class Room {
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "theatre", referencedColumnName = "location")
     private Theatre theatre;

@@ -65,7 +65,8 @@ const neonTheme = createTheme({
             backgroundColor: '#a805ad', // Neon purple
             color: '#ffffff', // Neon cyan text
             textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc',
-            boxShadow: '0 0 30px #a805ad, 0 0 20px #a805ad, inline 0 0 15px #a805ad', // Purple glow
+            boxShadow: '0 0 5px #7a007a, 0 0 10px #a805ad, 0 0 5px #a805ad', // Purple glow
+            transition: 'transform 0.2s ease, box-shadow 2s ease',
             '&:hover': {
               transform: 'scale(1.02)',
               backgroundColor: '#7a007a', // Darker purple on hover

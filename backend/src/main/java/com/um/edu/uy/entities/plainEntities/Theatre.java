@@ -1,9 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -17,7 +14,7 @@ public class Theatre {
 
     @Id
     private String location;
-    @OneToMany(mappedBy = "theatre", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "theatre", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Room> rooms;
 
 }
