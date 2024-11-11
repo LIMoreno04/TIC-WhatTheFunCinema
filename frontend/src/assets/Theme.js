@@ -65,13 +65,13 @@ const neonTheme = createTheme({
             backgroundColor: '#a805ad', // Neon purple
             color: '#ffffff', // Neon cyan text
             textShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc, 0 0 15px #0ff0fc',
-            boxShadow: '0 0 1px #a805ad, 0 0 3px #a805ad', // Purple glow
+            boxShadow: '0 0 30px #a805ad, 0 0 20px #a805ad, inline 0 0 15px #a805ad', // Purple glow
             '&:hover': {
               transform: 'scale(1.02)',
               backgroundColor: '#7a007a', // Darker purple on hover
               color: '#0ff0fc', // Neon pink text on hover
               textShadow: '0 0 20px #0ff0fc, 0 0 10px #0ff0fc, 0 0 10px #0ff0fc',
-              boxShadow: '0 0 1px #7a007a, 0 0 3px #7a007a', // Enhanced purple glow
+              boxShadow: '0 0 10px #7a007a, 0 0 30px #7a007a', // Enhanced purple glow
             },
           },
           outlinedPink: {
