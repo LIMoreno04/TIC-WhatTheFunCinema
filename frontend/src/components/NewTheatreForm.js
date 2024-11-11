@@ -88,7 +88,7 @@ const NewTheatreForm = () => {
         <Typography variant='neonPink' fontSize={'40px'}>Agregar sucursal</Typography>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <TextField
-          label="Location"
+          label="Ubicación"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
