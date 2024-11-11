@@ -3,6 +3,7 @@ package com.um.edu.uy;
 import com.um.edu.uy.controllers.UserRestController;
 import com.um.edu.uy.entities.plainEntities.Employee;
 import com.um.edu.uy.exceptions.InvalidDataException;
+import com.um.edu.uy.services.CustomerService;
 import com.um.edu.uy.services.EmployeeService;
 import com.um.edu.uy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 @SpringBootApplication
 public class TicWtfcinemaApplication {
@@ -19,7 +21,7 @@ public class TicWtfcinemaApplication {
 	private EmployeeService employeeService;
 
 	@Autowired
-	private UserRestController userRestController;
+	private CustomerService customerService;
 
 	public static void main(String[] args) throws InvalidDataException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);

@@ -1,16 +1,12 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.CardDTO;
-import com.um.edu.uy.entities.plainEntities.Card;
-import com.um.edu.uy.entities.plainEntities.Customer;
+import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.entities.DTOs.UserDTO;
-import com.um.edu.uy.entities.plainEntities.Reservation;
-import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.services.CardService;
 import com.um.edu.uy.services.CustomerService;
 import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -22,8 +18,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,9 +36,6 @@ public class CustomerRestController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CardService cardService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -88,6 +82,12 @@ public class CustomerRestController {
         return ResponseEntity.ok(newCustomer);
     }
 
+    @GetMapping("/current")
+    public ResponseEntity<Customer> getCurrentAccount(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        System.out.println(customer.getEmail());
+        return ResponseEntity.ok(customer);
+    }
 
     @PostMapping("/makeReservation")
     public ResponseEntity<Reservation> makeReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) throws InvalidDataException {
@@ -104,6 +104,71 @@ public class CustomerRestController {
         }
     }
 
+
+    @PostMapping("/addCard")
+    public ResponseEntity<?> addCard(@Valid @RequestBody CardDTO cardDTO, HttpSession session) {
+        // Validate Card Number: must be numeric and 16 digits
+        if (!cardDTO.getCardNumber().matches("\\d{16}")) {
+            return new ResponseEntity<>("Número de tarjeta inválido. Debe tener 16 dígitos numéricos.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate CVV: must be numeric and either 3 or 4 digits
+        if (!cardDTO.getCvv().matches("\\d{3,4}")) {
+            return new ResponseEntity<>("CVV inválido. Debe ser un número de 3 o 4 dígitos.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate Expiration Date: must be in the format MM/YY and not expired
+        try {
+            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(), DateTimeFormatter.ofPattern("MM/yy"));
+            if (YearMonth.now().isAfter(expirationDate)) {
+                return new ResponseEntity<>("La tarjeta ha expirado. Por favor, use una tarjeta válida.", HttpStatus.BAD_REQUEST);
+            }
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Fecha de vencimiento inválida. Use el formato MM/YY.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate Holder Name: must not be empty
+        if (cardDTO.getHolderName() == null || cardDTO.getHolderName().trim().isEmpty()) {
+            return new ResponseEntity<>("El nombre del titular no puede estar vacío.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate Card Type: must match a valid CardType enum value
+        try {
+            CardType.valueOf(cardDTO.getCardType()); // Throws exception if invalid
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("Tipo de tarjeta inválido. Por favor, seleccione un tipo de tarjeta válido.", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            // Retrieve the customer from session and add the card
+            Customer customer = (Customer) session.getAttribute("user");
+            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(), DateTimeFormatter.ofPattern("MM/yy"));
+            Card newCard = customerService.addCard(
+                    customer.getEmail(),
+                    CardType.valueOf(cardDTO.getCardType()).getType(),
+                    cardDTO.getHolderName(),
+                    cardDTO.getCardNumber(),
+                    expirationDate,
+                    cardDTO.getCvv()
+            );
+            return ResponseEntity.ok(newCard);
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @DeleteMapping("/removeCard")
+    public ResponseEntity<?> removeCard(@RequestBody CardDTO cardDTO, HttpSession session) {
+        try {
+            customerService.removeCard(((Customer) session.getAttribute("user")).getEmail(), cardDTO.getCardNumber());
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+         catch (InvalidDataException e) {
+             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+         }
+    }
+
     // Exception handler for validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -118,26 +183,4 @@ public class CustomerRestController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-
-    @PostMapping("/addCard")
-    public ResponseEntity<?> addCard(@Valid @RequestBody CardDTO cardDTO) {
-        YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate());
-        String cardType = CardType.valueOf(cardDTO.getCardType()).getType();
-
-        //Chequear que sea valido y tirar errores si no (longitudes de los numeros, si no expiró, etc)
-
-
-        try {
-            Card newCard = cardService.addCard(cardType, cardDTO.getHolderName(), cardDTO.getCardNumber(), expirationDate, cardDTO.getCvv());
-            return new ResponseEntity<>(newCard, HttpStatus.CREATED);
-        } catch (InvalidDataException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @DeleteMapping("/removeCard")
-    public ResponseEntity<?> removeCard(@PathVariable long cardNumber) {
-        cardService.removeCard(cardNumber);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }

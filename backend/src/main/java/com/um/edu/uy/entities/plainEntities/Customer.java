@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Customer extends User {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "customer_card",
             joinColumns = @JoinColumn(name = "email"),
@@ -28,10 +28,10 @@ public class Customer extends User {
         super(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
     }
 
-    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations;
 
-    @OneToMany(mappedBy = "customerEmail", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "customerEmail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovieCustomerRank> ratings;
 
 }

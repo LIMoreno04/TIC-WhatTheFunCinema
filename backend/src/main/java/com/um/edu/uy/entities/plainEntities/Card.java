@@ -1,14 +1,10 @@
 package com.um.edu.uy.entities.plainEntities;
 
-import com.um.edu.uy.enums.CardType;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.YearMonth;
 import java.util.List;
 
 @Getter
@@ -31,10 +27,10 @@ public class Card {
     @NotNull
     private String expirationDate;
 
-    @NotNull
-    private int cvv;
+    private @NotNull String cvv;
 
     @NotNull
-    @ManyToMany(mappedBy = "paymentMethods",cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToMany(mappedBy = "paymentMethods",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Customer> customerList;
 }

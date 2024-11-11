@@ -127,7 +127,8 @@ function ResponsiveAppBar() {
         }
       })
       .catch((error) => console.error('Error during logout:', error));
-  };
+      navigate("/home");
+    };
 
   return (
     <AppBar sx={{ height: TOOLBAR_HEIGHT_PERCENT, minHeight: TOOLBAR_MIN_HEIGHT }} position="fixed" className = {scrolled ? 'scrolled' : ''}>

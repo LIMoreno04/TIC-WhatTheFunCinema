@@ -1,6 +1,5 @@
 package com.um.edu.uy.entities.DTOs;
 
-import com.um.edu.uy.enums.CardType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,6 +18,5 @@ public class CardDTO {
     @NotNull
     private String expirationDate;
 
-    @NotNull
-    private int cvv;
+    private @NotNull String cvv;
 }
