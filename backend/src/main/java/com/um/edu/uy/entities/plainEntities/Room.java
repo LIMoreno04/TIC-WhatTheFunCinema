@@ -21,7 +21,6 @@ public class Room {
     private Theatre theatre;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int room_number;
 
     @NotNull

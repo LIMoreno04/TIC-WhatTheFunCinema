@@ -413,7 +413,7 @@ const countries = [
                     {/*tarjetas - card*/}
                     <Box flex={1} display={'flex'} flexDirection={'column'}>
                             <Typography marginBottom={'3vh'} variant='neonCyan' fontSize={'3vh'}>Métodos de pago</Typography>
-                            <PaymentMethodsDisplay cards={userData.paymentMethods}/>
+                            <PaymentMethodsDisplay cards={userData.paymentMethods ? userData.paymentMethods : []}/>
                     </Box>
                 
                 </Box>

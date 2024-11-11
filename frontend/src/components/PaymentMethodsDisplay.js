@@ -152,39 +152,48 @@ const PaymentMethodsDisplay = ({ cards }) => {
     >
 
 
-      {cards.map((card, index) => (
-        <Paper 
-          key={index}
-          sx={{
-            padding: 3,
-            paddingLeft: 3.5,
-            backgroundColor: '#18181c',
-            textAlign: 'left',
-            mb: '50px',
-            border: `2px solid #9df8fc`, 
-            boxShadow: `
-              inset 0 0 15px #0ff0fc,   
-              0 0 15px #0ff0fc,         
-              0 0 5px #0ff0fc`,
-              borderRadius:'40px',
-            position: 'relative',
-          }}
-        >
-          <Box display={'flex'} flexDirection={'row'}>
-            <Box flex={8} display={'flex'} flexDirection={'column'}>
-              <Typography variant="neonCyan">{card.cardType}</Typography>
-              <Typography variant="neonPink" fontSize={'1.2rem'}>{maskCardNumber(card.cardNumber)}</Typography>
-              <Typography variant="neonCyan">{card.holderName}</Typography>
-              <Typography variant="neonCyan">Exp: {card.expirationDate}</Typography>
+      {cards && cards.length > 0 ? (
+        cards.map((card, index) => (
+          <Paper 
+            key={index}
+            sx={{
+              padding: 3,
+              paddingLeft: 3.5,
+              backgroundColor: '#18181c',
+              textAlign: 'left',
+              mb: '50px',
+              border: `2px solid #9df8fc`, 
+              boxShadow: `
+                inset 0 0 15px #0ff0fc,   
+                0 0 15px #0ff0fc,         
+                0 0 5px #0ff0fc`,
+              borderRadius: '40px',
+              position: 'relative',
+            }}
+          >
+            <Box display={'flex'} flexDirection={'row'}>
+              <Box flex={8} display={'flex'} flexDirection={'column'}>
+                <Typography variant="neonCyan">{card.cardType}</Typography>
+                <Typography variant="neonPink" fontSize={'1.2rem'}>
+                  {maskCardNumber(card.cardNumber)}
+                </Typography>
+                <Typography variant="neonCyan">{card.holderName}</Typography>
+                <Typography variant="neonCyan">Exp: {card.expirationDate}</Typography>
+              </Box>
+              <Box flex={1} display={'flex'} flexDirection={'column'} alignItems={'flex-end'}>
+                <IconButton onClick={() => handleOpenDeleteDialog(card)} sx={{ color: '#a805ad' }}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
             </Box>
-            <Box flex={1} display={'flex'} flexDirection={'column'} alignItems={'flex-end'}>
-              <IconButton onClick={() => handleOpenDeleteDialog(card)} sx={{ color: '#a805ad' }}>
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        </Paper>
-      ))}
+          </Paper>
+        ))
+      ) : (
+        <Typography variant="body1" color="textSecondary" align="center">
+          No cards available
+        </Typography>
+      )}
+
 
       <Paper
         onClick={handleOpenDialog}

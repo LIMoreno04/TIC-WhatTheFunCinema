@@ -45,7 +45,7 @@ const MENU_MARGIN_TOP_PERCENT = '5%';
 const pages = ['cartelera', 'sucursales', 'contacto'];
 const paths = ['/movies', '/theatres', '/contact'];
 const customerSettings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
-const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado', 'Cerrar sesión'];
+const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado','Agregar sucursal', 'Cerrar sesión'];
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar() {
@@ -88,8 +88,10 @@ function ResponsiveAppBar() {
     } else if (setting === employeeSettings[2]) {
       navigate('/addEmployee');
       handleCloseUserMenu();
-    }
-    else {
+    } else if (setting === employeeSettings[3]) {
+      navigate('/addTheatre');
+      handleCloseUserMenu();
+    } else {
       handleCloseUserMenu();
     }
   };

@@ -10,6 +10,7 @@ import MoviesPage from './pages/Movies';
 import MyAccountPage from './pages/Account';
 import neonTheme from './assets/Theme';
 import AddEmployeePage from './pages/AddEmployee';
+import NewTheatrePage from './pages/AddTheatre';
 
 function App() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function App() {
           <Route path='/movies' element={<MoviesPage />} />
           <Route path='/account' element={<MyAccountPage />} />
           <Route path='/addEmployee' element={<AddEmployeePage/>} />
+          <Route path='/addTheatre' element={<NewTheatrePage/>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </ThemeProvider>

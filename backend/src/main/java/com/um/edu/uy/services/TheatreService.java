@@ -34,13 +34,16 @@ public class TheatreService {
         if (location == null) {
             throw new InvalidDataException("Ingrese la localidad.");
         }
+        if (theatreRepo.existsById(location)) {
+            throw new InvalidDataException("Ya se tiene registro de esa sucursal.");
+        }
         Theatre theatre = Theatre.builder()
-                .location(location)
+                .location(location).rooms(new LinkedList<>())
                 .build();
         return theatreRepo.save(theatre);
     }
 
-    public void addRoomToTheatre(String location, int rows, int cols) {
+    public void addRoomToTheatre(String location, int rows, int cols) throws InvalidDataException {
         Optional<Theatre> result = theatreRepo.findByLocation(location);
         if (result.isPresent()) {
             Theatre theatre = result.get();
@@ -50,7 +53,8 @@ public class TheatreService {
                     .rows(rows)
                     .build();
             theatre.getRooms().add(room);
-        }
+            roomRepo.save(room);
+        } else {throw new InvalidDataException("Sucursal no existe.");}
     }
 
     public void addTheatreWithRooms(String location, int numberOfRooms) throws InvalidDataException {
