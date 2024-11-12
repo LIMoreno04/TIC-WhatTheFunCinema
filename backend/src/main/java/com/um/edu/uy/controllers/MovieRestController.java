@@ -96,7 +96,7 @@ public class MovieRestController {
                 PGRating
         );
 
-        return ResponseEntity.ok(newMovie);
+        return ResponseEntity.ok("Película agregada.");
     }
 
 
