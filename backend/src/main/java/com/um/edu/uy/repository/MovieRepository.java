@@ -16,20 +16,20 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     public Optional<List<Movie>> findByTitleContainingIgnoreCase(String title);
 
 
-    @Query("SELECT DISTINCT m FROM Movie m " +
+    @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
             "JOIN m.screenings s " +
             "WHERE s.date_and_time < :nextWeek " +
             "AND s.date_and_time > :previousWeek")
-    Optional<List<Movie>> findAllOnDisplay(LocalDateTime previousWeek, LocalDateTime nextWeek);
+    Optional<List<Object[]>> findAllOnDisplay(LocalDateTime previousWeek, LocalDateTime nextWeek);
 
-    @Query("SELECT DISTINCT m FROM Movie m " +
+    @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
             "JOIN m.screenings s " +
             "WHERE s.date_and_time > :currentTime " +
             "AND NOT EXISTS (" +
             "   SELECT 1 FROM Screening past WHERE past.movie = m " +
             "   AND past.date_and_time BETWEEN :previousWeek AND :currentTime" +
             ")")
-    Optional<List<Movie>> findAllComingSoon(LocalDateTime previousWeek, LocalDateTime currentTime);
+    Optional<List<Object[]>> findAllComingSoon(LocalDateTime previousWeek, LocalDateTime currentTime);
     public Optional<List<Movie>> findByDirector(String director);
 
     public Optional<List<Movie>> findByPGRating(String pgrating);

@@ -22,7 +22,7 @@ const Overlay = styled(Box)({
   zIndex: 9999,
 });
 
-const NewTheatreForm = () => {
+const NewTheatreForm = ({onAdd}) => {
   const [location, setLocation] = useState('');
   const [numberOfRooms, setNumberOfRooms] = useState(8);
   const [error, setError] = useState('');
@@ -65,7 +65,8 @@ const NewTheatreForm = () => {
           setError("Error procesando la respuesta del servidor.");
         }
       } else if (response.ok) {
-        alert("Sucursal agregada a la base de datos!");
+        onAdd();
+        alert("Sucursal agregada correctamente!");
       } else {
         setError(`Error inesperado: ${response.status}`);
       }

@@ -7,6 +7,8 @@ import com.um.edu.uy.enums.PGRating;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.GenreService;
 import com.um.edu.uy.services.MovieService;
+import jakarta.servlet.http.HttpSession;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -37,7 +40,7 @@ public class MovieRestController {
 
 
     @PostMapping(value = "/addMovie", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addMovie(
+    public ResponseEntity<?> addMovie( HttpSession session,
             @RequestParam("title") String title,
             @RequestParam("duration") String duration,
             @RequestParam("description") String description,
@@ -46,58 +49,79 @@ public class MovieRestController {
             @RequestParam("genres") List<String> genres,
             @RequestParam("PGRating") String PGRating,
             @RequestParam("poster") MultipartFile poster) {
+        if (session.getAttribute("role").equals("employee")) {
 
-        Map<String, String> errors = new HashMap<>();
+            Map<String, String> errors = new HashMap<>();
 
-        // Duration validation
-        try {
-            LocalTime.parse(duration);
-        } catch (Exception e) {
-            errors.put("duration", "Formato de duración inválido. Use el formato HH:mm:ss.");
-        }
+            // Duration validation
+            try {
+                LocalTime.parse(duration);
+            } catch (Exception e) {
+                errors.put("duration", "Formato de duración inválido. Use el formato HH:mm:ss.");
+            }
 
-        // PG Rating validation
-        if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", PGRating)) {
-            errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R, o NC-17.");
-        }
+            // PG Rating validation
+            if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", PGRating)) {
+                errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R, o NC-17.");
+            }
 
-        // Return validation errors if any
-        if (!errors.isEmpty()) {
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
+            // Return validation errors if any
+            if (!errors.isEmpty()) {
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            }
 
-        // Genre handling
-        List<Genre> genreList = new LinkedList<>();
-        for (String genreName : genres) {
-            genreList.add(genreService.findByGenreNameElseAdd(genreName));
-        }
+            // Genre handling
+            List<Genre> genreList = new LinkedList<>();
+            for (String genreName : genres) {
+                genreList.add(genreService.findByGenreNameElseAdd(genreName));
+            }
 
-        // Parse other fields
-        LocalTime parsedDuration = LocalTime.parse(duration);
-        LocalDate parsedReleaseDate = LocalDate.parse(releaseDate);
+            // Parse other fields
+            LocalTime parsedDuration = LocalTime.parse(duration);
+            LocalDate parsedReleaseDate = LocalDate.parse(releaseDate);
 
-        // Convert MultipartFile to byte array
-        byte[] posterBytes;
-        try {
-            posterBytes = poster.getBytes();
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
-        }
+            // Convert MultipartFile to byte array
+            byte[] posterBytes;
+            try {
+                posterBytes = poster.getBytes();
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
+            }
 
-        // Create and save the movie
-        Movie newMovie = movieService.addMovie(
-                title,
-                parsedDuration,
-                description,
-                parsedReleaseDate,
-                director,
-                genreList,
-                posterBytes,
-                PGRating
-        );
+            // Create and save the movie
+            Movie newMovie = movieService.addMovie(
+                    title,
+                    parsedDuration,
+                    description,
+                    parsedReleaseDate,
+                    director,
+                    genreList,
+                    posterBytes,
+                    PGRating
+            );
 
-        return ResponseEntity.ok("Película agregada.");
+            return ResponseEntity.ok("Película agregada.");
+        } else { return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sin permisos."); }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMovieById(@PathVariable Long id) {
+        try {
+            Movie movie = movieService.findById(id);
+
+            // Encode the byte array to a Base64 string
+            String posterBase64 = Base64.getEncoder().encodeToString(movie.getPoster());
+            MovieDTO movieDTO = getMovieDTO(movie, posterBase64);
+
+            return ResponseEntity.ok(movieDTO);
+
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Película con id "+id+" no encontrada.");
+        }
+
+    }
+
+
 
 
     @GetMapping("/all")
@@ -111,14 +135,28 @@ public class MovieRestController {
         }
     }
 
+    @GetMapping("/allGenres")
+    public ResponseEntity<List<String>> allGenres() {
+        return ResponseEntity.ok(genreService.findAllGetNames());
+    }
+
     @GetMapping("/allOnDisplay")
-    public ResponseEntity<List<Movie>> showAllMoviesOnDisplay() {
-        List<Movie> moviesOnDisplay = movieService.findAllMoviesOnDisplay();
+    public ResponseEntity<List<HashMap<String,Object>>> showAllMoviesOnDisplay() {
+        List<Object[]> moviesOnDisplay = movieService.findAllMoviesOnDisplay();
 
         if (moviesOnDisplay.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(moviesOnDisplay);
+            List<HashMap<String,Object>> trueMoviesOnDisplay = new LinkedList<>();
+            for (Object[] movieData : moviesOnDisplay) {
+                HashMap<String, Object> movieOnDisplay = new HashMap<>();
+                movieOnDisplay.put("Id",movieData[0]);
+                movieOnDisplay.put("poster",movieData[1]);
+                movieOnDisplay.put("title",movieData[2]);
+                movieOnDisplay.put("PGRating",movieData[3]);
+                trueMoviesOnDisplay.add(movieOnDisplay);
+            }
+            return ResponseEntity.ok(trueMoviesOnDisplay);
         }
     }
 
@@ -187,5 +225,75 @@ public class MovieRestController {
             return ResponseEntity.ok(movie);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @NotNull
+    private static MovieDTO getMovieDTO(Movie movie, String posterBase64) {
+        List<String> genres = new LinkedList<>();
+        for (Genre genre: movie.getGenres()) {
+            genres.add(genre.getGenreName());
+        }
+        // Create a DTO or populate fields with Base64 encoded image
+        MovieDTO movieDTO = new MovieDTO(movie.getId(), movie.getTitle(), movie.getDuration().toString(), movie.getDescription(), movie.getReleaseDate().toString(), movie.getDirector(), genres,"data:image/jpeg;base64,"+ posterBase64, movie.getPGRating());
+        movieDTO.setId(movie.getId());
+        movieDTO.setTitle(movie.getTitle());
+        movieDTO.setPoster("data:image/jpeg;base64," + posterBase64); // Prefix with data URI scheme
+        return movieDTO;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -6,6 +6,7 @@ import com.um.edu.uy.repository.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class GenreService {
@@ -25,6 +26,8 @@ public class GenreService {
         else {throw new InvalidDataException("Genre not found");
         }
     }
+
+    public List<String> findAllGetNames() {return genreRepo.findAllGetNames();}
 
     public Genre findByGenreNameElseAdd(String genreName) {
         Optional<Genre> result = genreRepo.findByGenreName(genreName);

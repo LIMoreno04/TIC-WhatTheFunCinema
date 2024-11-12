@@ -5,7 +5,7 @@ import NewMovieForm from "../components/NewMovieForm";
 export default function NewMoviePage() {
  
     return (
-        <Box mt={15}>
+        <Box>
         <NewMovieForm></NewMovieForm>
         </Box>
     )

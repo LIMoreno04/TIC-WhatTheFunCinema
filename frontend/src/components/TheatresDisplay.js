@@ -69,7 +69,7 @@ const TheatresDisplay = ({ userRole }) => {
           display={'inline-flex'} 
           position="relative"  // Ensure the Box is positioned relatively
         >
-          <NewTheatreForm />
+          <NewTheatreForm onAdd={fetchTheatres}/>
           <IconButton
             onClick={() => setShowForm(false)}
             sx={{
@@ -97,6 +97,7 @@ const TheatresDisplay = ({ userRole }) => {
           backgroundColor: 'rgba(0,0,0,0.3)',
           width: '60vw',
           minHeight: '65vh',
+          maxHeight: '75vh',
           overflowY: 'auto',
           opacity: loading ? 0.5 : 1,
           '&::-webkit-scrollbar': {

@@ -47,7 +47,9 @@ public class MovieService {
 
         return movieRepo.save(movie);
     }
-
+    public Movie findById(Long id) throws InvalidDataException {
+        return movieRepo.findById(id).orElseThrow(()->new InvalidDataException("Movie not found"));
+    }
     public List<Movie> getAllMovies() {
         return movieRepo.findAll();
     }
@@ -60,11 +62,11 @@ public class MovieService {
         movieRepo.delete(movie);
     }
 
-    public List<Movie> findAllMoviesOnDisplay() {
+    public List<Object[]> findAllMoviesOnDisplay() {
         return movieRepo.findAllOnDisplay(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
-    public List<Movie> findAllMoviesComingSoon() {
+    public List<Object[]> findAllMoviesComingSoon() {
         return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()).orElse(new LinkedList<>());
     }
 

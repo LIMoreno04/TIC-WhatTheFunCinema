@@ -101,6 +101,16 @@ function ResponsiveAppBar({userRole, onUpdate}) {
   const handleCloseNavMenu = () => setAnchorElNav(null);
   const handleCloseUserMenu = () => setAnchorElUser(null);
 
+  React.useEffect(()=> {
+    //Periodic update
+    console.log("updated appbar.")
+    const intervalId = setInterval(onUpdate,600000);
+    return () => clearInterval(intervalId);
+  }, [])
+
+
+
+
   const handleLogout = () => {
     fetch('http://localhost:8080/api/user/logout', {
       method: 'POST',

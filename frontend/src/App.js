@@ -14,6 +14,7 @@ import NewTheatrePage from './pages/AddTheatre';
 import { useEffect, useState } from 'react';
 import TheatresPage from './pages/Theatres';
 import NewMoviePage from './pages/AddMovie';
+import { Box } from '@mui/material';
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
   return (
       <ThemeProvider theme={neonTheme}>
         <ResponsiveAppBar userRole={userRole} onUpdate={fetchRole}/>
+        <Box pt={17}>
         <Routes>
           <Route path='/home' element={<HomePage />} />
           <Route path='/' element={<HomePage />} />
@@ -49,9 +51,10 @@ function App() {
           <Route path='/theatres' element={<TheatresPage userRole={userRole}/>}/>
           <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
           <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
-          <Route path='/addMovie' element={<NewMoviePage/>}/>
+          <Route path='/addMovie' element={userRole==="employee" ? <NewMoviePage/> : <NotFound/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
+        </Box>
       </ThemeProvider>
   );
 }

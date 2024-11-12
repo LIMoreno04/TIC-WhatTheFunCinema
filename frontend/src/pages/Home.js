@@ -6,6 +6,7 @@ export default function HomePage() {
   const isSmallScreen = useMediaQuery('(max-width:900px)');
 
   return (
+    <Box mt={-17}>
     <div
       style={{
         position: 'relative',
@@ -48,10 +49,15 @@ export default function HomePage() {
           borderRadius: '2vw',
         }}
       >
-        <Typography
-          variant="neonCyan"
-          fontSize={isSmallScreen ? '8vw' : '2vw'}
-        >
+              <Typography
+        variant="h1"
+        sx={{
+          fontFamily: 'InfinityRegular',
+          fontSize: isSmallScreen ? '8vw' : '2vw',
+          color: '#f7bedf', // Neon pink text color
+          textShadow: '0 0 5px #ff0090, 0 0 10px #ff0090, 0 0 15px #ff0090',
+        }}
+      >
           Comprar entradas
         </Typography>
         {/* Add additional content here */}
@@ -87,5 +93,6 @@ export default function HomePage() {
         </Typography>
       </Box>
     </div>
+    </Box>
   );
 }

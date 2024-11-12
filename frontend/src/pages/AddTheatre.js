@@ -5,7 +5,7 @@ import NewTheatreForm from "../components/NewTheatreForm";
 export default function NewTheatrePage() {
 
     return (
-        <Box mt={20}>
+        <Box>
         <NewTheatreForm></NewTheatreForm>
         </Box>
     )

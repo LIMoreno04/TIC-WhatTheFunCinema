@@ -180,11 +180,14 @@ const countries = [
         <ThemeProvider theme={neonTheme}>
             <Paper 
             sx={{
+                minHeight:'700px',
+                maxHeight:'75vh',
                 width: '70vw',
                 minWidth: '925px',
                 margin: '20px auto',
                 paddingX: '2.5vw',
-                paddingY: '4vh',
+                paddingTop: '2vh',
+                paddingBottom: '4vh',
                 backgroundColor: '#191331',
                 textAlign: 'center',
                 boxShadow: 'inset 0 0 15px #a805ad, 0 0 25px #a805ad, 0 0 45px #0ff0fc',
@@ -195,7 +198,7 @@ const countries = [
                     Perfil {console.log(userData)}
                 </Typography>
                 
-                <Box display={'flex'} flexDirection={'row'}>
+                <Box display={'flex'} flexDirection={'row'} sx={{maxHeight:'clamp(620px,67vh,67vh)'}}>
                 
                     {/*datos del perfil*/}
                     <Box flex={1} display={'flex'} flexDirection={'column'}>
@@ -416,14 +419,15 @@ const countries = [
                         />
                     
                     {/*tarjetas - card*/}
-                    <Box flex={1} display={'flex'} flexDirection={'column'}>
+                    <Box flex={1} display={'flex'} flexDirection={'column'} backgroundColor={''} sx={{maxHeight:'inherit'}}>
                             <Typography marginBottom={'3vh'} variant='neonCyan' fontSize={'30px'}>Métodos de pago</Typography>
                             <PaymentMethodsDisplay cards={userData.paymentMethods ? userData.paymentMethods : []} onUpdate={fetchUserData}/>
                     </Box>
                 
                 </Box>
+            </Paper>
 
-                <Dialog open={openDialog} onClose={handleDialogClose}>
+            <Dialog open={openDialog} onClose={handleDialogClose}>
                     <DialogTitle>Editar {fieldLabels[currentField] ? fieldLabels[currentField].toLowerCase() : 'ERROR'}</DialogTitle>
                     <DialogContent>
                         {currentField === 'cel' ? (
@@ -596,8 +600,6 @@ const countries = [
                     </DialogActions>
                 </Dialog>
 
-
-            </Paper>
         </ThemeProvider>
     );
 }

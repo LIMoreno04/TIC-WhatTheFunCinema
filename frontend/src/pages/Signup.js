@@ -3,7 +3,7 @@ import SignupForm from "../components/SignupForm";
 
 export default function SignupPage() {
     return (
-      <Box mt={20}>
+      <Box>
         <SignupForm/>
       </Box>
     );

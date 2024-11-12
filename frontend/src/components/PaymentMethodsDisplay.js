@@ -125,7 +125,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
   };
 
   return (
-    <Box
+    <Paper
       sx={{
         boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
         borderRadius: '40px',
@@ -133,7 +133,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
         py: 5,
         px: 5,
         backgroundColor: 'rgba(0,0,0,0.3)',
-        maxHeight: '51vh',
+        maxHeight: 'inherit',
         overflowY: 'auto',
         // Hiding the scrollbar
         '&::-webkit-scrollbar': {
@@ -300,7 +300,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Paper>
   );
 };
 

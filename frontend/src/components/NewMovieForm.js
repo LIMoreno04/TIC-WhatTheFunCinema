@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextField, Button, Typography, Box, Autocomplete, Paper, CircularProgress,
-  IconButton, Divider
+  IconButton, Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  List,
+  ListItem,
+  ListItemText,
+  InputAdornment
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -10,6 +17,7 @@ import { styled } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import ImageIcon from '@mui/icons-material/Image';
 import RemoveIcon from '@mui/icons-material/Remove';
+import SearchIcon from '@mui/icons-material/Search';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import { format, parse } from 'date-fns';
 
@@ -37,7 +45,12 @@ const NewMovieForm = () => {
   const [loading, setLoading] = useState(false);
   const [openGenres, setOpenGenres] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-
+  const [allGenres, setAllGenres] = useState([]);
+  const [filteredGenres, setFilteredGenres] = useState([]);
+  const [genreDialogOpen, setGenreDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  
   const Overlay = styled(Box)({
     position: 'fixed',
     top: 0,
@@ -50,6 +63,21 @@ const NewMovieForm = () => {
     justifyContent: 'center',
     zIndex: 9999,
   });
+
+  const fetchGenres = () => {    
+    fetch('http://localhost:8080/api/movies/allGenres')
+    .then(response => response.json())
+    .then(data => {
+      setAllGenres(data);
+      setFilteredGenres(data);
+    })
+    .catch(error => console.error("Error fetching genres:", error));
+}
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,6 +125,7 @@ const NewMovieForm = () => {
         setGenres([]);
         setPoster(null);
         setPGRating('');
+        fetchGenres();
       }
     } catch (err) {
       setError('Failed to connect to server.');
@@ -104,6 +133,10 @@ const NewMovieForm = () => {
     
     setLoading(false);
   };
+
+  const handleOpenGenreDialog = () => setGenreDialogOpen(true);
+  const handleCloseGenreDialog = () => {setGenreDialogOpen(false); setNewGenre('');};
+
 
   const handleFileChange = (e) => {
     const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
@@ -125,16 +158,30 @@ const NewMovieForm = () => {
     handleFileChange(e);
   };
 
-  const handleAddGenre = () => {
-    if (newGenre && !genres.includes(newGenre.trim())) {
-      setGenres([...genres, newGenre.trim()]);
-      setNewGenre('');
+  const handleAddGenre = (genre) => {
+    if (!genres.includes(genre)) {
+      setGenres([...genres, genre]);
     }
+    handleCloseGenreDialog();
   };
+  
 
   const handleRemoveGenre = (index) => {
     setGenres(genres.filter((_, i) => i !== index));
   };
+
+  const handleSearch = (event) => {
+    const query = event.target.value;
+    setSearchTerm(query);
+    setFilteredGenres(
+      allGenres.filter(genre =>
+        genre.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .includes(query.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase())
+      )
+    );
+  };
+  
 
   const allFieldsFilled = title && duration && description && releaseDate && director && genres.length > 0 && PGRating && poster;
 
@@ -146,11 +193,11 @@ const NewMovieForm = () => {
           <CircularProgress />
         </Overlay>
       )}
-    <Paper sx={{ border:'2px solid #9df8fc', borderRadius:'30px', padding: '60px',maxWidth:'850px' ,flexDirection: 'column', margin: 'auto', opacity: loading ? 0.5 : 1 }}>
+    <Paper sx={{ border:'2px solid #9df8fc', borderRadius:'30px', padding: '40px',maxWidth:'850px' ,flexDirection: 'column', margin: 'auto', opacity: loading ? 0.5 : 1 }}>
     
     <Box align={'center'} maxWidth={850} sx={{margin:'auto'}}>
-        <Box mt={-5} mb={1}>
-            <Typography variant='neonCyan' fontSize={'40px'}>Agregar película</Typography>
+        <Box ml={3} display={'flex'} mt={-2} mb={3}>
+            <Typography variant='neonCyan' fontSize={'50px'}>Agregar película</Typography>
         </Box>
     {error && <ErrorMessage>{error}</ErrorMessage>}
       <Box sx={{paddingY: 2, display: 'flex', gap: 2, maxWidth: 800, margin: 'auto' }}>
@@ -257,19 +304,65 @@ const NewMovieForm = () => {
                   </IconButton>
                 </Box>
               ))}
-              <Divider />
-              <TextField
-                label="Agregar género"
-                value={newGenre}
-                onChange={(e) => setNewGenre(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={handleAddGenre}>
-                      <AddIcon />
-                    </IconButton>
-                  ),
-                }}
-              />
+              {/* Genre Selection Dialog */}
+              <Dialog open={genreDialogOpen} onClose={handleCloseGenreDialog}>
+                    <DialogTitle>Seleccionar géneros</DialogTitle>
+                    <DialogContent>
+                      <Box paddingBottom={3}>
+                      <TextField
+                        label="Buscar género"
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        fullWidth
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                      </Box>
+                      
+                      <List sx={{ maxHeight: 300, overflowY: 'auto','&::-webkit-scrollbar': {display: 'none',}, scrollbarWidth: 'none',  }}>
+                        {filteredGenres.map((genre, index) => (
+                          <Paper onClick={() => handleAddGenre(genre)}      
+                              sx={{
+                                my: 1,
+                                backgroundColor: '#18181c',
+                                textAlign: 'center',
+                                borderRadius: '5px',
+                                border: '1px solid #e4b4e6',
+                                '&:hover': { backgroundColor:'#221d24' },
+                                cursor: 'pointer',
+                              }}>                           
+                              <ListItem key={index} button onClick={() => handleAddGenre(genre)}>
+                            <ListItemText primary={genre} />
+                          </ListItem>
+                          </Paper>
+                        ))}
+                      </List>
+                      <Box paddingTop={3}>
+                      <TextField
+                        label="Nuevo"
+                        value={newGenre}
+                        onChange={(e) => setNewGenre(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton onClick={() => handleAddGenre(newGenre)}>
+                              <AddIcon />
+                            </IconButton>
+                          ),
+                        }}
+                      />
+                      </Box>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Button variant='outlined' sx={{'&:hover': {transform: 'scale(1.01)'}}} onClick={handleOpenGenreDialog}>
+                    Agregar género
+                  </Button>            
             </Box>
           )}
         </Box>

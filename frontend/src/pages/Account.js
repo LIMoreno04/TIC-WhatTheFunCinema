@@ -8,7 +8,7 @@ export default function MyAccountPage({userRole}) {
 
       if (userRole==='notLoggedIn') {
         return (
-        <Box mt={20}>
+        <Box>
             <NotLoggedInPage></NotLoggedInPage>
         </Box>
         )
@@ -19,7 +19,6 @@ export default function MyAccountPage({userRole}) {
           sx={{
             width: '800px',
             margin: '0 auto',
-            mt: 20,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -47,7 +46,7 @@ export default function MyAccountPage({userRole}) {
       else {
         return (
             
-            <Box mt={16}>
+            <Box mt={-5}>
                 <Profile></Profile>
             </Box>
         )

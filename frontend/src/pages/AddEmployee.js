@@ -3,7 +3,7 @@ import NewEmployeeForm from "../components/NewEmployeeForm";
 
 export default function AddEmployeePage() {
     return (
-      <Box mt={20}>
+      <Box>
         <NewEmployeeForm/>
       </Box>
     );
