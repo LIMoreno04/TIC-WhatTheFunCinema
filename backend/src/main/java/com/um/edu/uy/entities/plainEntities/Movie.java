@@ -45,7 +45,6 @@ public class Movie {
     private List<Genre> genres;
 
 
-    @NotNull
     @Lob
     private byte[] poster;
 

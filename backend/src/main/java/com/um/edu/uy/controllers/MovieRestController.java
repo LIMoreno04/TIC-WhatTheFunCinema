@@ -4,26 +4,25 @@ import com.um.edu.uy.entities.DTOs.MovieDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.enums.PGRating;
+import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.GenreService;
 import com.um.edu.uy.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("api/movies")
@@ -36,46 +35,70 @@ public class MovieRestController {
     @Autowired
     private GenreService genreService;
 
-    @PostMapping("/addMovie")
-    public ResponseEntity<?> addMovie(@RequestBody MovieDTO movieDTO) throws IOException {
+
+    @PostMapping(value = "/addMovie", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addMovie(
+            @RequestParam("title") String title,
+            @RequestParam("duration") String duration,
+            @RequestParam("description") String description,
+            @RequestParam("releaseDate") String releaseDate,
+            @RequestParam("director") String director,
+            @RequestParam("genres") List<String> genres,
+            @RequestParam("PGRating") String PGRating,
+            @RequestParam("poster") MultipartFile poster) {
+
         Map<String, String> errors = new HashMap<>();
 
+        // Duration validation
         try {
-            LocalTime.parse(movieDTO.getDuration());
+            LocalTime.parse(duration);
         } catch (Exception e) {
             errors.put("duration", "Formato de duración inválido. Use el formato HH:mm:ss.");
         }
 
-        if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", movieDTO.getPGRating())) {
-            errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R o NC-17.");
+        // PG Rating validation
+        if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", PGRating)) {
+            errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R, o NC-17.");
         }
 
+        // Return validation errors if any
         if (!errors.isEmpty()) {
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
-        List<Genre> genres = movieDTO.getGenres().stream()
-                .map(genreService::findByGenreName)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        // Genre handling
+        List<Genre> genreList = new LinkedList<>();
+        for (String genreName : genres) {
+            genreList.add(genreService.findByGenreNameElseAdd(genreName));
+        }
 
-        LocalTime duration = LocalTime.parse(movieDTO.getDuration());
-        LocalDate releaseDate = LocalDate.parse(movieDTO.getReleaseDate());
-        byte[] poster = movieDTO.getPoster().getBytes();
+        // Parse other fields
+        LocalTime parsedDuration = LocalTime.parse(duration);
+        LocalDate parsedReleaseDate = LocalDate.parse(releaseDate);
 
+        // Convert MultipartFile to byte array
+        byte[] posterBytes;
+        try {
+            posterBytes = poster.getBytes();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
+        }
+
+        // Create and save the movie
         Movie newMovie = movieService.addMovie(
-                movieDTO.getTitle(),
-                duration,
-                movieDTO.getDescription(),
-                releaseDate,
-                movieDTO.getDirector(),
-                genres,
-                poster,
-                movieDTO.getPGRating()
+                title,
+                parsedDuration,
+                description,
+                parsedReleaseDate,
+                director,
+                genreList,
+                posterBytes,
+                PGRating
         );
 
         return ResponseEntity.ok(newMovie);
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<Movie>> allMovies() {
@@ -124,7 +147,13 @@ public class MovieRestController {
     @GetMapping("/genre")
     public ResponseEntity<List<Movie>> showMoviesByGenre(@RequestBody List<String> stringGenres) {
         List<Genre> genres = stringGenres.stream()
-                .map(genreName -> genreService.findByGenreName(genreName))
+                .map(genreName -> {
+                    try {
+                        return genreService.findByGenreName(genreName);
+                    } catch (InvalidDataException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .collect(Collectors.toList());
 
         List<Movie> moviesByGenre = movieService.getByGenre(genres);

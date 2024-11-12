@@ -56,30 +56,6 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
-
-		String title = "Alien";
-		LocalTime duration = LocalTime.of(1, 57); // 1 hora 57 minutos
-		String description = "A spaceship crew discovers an alien creature on a distant planet, leading to a terrifying journey of survival.";
-		LocalDate releaseDate = LocalDate.of(1979, 5, 25);
-		String director = "Ridley Scott";
-		List<Genre> genres = new LinkedList<>();// Añadir géneros apropiados
-		String pgRating = "R"; // Clasificación de Alien
-
-		// Cargar el poster desde un archivo
-		byte[] poster = null;
-		try {
-			poster = loadPosterFromFile("C:\\Users\\Alfonso\\OneDrive\\Escritorio\\Alien_el_octavo_pasajero-490267394-large.jpg");
-		} catch (IOException e) {
-			System.err.println("Error al leer el archivo del póster: " + e.getMessage());
-			e.printStackTrace();
-			return;  // Detener si no se puede cargar la imagen
-		}
-
-
-		// Llamar al método addMovie para guardar la película
-		//System.out.println(movieService.addMovie(title, duration, description, releaseDate, director, genres, poster, pgRating));
-
-		retrievePoster(1);
 	}
 
 	public byte[] loadPosterFromFile(String filePath) throws IOException {

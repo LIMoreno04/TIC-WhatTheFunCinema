@@ -13,6 +13,7 @@ import AddEmployeePage from './pages/AddEmployee';
 import NewTheatrePage from './pages/AddTheatre';
 import { useEffect, useState } from 'react';
 import TheatresPage from './pages/Theatres';
+import NewMoviePage from './pages/AddMovie';
 
 function App() {
   const location = useLocation();
@@ -48,6 +49,7 @@ function App() {
           <Route path='/theatres' element={<TheatresPage userRole={userRole}/>}/>
           <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
           <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
+          <Route path='/addMovie' element={<NewMoviePage/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
       </ThemeProvider>
