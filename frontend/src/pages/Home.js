@@ -1,11 +1,64 @@
-import background from '../assets/background.png';
-import { Box, Typography, useMediaQuery } from '@mui/material';
+import React from 'react';
+import { Box, Paper, useMediaQuery } from '@mui/material';
+import background from '../assets/background.png'; // Update with your image path
+import TicketsForm from '../components/TicketsForm';
 
-export default function HomePage() {
-  // Media query for small screens
-  const isSmallScreen = useMediaQuery('(max-width:900px)');
 
+
+const HomePage = () => {
+  const isSmallScreen = useMediaQuery('(max-width:1150px)');
   return (
+    <Box mt={-17}
+    sx={{
+      position: 'relative',
+      minHeight: isSmallScreen ? '150vh' : '1500px', 
+      minWidth: 'auto',
+      width: 'auto',
+      height:'auto',
+      overflowY: 'hidden', 
+      overflowX: 'hidden',
+      
+    }}
+
+    >
+      <Box
+      sx={{
+        position:'absolute',
+        width:'100%',
+        height:'100%',
+        backgroundImage: isSmallScreen ? 'none' : `url(${background})`,
+        backgroundPosition: 'top left', 
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+      >
+
+      </Box>
+      <Paper
+        sx={{
+          position:'relative',
+          marginTop: isSmallScreen ? 20 : 25,
+          marginRight: isSmallScreen ? 'auto' : 'none',
+          marginLeft: isSmallScreen ? 'auto' : 5,
+          padding:'10px',
+          width: isSmallScreen ? '90vw' : '410px',
+          height: isSmallScreen ? '70vh' : '530px',
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
+          borderRadius: '40px',
+          border: `2px solid #e4b4e6`,
+          }}
+      >
+        <TicketsForm />
+      </Paper>
+
+
+
+    </Box>
+  );
+  
+  
+  /*
     <Box mt={-17}>
     <div
       style={{
@@ -16,7 +69,6 @@ export default function HomePage() {
         flexDirection: 'column',
       }}
     >
-      {/* Background Image */}
       <div
         style={{
           position: 'absolute',
@@ -31,42 +83,16 @@ export default function HomePage() {
         }}
       />
 
-      {/* Tickets Content Box */}
-      <Box
-        mt={isSmallScreen ? '41vh' : '25vh'}  // Center vertically on small screens
-        ml={isSmallScreen ? 'auto' : '2vw'}   // Center horizontally on small screens
-        mr={isSmallScreen ? 'auto' : 0}
-        maxWidth={isSmallScreen ? '80vw' : '20vw'}  // Width is more flexible on small screens
-        minHeight="60vh"
-        display="flex"
-        justifyContent="center"
-        alignItems="top"
-        sx={{
-          position: 'relative',
-          zIndex: 1,
-          backgroundColor: 'rgba(0, 0, 0, 0.9)',
-          padding: '3vh',
-          borderRadius: '2vw',
-        }}
-      >
-              <Typography
-        variant="h1"
-        sx={{
-          fontFamily: 'InfinityRegular',
-          fontSize: isSmallScreen ? '8vw' : '2vw',
-          color: '#f7bedf', // Neon pink text color
-          textShadow: '0 0 5px #ff0090, 0 0 10px #ff0090, 0 0 15px #ff0090',
-        }}
-      >
-          Comprar entradas
-        </Typography>
-        {/* Add additional content here */}
+      <Box     
+      mt={isSmallScreen ? '41vh' : '17vh'}  // Center vertically on small screens
+      ml={isSmallScreen ? 'auto' : '2vw'}   // Center horizontally on small screens
+      mr={isSmallScreen ? 'auto' : 0}>     
+      
+        <TicketsBox></TicketsBox>
+      
       </Box>
-
-      {/* Spacer to push the footer down */}
       <Box flexGrow={1} minHeight="10vh" />
 
-      {/* Footer */}
       <Box
         component="footer"
         display="flex"
@@ -94,5 +120,7 @@ export default function HomePage() {
       </Box>
     </div>
     </Box>
-  );
+      */
+
 }
+export default HomePage;

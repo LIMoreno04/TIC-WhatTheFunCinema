@@ -12,34 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
 
-
-const TOOLBAR_HEIGHT_PERCENT = '11vh';
-const TOOLBAR_MIN_HEIGHT = '90px';
-const MARGIN_TOP = '-1.5vh';
-const MIN_MARGIN_TOP = '-30px';
-
-const LOGO_HEIGHT_PERCENT = '18vh';
-const LOGO_MIN_HEIGHT = '108px';
-const LOGO_MARGIN_LEFT = '-2vw';
-const MIN_LOGO_MARGIN_LEFT = '-60px'
-const LOGO_MARGIN_RIGHT = '-1vw';
-const MIN_LOGO_MARGIN_RIGHT = '-30px'
-const LOGO_MARGIN_TOP = '-3.5vh';
-const MIN_LOGO_MARGIN_TOP = '-105px';
-
-const BUTTON_MARGIN_X_PERCENT = '0.8vw';
-const BUTTON_MARGIN_Y_PERCENT = '1vh';
-const ACCOUNT_BUTTONS_MARGIN_TOP = '-1.5vh';
-const SMALL_ACCOUNT_BUTTONS_MARGIN_TOP = '-3.5vh'
-const ACCOUNT_BUTTONS_MARGIN_X = '1vw';
-
-const TEXT_SIZE_PERCENT = '1vw';
-const MIN_TEXT_SIZE = '12px';
-const SPECIAL_TEXT_SIZE_PERCENT = '0.8vw';
-const MIN_SPECIAL_TEXT_SIZE = '10px';
-
-const MENU_MARGIN_TOP_PERCENT = '5%';
 
 
 const pages = ['cartelera', 'sucursales', 'contacto'];
@@ -49,10 +23,38 @@ const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empl
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar({userRole, onUpdate}) {
+  const isSmallScreen = useMediaQuery('(max-width:1200px)');
+  const TOOLBAR_HEIGHT_PERCENT = '11vh';
+  const TOOLBAR_MIN_HEIGHT = '90px';
+  const MARGIN_TOP = '-1.5vh';
+  const MIN_MARGIN_TOP = '-30px';
+
+  const LOGO_HEIGHT_PERCENT = '18vh';
+  const LOGO_MIN_HEIGHT = '108px';
+  const LOGO_MARGIN_LEFT = '-3vw';
+  const MIN_LOGO_MARGIN_LEFT = '-60px'
+  const LOGO_MARGIN_RIGHT = '-2vw';
+  const MIN_LOGO_MARGIN_RIGHT = '-100px'
+  const LOGO_MARGIN_TOP = '-3.5vh';
+  const MIN_LOGO_MARGIN_TOP = '-105px';
+
+  const BUTTON_MARGIN_X_PERCENT = '0.8vw';
+  const BUTTON_MARGIN_Y_PERCENT = '1vh';
+  const ACCOUNT_BUTTONS_MARGIN_TOP = '-1.5vh';
+  const SMALL_ACCOUNT_BUTTONS_MARGIN_TOP = '-3.5vh'
+  const ACCOUNT_BUTTONS_MARGIN_X = '1vw';
+
+  const TEXT_SIZE_PERCENT = '1vw';
+  const MIN_TEXT_SIZE = '18px';
+  const SPECIAL_TEXT_SIZE_PERCENT = '0.8vw';
+  const MIN_SPECIAL_TEXT_SIZE = '10px';
+
+  const MENU_MARGIN_TOP_PERCENT = '5%';
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [scrolled, setScrolled] = React.useState(false);
-
+  
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -137,8 +139,8 @@ function ResponsiveAppBar({userRole, onUpdate}) {
             <IconButton href="/home" 
             style={{ 
             marginTop: `clamp(${MIN_LOGO_MARGIN_TOP}, ${LOGO_MARGIN_TOP}, ${LOGO_MARGIN_TOP})`, 
-            marginLeft: `clamp(${MIN_LOGO_MARGIN_LEFT}, ${LOGO_MARGIN_LEFT}, ${LOGO_MARGIN_LEFT})`, 
-            marginRight: `clamp(${MIN_LOGO_MARGIN_RIGHT}, ${LOGO_MARGIN_RIGHT}, ${LOGO_MARGIN_LEFT})`, 
+            marginLeft: `clamp(${LOGO_MARGIN_LEFT}, ${MIN_LOGO_MARGIN_LEFT}, ${MIN_LOGO_MARGIN_LEFT})`, 
+            marginRight: `clamp(${LOGO_MARGIN_RIGHT}, ${MIN_LOGO_MARGIN_RIGHT}, ${MIN_LOGO_MARGIN_LEFT})`, 
             transition: 'transform 0.2s ease-in-out' 
             }}  
             onMouseEnter={(e) => e.currentTarget.firstChild.style.transform = 'scale(1.1)'}
@@ -149,13 +151,13 @@ function ResponsiveAppBar({userRole, onUpdate}) {
 
           {/* Burger menu for small screens */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'left' }}>
-            <IconButton size="large" onClick={handleOpenNavMenu} color="inherit"
+            <IconButton size={LOGO_HEIGHT_PERCENT} onClick={handleOpenNavMenu} color="inherit"
             style={{ 
               marginTop: `clamp(${MIN_LOGO_MARGIN_TOP}, ${LOGO_MARGIN_TOP}, ${LOGO_MARGIN_TOP})`, 
-              marginRight: `clamp(${MIN_LOGO_MARGIN_RIGHT}, ${LOGO_MARGIN_RIGHT}, ${LOGO_MARGIN_RIGHT})`, 
+              marginRight: `clamp(${LOGO_MARGIN_RIGHT}, ${MIN_LOGO_MARGIN_RIGHT}, ${MIN_LOGO_MARGIN_RIGHT})`, 
               transition: 'transform 0.2s ease-in-out' 
               }}>
-              <MenuIcon style={{ height: LOGO_HEIGHT_PERCENT, minHeight: LOGO_MIN_HEIGHT, transition: 'transform 0.2s ease-in-out' }}/>
+              <MenuIcon style={{ fontSize:'40px', height: LOGO_HEIGHT_PERCENT, minHeight: LOGO_MIN_HEIGHT, transition: 'transform 0.2s ease-in-out' }}/>
             </IconButton>
             <Menu
               id="menu-appbar"

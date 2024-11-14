@@ -3,6 +3,12 @@ import './MADEINFINITYRegular.otf'
 import './MADEINFINITYThin.otf'
 
 const neonTheme = createTheme({
+    breakpoints: {
+      values: {
+        xs: 0,      // Extra-small screens (e.g., mobile)
+        md: 1150,    // Medium screens (customized)
+      },
+    },
     palette: {
       primary: {
         main: '#a805ad', // Neon purple

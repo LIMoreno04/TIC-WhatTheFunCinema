@@ -40,7 +40,7 @@ function App() {
   return (
       <ThemeProvider theme={neonTheme}>
         <ResponsiveAppBar userRole={userRole} onUpdate={fetchRole}/>
-        <Box pt={17}>
+        <Box pt={'clamp(90px,11vh,11vh)'}>
         <Routes>
           <Route path='/home' element={<HomePage />} />
           <Route path='/' element={<HomePage />} />
