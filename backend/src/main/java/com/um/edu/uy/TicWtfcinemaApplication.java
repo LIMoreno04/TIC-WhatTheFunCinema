@@ -5,10 +5,7 @@ import com.um.edu.uy.entities.plainEntities.Employee;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.services.CustomerService;
-import com.um.edu.uy.services.EmployeeService;
-import com.um.edu.uy.services.MovieService;
-import com.um.edu.uy.services.UserService;
+import com.um.edu.uy.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +21,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Arrays;
@@ -42,6 +40,9 @@ public class TicWtfcinemaApplication {
 	@Autowired
 	private MovieService movieService;
 
+	@Autowired
+	private RoomService roomService;
+
 	public static void main(String[] args) throws InvalidDataException, IOException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
@@ -56,6 +57,9 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
+
+
+
 	}
 
 	public byte[] loadPosterFromFile(String filePath) throws IOException {

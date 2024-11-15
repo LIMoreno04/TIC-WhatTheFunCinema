@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString
 @IdClass(RoomID.class)
@@ -34,18 +35,6 @@ public class Room {
 
     @OneToMany(mappedBy = "room",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Screening> screenings;
-
-    public Room() {
-        this.rows = 10;
-        this.columns = 15;
-        this.screenings = new LinkedList<Screening>();
-    }
-
-    public Room(int rows, int columns) {
-        this.rows = rows;
-        this.columns = columns;
-        this.screenings = new LinkedList<Screening>();
-    }
 
 
 }

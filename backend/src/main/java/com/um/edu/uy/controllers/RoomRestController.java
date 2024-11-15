@@ -1,12 +1,9 @@
 package com.um.edu.uy.controllers;
-
-import com.um.edu.uy.entities.DTOs.UserDTO;
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Reservation;
 import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.services.CustomerService;
 import com.um.edu.uy.services.RoomService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,27 +11,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/rooms")
 public class RoomRestController {
+
     @Autowired
     private RoomService roomService;
 
-    @PostMapping("/addScreeningToRoom")
-    public ResponseEntity<?> addScreeningToRoom(@RequestParam String theatreLocation, @RequestParam int roomNumber, @RequestParam long movieID, @RequestParam String language, @RequestParam String dateTime, @RequestParam int screeningPrice) {
+    @PostMapping("/addScreening")
+    public ResponseEntity<?> addScreening(@RequestBody @Valid ScreeningDTO screeningDTO) {
 
-        try {
-            LocalDateTime date_and_time = LocalDateTime.parse(dateTime);
-            roomService.addScreeningToRoom(theatreLocation, roomNumber, movieID, language, date_and_time, screeningPrice);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Screening added successfully.");
-        } catch (InvalidDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the screening.");
+        Map<String, String> errors = new HashMap<>();
+
+        String language = screeningDTO.getLanguage();
+        long movieId = screeningDTO.getMovieId();
+        String theatre = screeningDTO.getTheatre();
+        LocalDateTime date_and_time = screeningDTO.getDate_and_time();
+        int roomNumber = screeningDTO.getRoomNumber();
+        int price = screeningDTO.getScreeningPrice();
+
+
+        if (!Pattern.matches("^(Inglés|Español)$", language)) {
+            errors.put("language", "Lenguaje invalido.");
         }
+
+        if (date_and_time.isBefore(LocalDateTime.now())) {
+            errors.put("date_and_time", "Fecha invalida. Debe ser una fecha a futuro.");
+        }
+        if (!errors.isEmpty()) {
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            roomService.addScreening(movieId,price,date_and_time,roomNumber,theatre,language);
+            return ResponseEntity.ok("Screening added.");
+        }
+        catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
+
     @PostMapping("/getAllReservations")
     public ResponseEntity<List<Reservation>> getAllReservations(@RequestBody Screening screening) {
         try {

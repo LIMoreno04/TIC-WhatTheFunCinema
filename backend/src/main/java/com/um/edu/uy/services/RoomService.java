@@ -7,8 +7,10 @@ import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,41 +18,50 @@ import java.util.Optional;
 public class RoomService {
     @Autowired
     private RoomRepository roomRepo;
-
+    @Autowired
+    private MovieRepository movieRepo;
     @Autowired
     private TheatreRepository theatreRepo;
     @Autowired
     private ScreeningRepository screeningRepo;
 
     @Autowired
-    private MovieRepository movieRepo;
+    private MovieService movieService;
     @Autowired
     private ReservationRepository reservationRepo;
 
-    public void addScreeningToRoom(String theatreLocation, int roomNumber, long movieID, String language, LocalDateTime date_and_time, int screeningPrice) throws InvalidDataException {
-        if (screeningPrice < 0) {
-            throw new InvalidDataException("Screening price cannot be negative.");
+    @Transactional
+    public void addScreening(long movieId,
+                             int screeningPrice,
+                             LocalDateTime date_and_time,
+                             int roomNumber,
+                             String theatre,
+                             String language) throws InvalidDataException {
+
+        Movie movie = movieService.findById(movieId);
+        Room room = findByTheatreAndRoomNumber(theatre, roomNumber);
+
+        // Check if the screening already exists
+        Optional<Screening> existingScreening = screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time));
+        if (existingScreening.isPresent()) {
+            throw new InvalidDataException("A screening already exists for the specified room and time.");
         }
 
-        Optional<Room> roomResult = roomRepo.findById(new RoomID(theatreLocation, roomNumber));
-        Optional<Movie> movieResult = movieRepo.findById(movieID);
-        if (movieResult.isEmpty()) {
-            throw new InvalidDataException("movie not found.");
-        } else if (roomResult.isEmpty()) {
-            throw new InvalidDataException("room not found.");
-        } else {
-            Room room = roomResult.get();
-            Movie movie = movieResult.get();
-            Screening newScreening = Screening.builder().
-                    movie(movie).
-                    room(room).
-                    language(language).
-                    date_and_time(date_and_time).
-                    screeningPrice(screeningPrice).
-                    build();
-            screeningRepo.save(newScreening);
-        }
+        // Create and save new screening
+        Screening newScreening = Screening.builder()
+                .movie(movie)
+                .screeningPrice(screeningPrice)
+                .language(language)
+                .date_and_time(date_and_time)
+                .room(room)
+                .build();
+
+        room.getScreenings().add(newScreening);
+        roomRepo.save(room);
+        movie.getScreenings().add(screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time)).get());
+        movieRepo.save(movie);
     }
+
 
     public List<Reservation> getAllReservations(Screening screening) throws InvalidDataException {
         Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
@@ -72,7 +83,7 @@ public class RoomService {
                 return true;}
             else {
                 return false;}
-            }
+        }
     }
 
     public Room findByTheatreAndRoomNumber(String theatreLocation, int room) throws InvalidDataException {
@@ -85,11 +96,9 @@ public class RoomService {
         if (result.isEmpty()) {
             throw new InvalidDataException("Room not found.");
         } else {
+            System.out.println("hola desde room service");
             return result.get();
         }
     }
 
 }
-
-
-

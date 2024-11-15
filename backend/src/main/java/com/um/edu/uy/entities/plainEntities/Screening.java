@@ -18,7 +18,6 @@ import java.util.List;
 public class Screening {
 
     @Id
-    @ValidReleaseDate
     private LocalDateTime date_and_time;
 
     @NotNull

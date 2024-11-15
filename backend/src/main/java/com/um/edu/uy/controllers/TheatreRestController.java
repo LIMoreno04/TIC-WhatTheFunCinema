@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.NewTheatreDTO;
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Room;
 import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.exceptions.InvalidDataException;
@@ -12,9 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/theatre")
@@ -66,4 +70,7 @@ public class TheatreRestController {
         }
     }
 
-        }
+
+
+
+}

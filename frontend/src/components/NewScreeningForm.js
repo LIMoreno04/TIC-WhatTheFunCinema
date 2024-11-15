@@ -77,7 +77,7 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/screening/add", {
+      const response = await fetch("http://localhost:8080/api/rooms/addScreening", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(screeningData),
