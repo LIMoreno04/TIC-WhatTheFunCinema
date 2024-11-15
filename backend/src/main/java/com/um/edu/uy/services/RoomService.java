@@ -72,7 +72,18 @@ public class RoomService {
                 return true;}
             else {
                 return false;}
-            }}
+            }
+    }
+
+    public Room findByTheatreAndRoomNumber(String theatre, int room) throws InvalidDataException {
+        Optional<Room> result = roomRepo.findByTheatreAndRoomNumber(theatre, room);
+
+        if (result.isEmpty()) {
+            throw new InvalidDataException("Room not found.");
+        } else {
+            return result.get();
+        }
+    }
 
 }
 
