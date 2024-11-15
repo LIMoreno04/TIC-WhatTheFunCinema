@@ -3,6 +3,7 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 
 function TicketsForm(){
     const isSmallScreen = useMediaQuery('(max-width:1150px)');
+    const isMediumScreen = useMediaQuery('(max-width:1280px)');
     return(
     <Box
     height={'100%'}
@@ -19,7 +20,7 @@ function TicketsForm(){
         <Typography
     variant="neonCyan"
     sx={{
-    fontSize: isSmallScreen ? '8vw' : '40px',
+    fontSize: isSmallScreen ? '8vw' : isMediumScreen ? 'calc(0.024 * 1280px)' : '2.4vw',
     }}
     >
     Comprar entradas

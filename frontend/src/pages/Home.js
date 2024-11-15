@@ -7,11 +7,12 @@ import TicketsForm from '../components/TicketsForm';
 
 const HomePage = () => {
   const isSmallScreen = useMediaQuery('(max-width:1150px)');
+  const isMediumScreen = useMediaQuery('(max-width:1280px)');
   return (
     <Box mt={-17}
     sx={{
       position: 'relative',
-      minHeight: isSmallScreen ? '150vh' : '1500px', 
+      minHeight: isSmallScreen ? '150vh' : isMediumScreen ? '1069.2px' : 'calc(99vw*(1620/1920))', 
       minWidth: 'auto',
       width: 'auto',
       height:'auto',
@@ -37,19 +38,19 @@ const HomePage = () => {
       <Paper
         sx={{
           position:'relative',
-          marginTop: isSmallScreen ? 20 : 25,
+          marginTop: isSmallScreen ? 20 : isMediumScreen ? 'calc(1280px * (220/1920))' : 'calc(100vw * (220/1920))',
           marginRight: isSmallScreen ? 'auto' : 'none',
-          marginLeft: isSmallScreen ? 'auto' : 5,
+          marginLeft: isSmallScreen ? 'auto' : isMediumScreen ? 'calc(1280px * (40/1920))' : 'calc(100vw * (40/1920))',
           padding:'10px',
-          width: isSmallScreen ? '90vw' : '410px',
-          height: isSmallScreen ? '70vh' : '530px',
+          width: isSmallScreen ? '90vw' : isMediumScreen ? 'calc(1280px * (410/1920))' : 'calc(100vw * (410/1920))',
+          height: isSmallScreen ? '70vh' : isMediumScreen ? 'calc(1280px * (575/1920))' : 'calc(100vw * (575/1920))',
           backgroundColor: 'rgba(0, 0, 0, 0.9)',
           boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
           borderRadius: '40px',
           border: `2px solid #e4b4e6`,
           }}
       >
-        <TicketsForm />
+        <TicketsForm /> 
       </Paper>
 
 
