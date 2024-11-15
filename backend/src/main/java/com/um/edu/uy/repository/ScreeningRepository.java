@@ -13,20 +13,5 @@ import java.util.Optional;
 
 public interface ScreeningRepository extends JpaRepository<Screening, ScreeningID> {
 
-    @Query("""
-        SELECT CASE WHEN COUNT(s) = 0 THEN TRUE ELSE FALSE END 
-        FROM Screening s 
-        WHERE s.theatre = :theatre 
-          AND s.roomNumber = :roomNumber 
-          AND (s.date_and_time BETWEEN :startDateTime AND :endDateTime
-               OR s.date_and_time + s.duration BETWEEN :startDateTime AND :endDateTime
-               OR :startDateTime BETWEEN s.date_and_time AND s.date_and_time + s.duration)
-    """)
-    boolean isAvailable(
-            @Param("theatre") String theatre,
-            @Param("roomNumber") int roomNumber,
-            @Param("startDateTime") LocalDateTime date_and_time,
-            @Param("endDateTime") LocalDateTime endDateTime
-    );
 
 }

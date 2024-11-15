@@ -39,6 +39,11 @@ public class MovieRestController {
     private GenreService genreService;
 
 
+    @GetMapping("/allTitles")
+    public ResponseEntity<List<Object[]>> getAllTitles() {
+    return ResponseEntity.ok(movieService.getTitlesAndIds().orElse(new LinkedList<>()));
+    }
+
     @PostMapping(value = "/addMovie", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addMovie( HttpSession session,
             @RequestParam("title") String title,

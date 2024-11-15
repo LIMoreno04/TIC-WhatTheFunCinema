@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.NewTheatreDTO;
+import com.um.edu.uy.entities.plainEntities.Room;
 import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.TheatreService;
@@ -21,6 +22,16 @@ public class TheatreRestController {
 
     @Autowired
     TheatreService theatreService;
+
+
+    @GetMapping("/rooms/{theatre}")
+    public ResponseEntity<?> getAllRooms(@PathVariable String theatre) {
+        try {
+            return ResponseEntity.ok(theatreService.findAllRooms(theatre));
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sucursal no encontrada.");
+        }
+    }
 
     @GetMapping("/allLocations")
     public ResponseEntity<List<String>> findAll() { return ResponseEntity.ok(theatreService.findAllLocations()); }

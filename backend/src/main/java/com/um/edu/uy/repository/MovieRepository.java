@@ -15,6 +15,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     public Optional<List<Movie>> findByTitleContainingIgnoreCase(String title);
 
+    @Query("SELECT m.Id, m.title FROM Movie m ")
+    Optional<List<Object[]>> getTitlesAndIds();
+
 
     @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
             "JOIN m.screenings s " +

@@ -4,10 +4,7 @@ import com.um.edu.uy.entities.ids.RoomID;
 import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.repository.MovieRepository;
-import com.um.edu.uy.repository.ReservationRepository;
-import com.um.edu.uy.repository.RoomRepository;
-import com.um.edu.uy.repository.ScreeningRepository;
+import com.um.edu.uy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +16,9 @@ import java.util.Optional;
 public class RoomService {
     @Autowired
     private RoomRepository roomRepo;
+
+    @Autowired
+    private TheatreRepository theatreRepo;
     @Autowired
     private ScreeningRepository screeningRepo;
 
@@ -75,8 +75,12 @@ public class RoomService {
             }
     }
 
-    public Room findByTheatreAndRoomNumber(String theatre, int room) throws InvalidDataException {
-        Optional<Room> result = roomRepo.findByTheatreAndRoomNumber(theatre, room);
+    public Room findByTheatreAndRoomNumber(String theatreLocation, int room) throws InvalidDataException {
+        Optional<Theatre> theatreOpt = theatreRepo.findById(theatreLocation);
+        if (theatreOpt.isEmpty()) {
+            throw new InvalidDataException("theatre not found.");
+        }
+        Optional<Room> result = roomRepo.findByTheatreAndRoomNumber(theatreOpt.get(),room);
 
         if (result.isEmpty()) {
             throw new InvalidDataException("Room not found.");

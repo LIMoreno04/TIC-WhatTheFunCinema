@@ -24,7 +24,7 @@ public class ScreeningService {
     @Autowired
     private RoomService roomService;
 
-    public Screening addScreening(long movieId,
+    public void addScreening(long movieId,
                                   int screeningPrice,
                                   LocalDateTime date_and_time,
                                   int roomNumber,
@@ -33,10 +33,12 @@ public class ScreeningService {
 
         Movie movie = movieService.findById(movieId);
         Room room = roomService.findByTheatreAndRoomNumber(theatre, roomNumber);
-        if (!screeningRepo.isAvailable(theatre,roomNumber,date_and_time,date_and_time.plus((Duration.ofHours(movie.getDuration().getHour()).plusMinutes(movie.getDuration().getMinute())))))
-        {
-            throw new InvalidDataException("Room not available.");
-        }
+        System.out.println( "\n"+ movie +"\n"+ theatre + " -- " + roomNumber +"\n"+ date_and_time.toString() +"\n"+ screeningPrice +"\n"+ language +"\n");
+
+//        if (!roomService.isAvailable(theatre,roomNumber,date_and_time,date_and_time.plus((Duration.ofHours(movie.getDuration().getHour()).plusMinutes(movie.getDuration().getMinute())))))
+//        {
+//            throw new InvalidDataException("Room not available.");
+//        }
         Screening newScreening = Screening.builder().
                 movie(movie).
                 screeningPrice(screeningPrice).
@@ -44,7 +46,7 @@ public class ScreeningService {
                 date_and_time(date_and_time).
                 room(room).build();
 
-        return screeningRepo.save(newScreening);
+        screeningRepo.save(newScreening);
     }
 
 }

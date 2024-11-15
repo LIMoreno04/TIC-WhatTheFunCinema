@@ -6,7 +6,6 @@ import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.GenreRepository;
 import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +23,9 @@ public class MovieService {
     @Autowired
     private GenreRepository genreRepo;
 
+    public Optional<List<Object[]>> getTitlesAndIds() {
+        return movieRepo.getTitlesAndIds();
+    }
     public Movie addMovie(String title,
                           LocalTime duration,
                           String description,

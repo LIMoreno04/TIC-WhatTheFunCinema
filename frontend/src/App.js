@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import TheatresPage from './pages/Theatres';
 import NewMoviePage from './pages/AddMovie';
 import { Box } from '@mui/material';
+import AddScreeningPage from './pages/AddScreening';
 
 function App() {
   const location = useLocation();
@@ -52,6 +53,7 @@ function App() {
           <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
           <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
           <Route path='/addMovie' element={userRole==="employee" ? <NewMoviePage/> : <NotFound/>}/>
+          <Route path='/addScreening' element={userRole==="employee" ? <AddScreeningPage/> : <NotFound/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
         </Box>

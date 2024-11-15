@@ -37,7 +37,7 @@ public class ScreeningRestController {
         int price = screeningDTO.getScreeningPrice();
 
 
-        if (!Pattern.matches("^(E|S)$", language)) {
+        if (!Pattern.matches("^(Inglés|Español)$", language)) {
             errors.put("language", "Lenguaje invalido.");
         }
 
@@ -48,8 +48,8 @@ public class ScreeningRestController {
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
         try {
-            Screening screening = screeningService.addScreening(movieId,price,date_and_time,roomNumber,theatre,language);
-            return ResponseEntity.ok(screening);
+            screeningService.addScreening(movieId,price,date_and_time,roomNumber,theatre,language);
+            return ResponseEntity.ok("Screening added.");
         }
         catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

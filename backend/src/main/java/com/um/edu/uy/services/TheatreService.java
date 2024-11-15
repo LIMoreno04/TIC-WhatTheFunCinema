@@ -30,7 +30,7 @@ public class TheatreService {
 
     public List<String> findAllLocations() {return theatreRepo.findAllLocations();}
 
-    public List<Room> findAllRooms(String location) throws InvalidDataException {return roomRepo.findAllByTheatre(findByLocation(location)).orElse(new LinkedList<>()); }
+    public List<Integer> findAllRooms(String location) throws InvalidDataException {return roomRepo.findNumbersByTheatre(findByLocation(location)).orElse(new LinkedList<>()); }
 
     public Theatre addTheatre(String location) throws InvalidDataException {
         if (location == null) {
