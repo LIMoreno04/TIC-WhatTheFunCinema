@@ -24,8 +24,15 @@ public class SnackService {
         return snackRepo.findBySnackName(name).orElse(null);
     }
 
-    public Snack addSnack(Snack snack) {
-        return snackRepo.save(snack);
+    public Snack addSnack(String name, String description, byte[] picture, int price) {
+
+        Snack newSnack = Snack.builder().
+                snackName(name).
+                snackDescription(description).
+                snackPicture(picture).
+                price(price).build();
+
+        return snackRepo.save(newSnack);
     }
 
     public List<Snack> findSnackByName(String snackName) {
@@ -39,5 +46,9 @@ public class SnackService {
     public void deleteSnack(Snack snack) {
         snackRepo.delete(snack);
 
+    }
+
+    public Snack findById(long id) {
+        return snackRepo.findById(id).orElse(null);
     }
 }

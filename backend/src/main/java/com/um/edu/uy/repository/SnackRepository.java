@@ -10,4 +10,5 @@ public interface SnackRepository extends JpaRepository<Snack, Long> {
     Optional<Snack> findBySnackName(String name);
     Optional<List<Snack>> findBySnackNameContainingIgnoreCase(String name);
     Optional<List<Snack>> findByPriceLessThanEqual(int price);
+
 }
