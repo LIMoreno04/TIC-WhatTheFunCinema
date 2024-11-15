@@ -30,4 +30,7 @@ public class Snack {
 
     @NotNull
     private String snackDescription;
+
+    @NotNull
+    private byte[] snackPicture;
 }

@@ -2,13 +2,26 @@ package com.um.edu.uy.controllers;
 
 
 import com.um.edu.uy.entities.DTOs.SnackDTO;
+import com.um.edu.uy.entities.plainEntities.Genre;
+import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.Snack;
 import com.um.edu.uy.services.SnackService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("api/snacks")
@@ -18,19 +31,39 @@ public class SnackRestController {
     @Autowired
     private SnackService snackService;
 
-    @PostMapping("/addSnack")
-    public ResponseEntity<Snack> addSnack(@RequestBody SnackDTO snackDTO) {
+    @PostMapping(value = "/addSnack", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addSnack( HttpSession session,
+                                       @RequestParam("name") String name,
+                                       @RequestParam("price") int price,
+                                       @RequestParam("description") String description,
+                                       @RequestParam("picture") MultipartFile picture) {
+        if (session.getAttribute("role").equals("employee")) {
 
-        if (snackDTO.getPrice() <= 0) {
-            return ResponseEntity.badRequest().build();
-        }
-        Snack snack = Snack.builder()
-                .snackName(snackDTO.getSnackName())
-                .snackDescription(snackDTO.getSnackDescription())
-                .price(snackDTO.getPrice())
-                .build();
+            Map<String, String> errors = new HashMap<>();
 
-        return ResponseEntity.ok(snackService.addSnack(snack));
+            if (name.isEmpty()) {
+                errors.put("name", "El nombre no es valido.");
+            }
+
+            if (description.isEmpty()) {
+                errors.put("description", "La descripcion no es valido.");
+            }
+
+            if (price < 0) {
+                errors.put("price", "Precio invalido.");
+            }
+
+            byte[] posterBytes;
+            try {
+                posterBytes = picture.getBytes();
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
+            }
+
+            Snack newSnack = snackService.addSnack(name, description, posterBytes, price);
+
+            return ResponseEntity.ok("Snack agregado.");
+        } else { return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sin permisos."); }
     }
 
     @GetMapping("/all")
@@ -67,8 +100,8 @@ public class SnackRestController {
     }
 
     @PostMapping("/deleteSnack")
-    public ResponseEntity<Snack> deleteSnack(@RequestBody String snackName) {
-        Snack snack = snackService.findByExactName(snackName);
+    public ResponseEntity<Snack> deleteSnack(@RequestBody long snackID) {
+        Snack snack = snackService.findById(snackID);
 
         if (snack == null) {
             return ResponseEntity.notFound().build();

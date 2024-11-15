@@ -18,15 +18,18 @@ public interface ScreeningRepository extends JpaRepository<Screening, ScreeningI
         FROM Screening s 
         WHERE s.theatre = :theatre 
           AND s.roomNumber = :roomNumber 
-          AND (s.date_and_time BETWEEN :startDateTime AND :endDateTime
-               OR s.date_and_time + s.duration BETWEEN :startDateTime AND :endDateTime
-               OR :startDateTime BETWEEN s.date_and_time AND s.date_and_time + s.duration)
+          AND (
+              s.date_and_time BETWEEN :startDateTime AND :endDateTime 
+              OR s.date_and_time + s.duration BETWEEN :startDateTime AND :endDateTime 
+              OR :startDateTime BETWEEN s.date_and_time AND s.date_and_time + s.duration
+          )
     """)
     boolean isAvailable(
             @Param("theatre") String theatre,
             @Param("roomNumber") int roomNumber,
-            @Param("startDateTime") LocalDateTime date_and_time,
+            @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime
     );
+
 
 }

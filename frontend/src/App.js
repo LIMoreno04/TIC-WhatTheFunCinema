@@ -52,6 +52,7 @@ function App() {
           <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
           <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
           <Route path='/addMovie' element={userRole==="employee" ? <NewMoviePage/> : <NotFound/>}/>
+          <Route path= '/addSnack' element={userRole==="employee" ? <NewSnackPage/> : <NotFound/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
         </Box>

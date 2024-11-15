@@ -9,4 +9,5 @@ public class SnackDTO {
     private String snackName;
     private int price;
     private String snackDescription;
+    private String snackPicture;
 }

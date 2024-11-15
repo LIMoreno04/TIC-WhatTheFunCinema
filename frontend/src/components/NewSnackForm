@@ -1,0 +1,111 @@
+import React, { useState } from "react";
+import axios from "axios";
+
+const AddSnackForm = () => {
+  const [snackData, setSnackData] = useState({
+    name: "",
+    price: "",
+    description: "",
+    picture: null,
+    url: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSnackData({
+      ...snackData,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    setSnackData({
+      ...snackData,
+      picture: e.target.files[0],
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", snackData.name);
+    formData.append("price", snackData.price);
+    formData.append("description", snackData.description);
+    formData.append("picture", snackData.picture);
+    formData.append("url", snackData.url);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/snacks/addSnack",
+        formData,
+        { withCredentials: true }
+      );
+      setMessage(response.data);
+      setErrors({});
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setErrors(error.response.data);
+      } else {
+        setMessage("Error al agregar el snack.");
+      }
+    }
+  };
+
+  return (
+    <div>
+      <h1>Agregar Snack</h1>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <div>
+          <label>Nombre:</label>
+          <input
+            type="text"
+            name="name"
+            value={snackData.name}
+            onChange={handleChange}
+          />
+          {errors.name && <span>{errors.name}</span>}
+        </div>
+        <div>
+          <label>Precio:</label>
+          <input
+            type="number"
+            name="price"
+            value={snackData.price}
+            onChange={handleChange}
+          />
+          {errors.price && <span>{errors.price}</span>}
+        </div>
+        <div>
+          <label>Descripción:</label>
+          <textarea
+            name="description"
+            value={snackData.description}
+            onChange={handleChange}
+          />
+          {errors.description && <span>{errors.description}</span>}
+        </div>
+        <div>
+          <label>URL:</label>
+          <input
+            type="text"
+            name="url"
+            value={snackData.url}
+            onChange={handleChange}
+          />
+          {errors.url && <span>{errors.url}</span>}
+        </div>
+        <div>
+          <label>Imagen:</label>
+          <input type="file" name="picture" onChange={handleFileChange} />
+        </div>
+        <button type="submit">Agregar Snack</button>
+      </form>
+      {message && <p>{message}</p>}
+    </div>
+  );
+};
+
+export default AddSnackForm;

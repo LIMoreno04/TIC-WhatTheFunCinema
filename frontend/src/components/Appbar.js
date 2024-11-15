@@ -19,7 +19,7 @@ import { useMediaQuery } from '@mui/material';
 const pages = ['cartelera', 'sucursales', 'contacto'];
 const paths = ['/movies', '/theatres', '/contact'];
 const customerSettings = ['Detalles de cuenta', 'Historial de compras', 'Cerrar sesión'];
-const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado','Agregar sucursal', 'Cerrar sesión'];
+const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado','Agregar sucursal', 'Agregar snack', 'Cerrar sesión'];
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar({userRole, onUpdate}) {
@@ -92,7 +92,9 @@ function ResponsiveAppBar({userRole, onUpdate}) {
     } else if (setting === employeeSettings[3]) {
       navigate('/addTheatre');
       handleCloseUserMenu();
-    } else {
+    } else if (setting === employeeSettings[4]){
+      navigate('/addSnack')
+    }else {
       handleCloseUserMenu();
     }
   };
