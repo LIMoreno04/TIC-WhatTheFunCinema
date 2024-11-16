@@ -182,6 +182,7 @@ const neonTheme = createTheme({
       MuiAutocomplete: {
         styleOverrides: {
           root: {
+            backgroundColor: '#1a171f',
             '& .MuiOutlinedInput-root': {
               backgroundColor: '#252d3a', // Slightly lighter dark background
               color: '#0ff0fc', // Neon cyan text color
@@ -196,8 +197,30 @@ const neonTheme = createTheme({
               },
             },
           },
+          option: {
+            backgroundColor: '#090a14', // Main color for options
+            color: '#0ff0fc', // Neon cyan text color
+            '&:hover': {
+              backgroundColor: '#252d3a', // Lighter tone for hover
+            },
+            '&.Mui-focused': {
+              backgroundColor: '#ab2972', // Neon pink for focused option
+              color: '#ffffff', // White text for better contrast
+            },
+            '&[aria-selected="true"]': {
+              backgroundColor: '#252d3a', // Lighter tone for selected
+              color: '#0ff0fc', // Neon cyan for selected text
+            },
+          },
+          popper: {
+            backgroundColor: '#090a14', // Background for the dropdown menu
+          },
+          paper: {
+            backgroundColor: '#090a14', // Background for the dropdown menu
+          },
         },
       },
+      
       MuiIconButton: {
         styleOverrides: {
           root: {

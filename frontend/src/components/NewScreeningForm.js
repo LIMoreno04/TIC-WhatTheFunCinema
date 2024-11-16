@@ -146,14 +146,15 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
         <Paper
           sx={{
             padding: "40px",
+            paddingTop:'30px',
             maxWidth: "600px",
             margin: "auto",
             border: "2px solid #9df8fc",
             borderRadius: "20px",
           }}
         >
-          <Typography variant="neonCyan" fontSize="2.5rem" gutterBottom>
-            Add New Screening
+          <Typography marginLeft={1} variant="neonCyan" fontSize="50px" gutterBottom>
+          Agregar función
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ paddingTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
@@ -162,7 +163,7 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
                 options={theatres}
                 value={theatre}
                 onChange={(e, newValue) => setTheatre(newValue)}
-                renderInput={(params) => <TextField {...params} label="Theatre" required />}
+                renderInput={(params) => <TextField {...params} label="Sucursal" required />}
               />
             )}
 
@@ -172,12 +173,12 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               value={roomNumber}
               onChange={(e, newValue) => setRoomNumber(newValue)}
               getOptionLabel={(option) => (option ? String(option) : "")} // Ensure a string is returned
-              renderInput={(params) => <TextField {...params} label="Room" required />}
+              renderInput={(params) => <TextField {...params} label="Sala" required />}
             />            
             )}
 
             <DatePicker
-              label="Date"
+              label="Fecha"
               format="dd/MM/yyyy"
               dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
               value={date}
@@ -186,7 +187,7 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
             />
 
             <TimePicker
-              label="Time"
+              label="Horario"
               value={time}
               onChange={(newValue) => setTime(newValue)}
               renderInput={(params) => <TextField {...params} required />}
@@ -197,7 +198,7 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
                 options={movieOptions}
                 value={selectedMovieTitle}
                 onChange={(e, newValue) => setSelectedMovieTitle(newValue)}
-                renderInput={(params) => <TextField {...params} label="Movie" required />}
+                renderInput={(params) => <TextField {...params} label="Película" required />}
               />
             )}
 
@@ -205,11 +206,11 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               options={languages}
               value={language}
               onChange={(e, newValue) => setLanguage(newValue)}
-              renderInput={(params) => <TextField {...params} label="Language" required />}
+              renderInput={(params) => <TextField {...params} label="Lenguaje" required />}
             />
 
             <TextField
-              label="Screening Price"
+              label="Precio"
               type="number"
               value={screeningPrice}
               onChange={(e) => setScreeningPrice(e.target.value)}

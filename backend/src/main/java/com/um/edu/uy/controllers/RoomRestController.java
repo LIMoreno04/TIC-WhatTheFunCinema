@@ -3,6 +3,7 @@ import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Reservation;
 import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.exceptions.InvalidDataException;
+import com.um.edu.uy.services.MovieService;
 import com.um.edu.uy.services.RoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class RoomRestController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private MovieService movieService;
 
     @PostMapping("/addScreening")
     public ResponseEntity<?> addScreening(@RequestBody @Valid ScreeningDTO screeningDTO) {
@@ -47,8 +51,13 @@ public class RoomRestController {
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
         try {
-            roomService.addScreening(movieId,price,date_and_time,roomNumber,theatre,language);
-            return ResponseEntity.ok("Screening added.");
+            if (roomService.isRoomAvailable(date_and_time,date_and_time.plus(movieService.getDurationByID(movieId)),theatre,roomNumber)) {
+                roomService.addScreening(movieId,price,date_and_time,roomNumber,theatre,language);
+                return ResponseEntity.ok("Screening added.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String,String>().put("room","Sala ocupada en ese horario."));
+            }
+
         }
         catch (InvalidDataException e) {
             if (e.getMessage().contains("Movie")) { errors.put("movieId","Película no encontrada.");}
@@ -71,7 +80,7 @@ public class RoomRestController {
     @PostMapping("/checkIfAvailable")
     public ResponseEntity<Boolean> checkIfAvailable(@RequestBody Screening screening, @RequestParam int col, @RequestParam int row) {
         try {
-            boolean available = roomService.checkIfAvailable(screening, col, row);
+            boolean available = roomService.checkIfSeatIsAvailable(screening, col, row);
             return ResponseEntity.ok(available);
         } catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

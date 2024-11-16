@@ -16,6 +16,7 @@ import TheatresPage from './pages/Theatres';
 import NewMoviePage from './pages/AddMovie';
 import { Box } from '@mui/material';
 import AddScreeningPage from './pages/AddScreening';
+import NewSnackPage from './pages/AddSnack';
 
 function App() {
   const location = useLocation();
@@ -54,6 +55,7 @@ function App() {
           <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
           <Route path='/addMovie' element={userRole==="employee" ? <NewMoviePage/> : <NotFound/>}/>
           <Route path='/addScreening' element={userRole==="employee" ? <AddScreeningPage/> : <NotFound/>}/>
+          <Route path='/addSnack' element={userRole==="employee" ? <NewSnackPage/> : <NotFound/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
         </Box>

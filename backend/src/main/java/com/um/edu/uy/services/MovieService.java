@@ -8,6 +8,7 @@ import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -96,4 +97,10 @@ public class MovieService {
     public List<Movie> getByPGRating(String pgrating) {
         return movieRepo.findByPGRating(pgrating).orElse(new LinkedList<>());
     }
+
+    public Duration getDurationByID(long id) throws InvalidDataException{
+        LocalTime durationTime = movieRepo.getDurationById(id).orElseThrow(() -> new InvalidDataException("Movie not found."));
+        return Duration.ofHours(durationTime.getHour()).plusMinutes(durationTime.getMinute()).plusSeconds(durationTime.getSecond());
+    }
+
 }

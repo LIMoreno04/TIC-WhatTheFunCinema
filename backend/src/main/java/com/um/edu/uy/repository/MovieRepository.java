@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("SELECT m.Id, m.title FROM Movie m ")
     Optional<List<Object[]>> getTitlesAndIds();
 
+    @Query("SELECT m.duration FROM Movie m WHERE m.Id =:id")
+    Optional<LocalTime> getDurationById(@Param("id")long id);
 
     @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
             "JOIN m.screenings s " +

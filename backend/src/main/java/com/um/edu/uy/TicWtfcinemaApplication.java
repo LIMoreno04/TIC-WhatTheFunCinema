@@ -4,7 +4,9 @@ import com.um.edu.uy.controllers.UserRestController;
 import com.um.edu.uy.entities.plainEntities.Employee;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.exceptions.InvalidDataException;
+import com.um.edu.uy.repository.ScreeningRepository;
 import com.um.edu.uy.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +29,7 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class TicWtfcinemaApplication {
@@ -41,8 +44,7 @@ public class TicWtfcinemaApplication {
 	private MovieService movieService;
 
 	@Autowired
-	private RoomService roomService;
-
+	private ScreeningRepository screeningRepository;
 	public static void main(String[] args) throws InvalidDataException, IOException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
@@ -57,8 +59,6 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
-
-
 
 	}
 

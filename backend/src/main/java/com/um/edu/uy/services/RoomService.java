@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +62,10 @@ public class RoomService {
         movieRepo.save(movie);
     }
 
+    public Boolean isRoomAvailable(LocalDateTime start, LocalDateTime end, String theatre, int roomNumber){
+        Optional<List<Object[]>> opt = screeningRepo.isRoomAvailable(start,end,theatre,roomNumber);
+        return (opt.isEmpty() || opt.get().isEmpty());
+    }
 
     public List<Reservation> getAllReservations(Screening screening) throws InvalidDataException {
         Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
@@ -73,7 +77,7 @@ public class RoomService {
 
     }
 
-    public boolean checkIfAvailable(Screening screening, int col, int row) throws InvalidDataException{
+    public boolean checkIfSeatIsAvailable(Screening screening, int col, int row) throws InvalidDataException{
         Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
         if (screeningResult.isEmpty()) {
             throw new InvalidDataException("screening not found.");
