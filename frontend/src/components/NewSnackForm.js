@@ -1,205 +1,160 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { es } from 'date-fns/locale';
 import {
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  Box,
-  CircularProgress,
-  styled,
-} from "@mui/material";
-import ImageIcon from "@mui/icons-material/Image";
-import axios from "axios";
+  TextField, Button, Typography, Box, Paper, CircularProgress,
+  IconButton, Dialog, DialogTitle, DialogContent, List,
+  ListItem, ListItemText, InputAdornment
+} from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import SearchIcon from '@mui/icons-material/Search';
+import { styled } from '@mui/system';
 
 const ErrorMessage = styled(Typography)({
-  color: "pink",
-  fontWeight: "bold",
-  textShadow: "0 0 5px cyan",
-  marginBottom: "10px",
+  color: 'pink',
+  fontWeight: 'bold',
+  textShadow: '0 0 5px cyan',
+  marginBottom: '10px',
 });
 
-const Overlay = styled(Box)({
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.7)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 9999,
-});
-
-const AddSnackForm = () => {
-  const [snackData, setSnackData] = useState({
-    name: "",
-    price: "",
-    description: "",
-    picture: null,
-    url: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState("");
+const NewSnackForm = () => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSnackData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (!name || !description || !price || !image) {
+      setError('Todos los campos son obligatorios.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("image", image);
+
+      const response = await fetch('http://localhost:8080/api/snacks/addSnack', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData || 'Error inesperado.');
+      } else {
+        alert("Snack agregado con éxito.");
+        setName('');
+        setDescription('');
+        setPrice('');
+        setImage(null);
+      }
+    } catch (err) {
+      setError('No se pudo conectar al servidor.');
+    }
+    
+    setLoading(false);
   };
 
   const handleFileChange = (e) => {
-    setSnackData((prevData) => ({
-      ...prevData,
-      picture: e.target.files[0],
-    }));
+    const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
+    if (file) setImage(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const formData = new FormData();
-    formData.append("name", snackData.name);
-    formData.append("price", snackData.price);
-    formData.append("description", snackData.description);
-    formData.append("picture", snackData.picture);
-    formData.append("url", snackData.url);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/snacks/addSnack",
-        formData,
-        { withCredentials: true }
-      );
-      setMessage(response.data);
-      setErrors({});
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrors(error.response.data);
-      } else {
-        setMessage("Error al agregar el snack.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const allFieldsFilled = name && description && price && image;
 
   return (
     <Box position="relative">
-      {loading && (
-        <Overlay>
-          <CircularProgress />
-        </Overlay>
-      )}
-      <Paper
-        sx={{
-          border: "2px solid #9df8fc",
-          borderRadius: "30px",
-          padding: "40px",
-          maxWidth: "600px",
-          margin: "auto",
-          opacity: loading ? 0.5 : 1,
-        }}
-      >
-        <Box align="center" mb={3}>
-          <Typography variant="h4" color="#9df8fc">
-            Agregar Snack
-          </Typography>
-        </Box>
-        {message && (
-          <Typography color="#9df8fc" mb={2}>
-            {message}
-          </Typography>
-        )}
-        {Object.keys(errors).length > 0 && (
-          <ErrorMessage>Por favor corrige los errores marcados.</ErrorMessage>
-        )}
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <Box display="flex" flexDirection="column" gap={3}>
-            <TextField
-              label="Nombre"
-              name="name"
-              value={snackData.name}
-              onChange={handleChange}
-              error={Boolean(errors.name)}
-              helperText={errors.name}
-              fullWidth
-            />
-            <TextField
-              label="Precio"
-              name="price"
-              type="number"
-              value={snackData.price}
-              onChange={handleChange}
-              error={Boolean(errors.price)}
-              helperText={errors.price}
-              fullWidth
-            />
-            <TextField
-              label="Descripción"
-              name="description"
-              value={snackData.description}
-              onChange={handleChange}
-              error={Boolean(errors.description)}
-              helperText={errors.description}
-              multiline
-              rows={4}
-              fullWidth
-            />
-            <TextField
-              label="URL"
-              name="url"
-              value={snackData.url}
-              onChange={handleChange}
-              error={Boolean(errors.url)}
-              helperText={errors.url}
-              fullWidth
-            />
-            <Paper
-              elevation={3}
-              sx={{
-                border: "2px solid #e4b4e6",
-                p: 3,
-                textAlign: "center",
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 150,
-              }}
-              onClick={() => document.getElementById("file-input").click()}
-            >
-              <ImageIcon fontSize="large" />
-              <Typography variant="subtitle1">
-                {snackData.picture ? snackData.picture.name : "Sube una imagen"}
-              </Typography>
-            </Paper>
-            <input
-              id="file-input"
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*"
-              style={{ display: "none" }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={loading}
-            >
-              Agregar Snack
-            </Button>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+        {loading && (
+          <Box
+            position="fixed"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            backgroundColor="rgba(0, 0, 0, 0.7)"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            zIndex={9999}
+          >
+            <CircularProgress />
           </Box>
-        </form>
-      </Paper>
+        )}
+
+        <Paper sx={{ border: '2px solid #ff66b2', borderRadius: '30px', padding: '40px', maxWidth: '850px', flexDirection: 'column', margin: 'auto', opacity: loading ? 0.5 : 1 }}>
+          <Box align={'center'} maxWidth={850} sx={{ margin: 'auto' }}>
+            <Box ml={3} display={'flex'} mt={-2} mb={3}>
+              <Typography
+                variant="h5"
+                fontSize={'50px'}
+                sx={{
+                  color: '#fff', // Letra blanca
+                  textShadow: '0 0 10px #ff66b2, 0 0 20px #ff66b2', // Efecto de sombra brillante
+                  fontWeight: 'bold', // Fuente más llamativa
+                }}
+              >
+                Agregar Snack
+              </Typography>
+            </Box>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+            <Box sx={{ paddingY: 2, display: 'flex', gap: 2, maxWidth: 800, margin: 'auto' }}>
+              {/* Image section */}
+              <Box sx={{ flex: 0.75, maxWidth: '50%' }}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    border: '2px dashed #ff66b2', // Borde rosado brillante
+                    p: 3,
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    height: 292,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onClick={() => document.getElementById('file-input').click()}
+                >
+                  <Typography variant="subtitle1">{image ? image.name : 'Arrastre o elija el archivo de la imagen'}</Typography>
+                </Paper>
+                <input
+                  id="file-input"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  required
+                />
+              </Box>
+
+              {/* Fields section */}
+              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField label="Nombre" value={name} onChange={(e) => setName(e.target.value)} required />
+                <TextField label="Descripción" value={description} onChange={(e) => setDescription(e.target.value)} required />
+                <TextField label="Precio" value={price} onChange={(e) => setPrice(e.target.value)} required />
+              </Box>
+            </Box>
+
+            <Button variant="contained" onClick={handleSubmit} disabled={!allFieldsFilled}>Enviar</Button>
+          </Box>
+        </Paper>
+      </LocalizationProvider>
     </Box>
   );
 };
 
-export default AddSnackForm;
+export default NewSnackForm;
