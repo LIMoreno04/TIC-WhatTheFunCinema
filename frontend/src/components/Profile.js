@@ -10,6 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { es } from 'date-fns/locale'; // Use 'es' locale for Spanish
 import { format } from 'date-fns';
 import PaymentMethodsDisplay from './PaymentMethodsDisplay';
+import { DatePicker } from '@mui/x-date-pickers';
 
 
 const countries = [
@@ -553,12 +554,11 @@ const countries = [
                                     value={format(new Date(userData[currentField] + 'T00:00:00'),"dd/MM/yyyy")}
                                     InputProps={{ readOnly: true }}
                                 />
-                                <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
-                                    <DateField
+                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+                                    <DatePicker
+                                    sx={{width:'100%'}}
                                         label={'Nueva Fecha de nacimiento'}
-                                        fullWidth
-                                        margin="normal"
-                                        variant="outlined"
+                                        dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
                                         error={!!errors[currentField]}
                                         helperText={errors[currentField]}
                                         format="dd/MM/yyyy"

@@ -10,7 +10,9 @@ import {
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { es } from "date-fns/locale";
 
 const languages = ["Español", "Inglés"];
 
@@ -24,7 +26,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
   const [theatres, setTheatres] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [language, setLanguage] = useState("");
-  const [dateTime, setDateTime] = useState(null);
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
   const [screeningPrice, setScreeningPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -67,12 +70,26 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
 
     // Find the movie ID based on the selected title
     const selectedMovie = movies.find(([id, title]) => title === selectedMovieTitle);
+
+    // Combine date and time into a single ISO string
+    let dateTime = null;
+    if (date && time) {
+      const combinedDateTime = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        time.getHours(),
+        time.getMinutes()
+      );
+      dateTime = combinedDateTime.toISOString();
+    }
+
     const screeningData = {
       movieId: selectedMovie?.[0], // Use the ID for submission
       theatre,
       roomNumber,
       language,
-      date_and_time: dateTime?.toISOString(),
+      date_and_time: dateTime,
       screeningPrice,
     };
 
@@ -94,7 +111,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
         setRoomNumber("");
         setSelectedMovieTitle("");
         setLanguage("");
-        setDateTime(null);
+        setDate(null);
+        setTime(null);
         setScreeningPrice("");
       }
     } catch (error) {
@@ -105,7 +123,7 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       <Box position="relative">
         {loading && (
           <Box
@@ -134,11 +152,11 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
             borderRadius: "20px",
           }}
         >
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="neonCyan" fontSize="2.5rem" gutterBottom>
             Add New Screening
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ paddingTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
             {!initialRoom && (
               <Autocomplete
                 options={theatres}
@@ -150,12 +168,29 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
 
             {theatre && (
               <Autocomplete
-                options={rooms}
-                value={roomNumber}
-                onChange={(e, newValue) => setRoomNumber(newValue)}
-                renderInput={(params) => <TextField {...params} label="Room" required />}
-              />
+              options={rooms}
+              value={roomNumber}
+              onChange={(e, newValue) => setRoomNumber(newValue)}
+              getOptionLabel={(option) => (option ? String(option) : "")} // Ensure a string is returned
+              renderInput={(params) => <TextField {...params} label="Room" required />}
+            />            
             )}
+
+            <DatePicker
+              label="Date"
+              format="dd/MM/yyyy"
+              dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
+              value={date}
+              onChange={(newValue) => setDate(newValue)}
+              renderInput={(params) => <TextField {...params} required />}
+            />
+
+            <TimePicker
+              label="Time"
+              value={time}
+              onChange={(newValue) => setTime(newValue)}
+              renderInput={(params) => <TextField {...params} required />}
+            />
 
             {!initialMovieId && (
               <Autocomplete
@@ -171,13 +206,6 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               value={language}
               onChange={(e, newValue) => setLanguage(newValue)}
               renderInput={(params) => <TextField {...params} label="Language" required />}
-            />
-
-            <DateTimePicker
-              label="Date and Time"
-              value={dateTime}
-              onChange={(newValue) => setDateTime(newValue)}
-              renderInput={(params) => <TextField {...params} required />}
             />
 
             <TextField

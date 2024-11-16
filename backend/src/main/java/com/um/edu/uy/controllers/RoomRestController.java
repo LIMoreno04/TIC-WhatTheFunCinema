@@ -51,7 +51,9 @@ public class RoomRestController {
             return ResponseEntity.ok("Screening added.");
         }
         catch (InvalidDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            if (e.getMessage().contains("Movie")) { errors.put("movieId","Película no encontrada.");}
+            else {errors.put("Unexpected","Error inesperado: "+e.getMessage());}
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
     }

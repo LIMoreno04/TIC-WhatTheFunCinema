@@ -33,7 +33,7 @@ public class TheatreRestController {
         try {
             return ResponseEntity.ok(theatreService.findAllRooms(theatre));
         } catch (InvalidDataException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sucursal no encontrada.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String,String>().put("theatre","Sucursal no encontrada."));
         }
     }
 

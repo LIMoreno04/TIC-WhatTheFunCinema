@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { es } from 'date-fns/locale'; // Use 'es' locale for Spanish
 import {
   TextField, Button, Typography, Box, Autocomplete, Paper, CircularProgress,
   IconButton, Divider,
@@ -10,7 +11,7 @@ import {
   ListItemText,
   InputAdornment
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TimeField } from '@mui/x-date-pickers/TimeField';
 import { styled } from '@mui/system';
@@ -187,7 +188,7 @@ const NewMovieForm = () => {
 
   return (
     <Box position="relative">
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       {loading && (
         <Overlay>
           <CircularProgress />
@@ -248,9 +249,11 @@ const NewMovieForm = () => {
             required
           />
 
-            <DateField
+            <DatePicker
                 label="Fecha de estreno"
-                format="dd-MM-yyyy"
+                format="dd/MM/yyyy"
+                dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
+                renderInput={(params) => <TextField {...params} required />}
                 value={releaseDate}
                 onChange={(newValue) => setReleaseDate(newValue)}
             />

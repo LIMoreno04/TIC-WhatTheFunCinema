@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DateField } from '@mui/x-date-pickers/DateField';
+import format from 'date-fns/format';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { es } from 'date-fns/locale'; // Use 'es' locale for Spanish
@@ -10,6 +10,7 @@ import { Container, Paper, Typography, Button, IconButton, InputAdornment, Toolt
 import Autocomplete from '@mui/material/Autocomplete';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import NotFound from '../pages/NotFound';
+import { DatePicker } from '@mui/x-date-pickers';
 
 
 export default function NewEmployeeForm() {
@@ -51,7 +52,7 @@ export default function NewEmployeeForm() {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState('');
+  const [dob, setDob] = useState(null);
   const [idNumber, setIdNumber] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedPhoneCountry, setSelectedPhoneCountry] = useState(null);
@@ -258,11 +259,13 @@ export default function NewEmployeeForm() {
             error={!!formErrors.address}
             helperText={formErrors.address}
             />
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
-              <DateField
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+              <DatePicker
                 label="Fecha de nacimiento (DD/MM/YYYY)"
                 value={dob}
+                dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
                 onChange={(newValue) => setDob(newValue)}
+                renderInput={(params) => <TextField {...params} required />}
                 format="dd/MM/yyyy"
                 disabled={loading}
                 error={!!formErrors.dateOfBirth}

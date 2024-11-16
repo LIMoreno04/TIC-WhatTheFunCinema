@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { colors, createTheme } from "@mui/material";
 import './MADEINFINITYRegular.otf'
 import './MADEINFINITYThin.otf'
 
@@ -208,6 +208,19 @@ const neonTheme = createTheme({
               textShadow: '0 0 8px #ff66c4, 0 0 12px #ff66c4, 0 0 18px #ff66c4', // Enhanced glow on hover
             },
           },
+        },
+      }, 
+      MuiPickersDay: {
+        styleOverrides: {
+          root: {
+            color: '#fff', // Set the text color to white
+            
+            '&.Mui-selected': {
+              color: '#fff', // Keep the selected day text white
+            },  '& .MuiDayCalendar-weekDayLabel': {
+              color:'red'
+          },
+        }
         },
       },
     },

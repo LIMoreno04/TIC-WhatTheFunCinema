@@ -10,6 +10,7 @@ import { Container, Paper, Typography, Button, IconButton, InputAdornment, Toolt
 import Autocomplete from '@mui/material/Autocomplete';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { DatePicker } from '@mui/x-date-pickers';
 
 
 export default function SignupForm() {
@@ -247,10 +248,11 @@ export default function SignupForm() {
             error={!!formErrors.lastName}
             helperText={formErrors.lastName}
             />
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
-              <DateField
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
+              <DatePicker
                 label="Fecha de nacimiento (DD/MM/YYYY)"
                 value={dob}
+                dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
                 onChange={(newValue) => setDob(newValue)}
                 format="dd/MM/yyyy"
                 disabled={loading}

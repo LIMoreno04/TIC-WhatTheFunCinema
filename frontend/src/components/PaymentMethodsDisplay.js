@@ -55,7 +55,25 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewCard((prevCard) => ({ ...prevCard, [name]: value }));
+
+    if (name === 'expirationDate') {
+      // Only allow numeric input
+      const input = value.replace(/\D/g, '');
+      let formatted = input;
+
+      if (input.length > 2) {
+        // Add "/" after the first two digits
+        formatted = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
+      }
+
+      // Limit to 5 characters (MM/YY format)
+      setNewCard((prevCard) => ({
+        ...prevCard,
+        expirationDate: formatted.slice(0, 5),
+      }));
+    } else {
+      setNewCard((prevCard) => ({ ...prevCard, [name]: value }));
+    }
   };
 
   const handleCardTypeChange = (event, newValue) => {
@@ -74,7 +92,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
         credentials: 'include',
         body: JSON.stringify(newCard),
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
@@ -108,7 +126,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
           credentials: 'include',
           body: JSON.stringify(selectedCard),
         });
-  
+
         if (!response.ok) {
           throw new Error('Failed to delete card');
         }
@@ -123,6 +141,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
   const maskCardNumber = (cardNumber) => {
     return `**** **** **** ${cardNumber.slice(-4)}`;
   };
+
 
   return (
     <Paper
@@ -253,6 +272,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
               placeholder="MM/YY"
               value={newCard.expirationDate}
               onChange={handleInputChange}
+              inputProps={{ maxLength: 5 }}
             />
             <TextField
               margin="dense"
@@ -280,14 +300,11 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>
-            Cancel
-          </Button>
-          <Button onClick={handleAddCard}>
-            Confirm
-          </Button>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleAddCard}>Confirm</Button>
         </DialogActions>
       </Dialog>
+
 
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
         <DialogTitle>¿Seguro que deseas eliminar este método de pago?</DialogTitle>
