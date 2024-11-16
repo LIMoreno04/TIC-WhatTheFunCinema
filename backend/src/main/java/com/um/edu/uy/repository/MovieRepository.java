@@ -45,7 +45,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
         FROM Movie m
         JOIN Screening s ON m = s.movie
         JOIN Reservation r ON s = r.screening
-        WHERE r.email = :customerEmail
+        WHERE r.customer.email = :customerEmail
           AND s.date_and_time < CURRENT_TIMESTAMP
     """)
     List<Movie> findSeenMoviesByCustomerId(@Param("customerEmail") String email);

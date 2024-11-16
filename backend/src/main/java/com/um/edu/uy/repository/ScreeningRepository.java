@@ -29,7 +29,7 @@ public interface ScreeningRepository extends JpaRepository<Screening, ScreeningI
 
     @Query(value = " SELECT s.room_number, s.date_and_time, m.duration " +
             " FROM screening s CROSS JOIN Movie m " +
-            " WHERE s.theatre = :thtre AND s.room_number = :n" +
+            " WHERE s.theatre = :thtre AND s.room_number = :n AND" +
             " ((s.date_and_time + m.duration::INTERVAL BETWEEN :sdt AND :edt) " +
             " OR (s.date_and_time BETWEEN :sdt AND :edt) " +
             " OR (s.date_and_time < :sdt AND s.date_and_time + m.duration::INTERVAL > :edt)) ",
