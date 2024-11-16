@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.MovieDTO;
+import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.enums.PGRating;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -126,6 +128,24 @@ public class MovieRestController {
 
     }
 
+    @GetMapping("/preview/{id}")
+    public ResponseEntity<?> getMoviePreview(@PathVariable Long id) {
+        try {
+            MoviePreviewDTO moviePreview = movieService.getPreview(id);
+            String posterBase64 = Base64.getEncoder().encodeToString((byte[]) moviePreview.getPoster());
+            HashMap<String,String> movie = new HashMap<>();
+            movie.put("title",moviePreview.getTitle());
+            movie.put("poster","data:image/jpeg;base64,"+ posterBase64);
+            movie.put("duration",moviePreview.getDuration().toString());
+            movie.put("PGRating",moviePreview.getPGRating());
+            movie.put("releaseDate",moviePreview.getReleaseDate().toString());
+            return ResponseEntity.ok(movie);
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String,String>().put("movieId","Película con id "+id+" no encontrada."));
+        }
+
+    }
+
 
 
 
@@ -146,22 +166,13 @@ public class MovieRestController {
     }
 
     @GetMapping("/allOnDisplay")
-    public ResponseEntity<List<HashMap<String,Object>>> showAllMoviesOnDisplay() {
-        List<Object[]> moviesOnDisplay = movieService.findAllMoviesOnDisplay();
+    public ResponseEntity<?> showAllMoviesOnDisplay() {
+        List<Long> moviesOnDisplay = movieService.findAllMoviesOnDisplay();
 
         if (moviesOnDisplay.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            List<HashMap<String,Object>> trueMoviesOnDisplay = new LinkedList<>();
-            for (Object[] movieData : moviesOnDisplay) {
-                HashMap<String, Object> movieOnDisplay = new HashMap<>();
-                movieOnDisplay.put("Id",movieData[0]);
-                movieOnDisplay.put("poster",movieData[1]);
-                movieOnDisplay.put("title",movieData[2]);
-                movieOnDisplay.put("PGRating",movieData[3]);
-                trueMoviesOnDisplay.add(movieOnDisplay);
-            }
-            return ResponseEntity.ok(trueMoviesOnDisplay);
+            return ResponseEntity.ok(moviesOnDisplay);
         }
     }
 

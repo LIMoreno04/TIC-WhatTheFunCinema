@@ -1,5 +1,6 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.exceptions.InvalidDataException;
@@ -7,6 +8,7 @@ import com.um.edu.uy.repository.GenreRepository;
 import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -53,6 +55,13 @@ public class MovieService {
     public Movie findById(Long id) throws InvalidDataException {
         return movieRepo.findById(id).orElseThrow(()->new InvalidDataException("Movie not found"));
     }
+
+    @Transactional
+    public MoviePreviewDTO getPreview(long id) throws InvalidDataException {
+        return movieRepo.getPreview(id).orElseThrow(()->new InvalidDataException("Movie not found"));
+    }
+
+
     public List<Movie> getAllMovies() {
         return movieRepo.findAll();
     }
@@ -65,11 +74,11 @@ public class MovieService {
         movieRepo.delete(movie);
     }
 
-    public List<Object[]> findAllMoviesOnDisplay() {
+    public List<Long> findAllMoviesOnDisplay() {
         return movieRepo.findAllOnDisplay(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
-    public List<Object[]> findAllMoviesComingSoon() {
+    public List<Long> findAllMoviesComingSoon() {
         return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()).orElse(new LinkedList<>());
     }
 

@@ -1,5 +1,6 @@
 package com.um.edu.uy.repository;
 
+import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,20 +23,20 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("SELECT m.duration FROM Movie m WHERE m.Id =:id")
     Optional<LocalTime> getDurationById(@Param("id")long id);
 
-    @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
+    @Query("SELECT m.Id FROM Movie m " +
             "JOIN m.screenings s " +
             "WHERE s.date_and_time < :nextWeek " +
             "AND s.date_and_time > :previousWeek")
-    Optional<List<Object[]>> findAllOnDisplay(LocalDateTime previousWeek, LocalDateTime nextWeek);
+    Optional<List<Long>> findAllOnDisplay(LocalDateTime previousWeek, LocalDateTime nextWeek);
 
-    @Query("SELECT m.Id, m.poster, m.title, m.PGRating FROM Movie m " +
+    @Query("SELECT m.Id FROM Movie m " +
             "JOIN m.screenings s " +
             "WHERE s.date_and_time > :currentTime " +
             "AND NOT EXISTS (" +
             "   SELECT 1 FROM Screening past WHERE past.movie = m " +
             "   AND past.date_and_time BETWEEN :previousWeek AND :currentTime" +
             ")")
-    Optional<List<Object[]>> findAllComingSoon(LocalDateTime previousWeek, LocalDateTime currentTime);
+    Optional<List<Long>> findAllComingSoon(LocalDateTime previousWeek, LocalDateTime currentTime);
     public Optional<List<Movie>> findByDirector(String director);
 
     public Optional<List<Movie>> findByPGRating(String pgrating);
@@ -49,5 +50,10 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
           AND s.date_and_time < CURRENT_TIMESTAMP
     """)
     List<Movie> findSeenMoviesByCustomerId(@Param("customerEmail") String email);
+
+    @Query("SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.title, m.poster, m.duration, m.PGRating, m.releaseDate) " +
+            "FROM Movie m WHERE m.Id = :id")
+    Optional<MoviePreviewDTO> getPreview(@Param("id") long id);
+
 
 }
