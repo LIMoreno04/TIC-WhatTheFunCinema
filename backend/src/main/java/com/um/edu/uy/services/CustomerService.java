@@ -1,14 +1,12 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.ids.CustomerRankID;
 import com.um.edu.uy.entities.ids.ReservationId;
 import com.um.edu.uy.entities.ids.RoomID;
 import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.repository.CardRepository;
-import com.um.edu.uy.repository.CustomerRepository;
-import com.um.edu.uy.repository.ReservationRepository;
-import com.um.edu.uy.repository.ScreeningRepository;
+import com.um.edu.uy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +33,9 @@ public class CustomerService {
 
     @Autowired
     private CardRepository cardRepo;
+
+    @Autowired
+    private MovieCustomerRankRepository movieCustomerRankRepo;
 
     public List<Customer> getAll() {return customerRepo.findAll();}
 
@@ -204,6 +205,23 @@ public class CustomerService {
         Customer customer = findCustomer(email, password);
         customerRepo.delete(customer);
         userService.deleteUser(email, password);
+    }
+
+    public MovieCustomerRank rankMovie(Movie movieId, Customer customerEmail, int rank) {
+        CustomerRankID id = new CustomerRankID(customerEmail.getEmail(), movieId.getId());
+        MovieCustomerRank movieCustomerRank = movieCustomerRankRepo.findById(id).orElse(null);
+
+        if (movieCustomerRank != null) {
+            return null;
+        }
+
+        MovieCustomerRank movieRank = MovieCustomerRank.builder()
+                .movieId(movieId)
+                .customerEmail(customerEmail)
+                .rank(rank)
+                .build();
+
+        return movieCustomerRankRepo.save(movieRank);
     }
 
 }

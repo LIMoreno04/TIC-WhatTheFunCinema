@@ -3,8 +3,10 @@ package com.um.edu.uy.services;
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.entities.plainEntities.MovieCustomerRank;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.GenreRepository;
+import com.um.edu.uy.repository.MovieCustomerRankRepository;
 import com.um.edu.uy.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class MovieService {
 
     @Autowired
     private GenreRepository genreRepo;
+
+    @Autowired
+    private MovieCustomerRankRepository movieCustomerRankRepo;
 
     public Optional<List<Object[]>> getTitlesAndIds() {
         return movieRepo.getTitlesAndIds();
@@ -112,7 +117,11 @@ public class MovieService {
         return Duration.ofHours(durationTime.getHour()).plusMinutes(durationTime.getMinute()).plusSeconds(durationTime.getSecond());
     }
 
-    public List<Movie> findSeenMoviesByCustomerId(String email) {
+    public List<Long> findSeenMoviesByCustomerId(String email) {
         return movieRepo.findSeenMoviesByCustomerId(email);
+    }
+
+    public List<Long> getMovieRanking() throws InvalidDataException {
+        return movieCustomerRankRepo.findBestRankedMovies();
     }
 }

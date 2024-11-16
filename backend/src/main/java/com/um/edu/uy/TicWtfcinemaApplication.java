@@ -1,10 +1,9 @@
 package com.um.edu.uy;
 
 import com.um.edu.uy.controllers.UserRestController;
-import com.um.edu.uy.entities.plainEntities.Employee;
-import com.um.edu.uy.entities.plainEntities.Genre;
-import com.um.edu.uy.entities.plainEntities.Movie;
-import com.um.edu.uy.entities.plainEntities.Screening;
+import com.um.edu.uy.entities.ids.RoomID;
+import com.um.edu.uy.entities.ids.ScreeningID;
+import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.ScreeningRepository;
 import com.um.edu.uy.services.*;
@@ -26,10 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootApplication
 public class TicWtfcinemaApplication {
@@ -44,11 +40,31 @@ public class TicWtfcinemaApplication {
 	private MovieService movieService;
 
 	@Autowired
+	private RoomService roomService;
+
+	@Autowired
+	private ScreeningRepository screeningRepo;
+
+	@Autowired
 	private ScreeningRepository screeningRepository;
 	public static void main(String[] args) throws InvalidDataException, IOException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
 		app.runInCommandLine();
+	}
+
+	public void prueba() throws InvalidDataException {
+		Movie movie = movieService.findById(10L);
+
+		Customer customer = customerService.findCustomer("ignamoreno04@gmail.com", "Abcd1234@@");
+
+		LocalDateTime date = LocalDateTime.of(2024, 11, 15, 18, 30, 8, 548_000_000);
+
+		Screening screening = screeningRepo.findById(new ScreeningID(new RoomID("Malvin",2),date)).get();
+
+		customerService.makeReservation(customer.getEmail(), 1, 1, screening);
+
+
 	}
 
 	public void runInCommandLine() throws InvalidDataException, IOException {
@@ -59,6 +75,8 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
+
+		prueba();
 
 	}
 

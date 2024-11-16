@@ -242,6 +242,17 @@ public class MovieRestController {
         }
     }
 
+    @GetMapping("/ranking")
+    public ResponseEntity<?> ranking() throws InvalidDataException {
+        List<Long> ranking = movieService.getMovieRanking();
+
+        if (ranking.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ranking);
+        }
+    }
+
 
 
 

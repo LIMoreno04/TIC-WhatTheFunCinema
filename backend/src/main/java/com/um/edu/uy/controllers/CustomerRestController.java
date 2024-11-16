@@ -178,10 +178,10 @@ public class CustomerRestController {
     }
 
     @GetMapping("/seenMovies")
-    public ResponseEntity<List<Movie>> seenMovies(HttpSession session) {
+    public ResponseEntity<List<Long>> seenMovies(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
 
-        List<Movie> seenMovies = movieService.findSeenMoviesByCustomerId(customer.getEmail());
+        List<Long> seenMovies = movieService.findSeenMoviesByCustomerId(customer.getEmail());
 
         if (seenMovies.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -190,11 +190,20 @@ public class CustomerRestController {
         }
     }
 
-//    @PostMapping("/rankMovie")
-//    public ResponseEntity<?> rankMovie() {
-//
-//    }
+    @PostMapping("/rankMovie")
+    public ResponseEntity<?> rankMovie(@RequestBody Long movieId, @RequestBody int rank, HttpSession session) throws InvalidDataException {
+        Customer customer = (Customer) session.getAttribute("user");
 
+        Movie movie = movieService.findById(movieId);
+
+        MovieCustomerRank movieRank = customerService.rankMovie(movie, customer, rank);
+
+        if (movieRank == null) {
+            return ResponseEntity.badRequest().body("Esta pelicula ya fue rankeada.");
+        } else {
+            return ResponseEntity.ok(movieRank);
+        }
+}
 
     // Exception handler for validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)

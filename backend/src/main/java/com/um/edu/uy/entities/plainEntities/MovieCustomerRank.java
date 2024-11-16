@@ -3,13 +3,11 @@ package com.um.edu.uy.entities.plainEntities;
 import com.um.edu.uy.entities.ids.CustomerRankID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @IdClass(CustomerRankID.class)
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
