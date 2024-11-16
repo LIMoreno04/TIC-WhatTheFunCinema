@@ -103,4 +103,7 @@ public class MovieService {
         return Duration.ofHours(durationTime.getHour()).plusMinutes(durationTime.getMinute()).plusSeconds(durationTime.getSecond());
     }
 
+    public List<Movie> findSeenMoviesByCustomerId(String email) {
+        return movieRepo.findSeenMoviesByCustomerId(email);
+    }
 }

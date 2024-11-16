@@ -8,23 +8,23 @@ import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
+import com.um.edu.uy.services.MovieService;
 import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
@@ -37,6 +37,9 @@ public class CustomerRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MovieService movieService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -173,6 +176,25 @@ public class CustomerRestController {
              return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
          }
     }
+
+    @GetMapping("/seenMovies")
+    public ResponseEntity<List<Movie>> seenMovies(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+
+        List<Movie> seenMovies = movieService.findSeenMoviesByCustomerId(customer.getEmail());
+
+        if (seenMovies.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(seenMovies);
+        }
+    }
+
+//    @PostMapping("/rankMovie")
+//    public ResponseEntity<?> rankMovie() {
+//
+//    }
+
 
     // Exception handler for validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
