@@ -56,7 +56,7 @@ public class MovieRestController {
             @RequestParam("genres") List<String> genres,
             @RequestParam("PGRating") String PGRating,
             @RequestParam("poster") MultipartFile poster) {
-        if (session.getAttribute("role").equals("employee")) {
+        if (session.getAttribute("role") !=null && session.getAttribute("role").equals("employee")) {
 
             Map<String, String> errors = new HashMap<>();
 
