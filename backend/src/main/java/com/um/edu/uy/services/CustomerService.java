@@ -138,25 +138,47 @@ public class CustomerService {
     }
 
     public Reservation makeReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
+        // Validar que el cliente exista
         Optional<Customer> customerOpt = customerRepo.findById(email);
         if (customerOpt.isEmpty()) {
             throw new InvalidDataException("Customer not found.");
         }
         Customer customer = customerOpt.get();
 
-        Optional<Screening> screeningOpt = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time()));
+        // Validar que la proyección exista
+        Optional<Screening> screeningOpt = screeningRepo.findById(
+                new ScreeningID(
+                        new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()),
+                        screening.getDate_and_time()
+                )
+        );
         if (screeningOpt.isEmpty()) {
             throw new InvalidDataException("Screening not found.");
         }
+        Screening validScreening = screeningOpt.get();
 
-        Optional<Reservation> existingReservation = reservationRepo.findById(new ReservationId(row,col,new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(),screening.getRoom().getRoom_number()),screening.getDate_and_time())));
-        if (existingReservation.isPresent()) {
-            throw new InvalidDataException("Seat already reserved.");
+        // Validar que la fila y columna sean válidas según la capacidad de la sala
+        Room room = validScreening.getRoom();
+        if (row < 0 || col < 0) {
+            throw new InvalidDataException("Row and column must be non-negative.");
+        }
+        if (row >= room.getRows()) {
+            throw new InvalidDataException("Row exceeds the room's capacity.");
+        }
+        if (col >= room.getColumns()) {
+            throw new InvalidDataException("Column exceeds the room's capacity.");
         }
 
+        // Verificar que el asiento no esté reservado
+        Optional<Reservation> existingReservation = reservationRepo.findByScreeningAndColAndRow(validScreening, col, row);
+        if (existingReservation.isPresent()) {
+            throw new InvalidDataException("Seat is already reserved.");
+        }
+
+        // Crear y guardar la reserva
         Reservation reservation = Reservation.builder()
                 .customer(customer)
-                .screening(screening)
+                .screening(validScreening)
                 .col(col)
                 .row(row)
                 .build();
@@ -167,6 +189,8 @@ public class CustomerService {
 
         return reservation;
     }
+
+
 
     public void cancelReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
         Optional<Customer> customerOpt = customerRepo.findByEmail(email);

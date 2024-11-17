@@ -95,10 +95,26 @@ public class CustomerRestController {
     }
 
     @PostMapping("/makeReservation")
-    public ResponseEntity<Reservation> makeReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) throws InvalidDataException {
-        Reservation reservation = customerService.makeReservation(email, col, row, screening);
-        return ResponseEntity.ok(reservation);
+    public ResponseEntity<?> makeReservation(
+            @RequestParam String email,
+            @RequestParam Integer col,
+            @RequestParam Integer row,
+            @RequestBody Screening screening) {
+        try {
+            Reservation reservation = customerService.makeReservation(email, col, row, screening);
+            return ResponseEntity.ok(reservation);
+        } catch (InvalidDataException e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", e.getMessage());
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("error", "An unexpected error occurred. Please try again later.");
+            return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
     @DeleteMapping("/cancelReservation")
     public ResponseEntity<String> cancelReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) {
         try {
