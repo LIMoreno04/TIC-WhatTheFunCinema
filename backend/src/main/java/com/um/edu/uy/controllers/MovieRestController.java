@@ -4,6 +4,7 @@ import com.um.edu.uy.entities.DTOs.MovieDTO;
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.enums.PGRating;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.GenreService;
@@ -126,6 +127,11 @@ public class MovieRestController {
 
     }
 
+    @GetMapping("/screenings/{movieId}")
+    public ResponseEntity<?> getScreeningsByTheatre(@PathVariable long movieId) {
+        return ResponseEntity.ok(movieService.findScreenings(movieId));
+    }
+
     @GetMapping("/preview/{id}")
     public ResponseEntity<?> getMoviePreview(@PathVariable Long id) {
         try {
@@ -171,6 +177,22 @@ public class MovieRestController {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(moviesOnDisplay);
+        }
+    }
+    @GetMapping("/allOnDisplayWithTitles")
+    public ResponseEntity<?> showAllMoviesOnDisplayWithTitles() {
+        List<Object[]> moviesOnDisplay = movieService.findAllMoviesOnDisplayWithTitles();
+        List<HashMap<String,Object>> movies = new LinkedList<>();
+        for (Object[] movie : moviesOnDisplay) {
+            HashMap<String,Object> moviee = new HashMap<>();
+            moviee.put("movieId",movie[0]);
+            moviee.put("movieTitle",movie[1]);
+            movies.add(moviee);
+        }
+        if (moviesOnDisplay.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(movies);
         }
     }
 

@@ -67,6 +67,11 @@ public class RoomService {
         return (opt.isEmpty() || opt.get().isEmpty());
     }
 
+    public Screening findScreeningById(String theatre,int roomNumber,LocalDateTime date_and_time) throws InvalidDataException {
+        return screeningRepo.findByIdMyself(theatre,roomNumber,date_and_time).orElseThrow(()->new InvalidDataException("Función inexistente."));
+    }
+
+
     public List<Reservation> getAllReservations(Screening screening) throws InvalidDataException {
         Optional<Screening> screeningResult = screeningRepo.findById(new ScreeningID(new RoomID(screening.getRoom().getTheatre().getLocation(), screening.getRoom().getRoom_number()), screening.getDate_and_time()));
         if (screeningResult.isEmpty()) {

@@ -1,8 +1,10 @@
 package com.um.edu.uy.repository;
 
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
+import com.um.edu.uy.entities.plainEntities.Theatre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +36,15 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "AND COUNT(CASE WHEN s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0")
     Optional<List<Long>> findAllOnDisplay(LocalDateTime previousWeek, LocalDateTime nextWeek);
 
+    @Query("SELECT m.Id, m.title FROM Movie m " +
+            "JOIN m.screenings s " +
+            "WHERE s.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP " +
+            "OR s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek " +
+            "GROUP BY m.Id " +
+            "HAVING COUNT(CASE WHEN s.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP THEN 1 END) > 0 " +
+            "AND COUNT(CASE WHEN s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0")
+    Optional<List<Object[]>> findAllOnDisplayWithTitles(LocalDateTime previousWeek, LocalDateTime nextWeek);
+
     @Query("SELECT m.Id " +
             "FROM Movie m " +
             "LEFT JOIN m.screenings s " +
@@ -61,8 +72,8 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     FROM Movie m
     JOIN m.genres g
     WHERE g IN :generos
-    GROUP BY m.id
-    HAVING COUNT(DISTINCT g.id) = :sizeOfList
+    GROUP BY m.Id
+    HAVING COUNT(DISTINCT g.genreName) = :sizeOfList
     """)
     Optional<List<MoviePreviewDTO>> findByGenres(@Param("generos") List<Genre> genres, @Param("sizeOfList") int sizeOfList);
 

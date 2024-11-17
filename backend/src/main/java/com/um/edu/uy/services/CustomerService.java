@@ -9,6 +9,7 @@ import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -137,6 +138,8 @@ public class CustomerService {
         customerRepo.save(customer);
     }
 
+    @Transactional
+    @jakarta.transaction.Transactional
     public Reservation makeReservation(String email, Integer col, Integer row, Screening screening) throws InvalidDataException {
         // Validar que el cliente exista
         Optional<Customer> customerOpt = customerRepo.findById(email);
@@ -183,7 +186,6 @@ public class CustomerService {
                 .row(row)
                 .build();
 
-        reservationRepo.save(reservation);
         customer.getReservations().add(reservation);
         customerRepo.save(customer);
 

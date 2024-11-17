@@ -1,13 +1,21 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.DTOs.ReservationDTO;
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
+import com.um.edu.uy.entities.ids.RoomID;
+import com.um.edu.uy.entities.ids.ScreeningID;
+import com.um.edu.uy.entities.plainEntities.Reservation;
 import com.um.edu.uy.entities.plainEntities.Room;
+import com.um.edu.uy.entities.plainEntities.Screening;
 import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.RoomRepository;
+import com.um.edu.uy.repository.ScreeningRepository;
 import com.um.edu.uy.repository.TheatreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +26,9 @@ public class TheatreService {
     private TheatreRepository theatreRepo;
     @Autowired
     private RoomRepository roomRepo;
+
+    @Autowired
+    private ScreeningRepository screeningRepo;
 
     public Theatre findByLocation(String location) throws InvalidDataException {
         if(theatreRepo.findById(location).isEmpty()) {
@@ -67,5 +78,22 @@ public class TheatreService {
         for (int i = 0; i < numberOfRooms; i++) {
             addRoomToTheatre(location,10,15);
         }
+
     }
+
+
+    public Object[] getReservations(String theatre, int roomNumber, LocalDateTime date_and_time) throws InvalidDataException {
+        Screening screening = screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time)).orElseThrow(()->new InvalidDataException("screening not found."));
+        Object[] toSend = new Object[] {screening.getRoom().getRows(),screening.getRoom().getColumns(),null,roomNumber};
+        List<ReservationDTO> reservationDTOS = new LinkedList<>();
+        for(Reservation reservation : screening.getReservations()) {
+            reservationDTOS.add(new ReservationDTO(theatre,roomNumber,date_and_time,reservation.getCol(),reservation.getRow()));
+        }
+        toSend[2] = reservationDTOS;
+        return toSend;
+    }
+
+
+
+
 }

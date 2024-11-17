@@ -1,5 +1,6 @@
 package com.um.edu.uy.repository;
 
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.Room;
 import com.um.edu.uy.entities.plainEntities.Screening;
@@ -38,5 +39,12 @@ public interface ScreeningRepository extends JpaRepository<Screening, ScreeningI
                                                       @Param("edt") LocalDateTime endingDateTime,
                                                       @Param("thtre") String theatre, @Param("n") int roomNumber);
 
+
+    @Query(" SELECT new com.um.edu.uy.entities.DTOs.ScreeningDTO(s.movie.Id,s.movie.title,s.screeningPrice,s.date_and_time,s.room.room_number,s.room.theatre.location,s.language)" +
+            " FROM Screening s WHERE s.movie.Id =:id AND s.date_and_time > :limit ")
+    public Optional<List<ScreeningDTO>> findByMovie(@Param("id") long movieId, @Param("limit") LocalDateTime limit);
+
+    @Query("SELECT s FROM Screening s WHERE  s.room.theatre.location =:t AND s.room.room_number=:n AND s.date_and_time=:d")
+    public Optional<Screening> findByIdMyself(@Param("t") String theatre, @Param("n") int roomNumber, @Param("d") LocalDateTime date_and_time);
 
 }

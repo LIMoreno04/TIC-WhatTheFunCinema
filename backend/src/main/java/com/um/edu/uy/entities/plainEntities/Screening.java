@@ -33,7 +33,7 @@ public class Screening {
 
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "movieId")
     private Movie movie;
 

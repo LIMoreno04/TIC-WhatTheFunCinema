@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -70,7 +71,15 @@ public class TheatreRestController {
         }
     }
 
+    @GetMapping("/getReservations/{theatre}/{roomNumber}/{date_and_time}")
+    public ResponseEntity<?> getReservations(@PathVariable String theatre, @PathVariable int roomNumber , @PathVariable LocalDateTime date_and_time) {
+        try {
+            return ResponseEntity.ok(theatreService.getReservations(theatre,roomNumber,date_and_time));
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<>().put("screening", "No se encontró la función."));
+        }
 
+    }
 
 
 }

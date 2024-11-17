@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.CardDTO;
+import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.entities.DTOs.UserDTO;
 import com.um.edu.uy.enums.CardType;
@@ -9,6 +10,7 @@ import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.CustomerService;
 import com.um.edu.uy.services.MovieService;
+import com.um.edu.uy.services.RoomService;
 import com.um.edu.uy.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -40,6 +42,9 @@ public class CustomerRestController {
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private RoomService roomService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -94,13 +99,24 @@ public class CustomerRestController {
         return ResponseEntity.ok(customer);
     }
 
-    @PostMapping("/makeReservation")
+    @PostMapping("/makeReservation/{col}/{row}")
     public ResponseEntity<?> makeReservation(
-            @RequestParam String email,
-            @RequestParam Integer col,
-            @RequestParam Integer row,
-            @RequestBody Screening screening) {
+            @PathVariable Integer col,
+            @PathVariable Integer row,
+            @RequestBody ScreeningDTO screeningDTO,
+            HttpSession session) {
         try {
+            // Obtener el email desde la sesión
+            User user = (User) session.getAttribute("user");
+            if (user == null || user.getEmail() == null) {
+                Map<String, String> errors = new HashMap<>();
+                errors.put("error", "Usuario no autenticado.");
+                return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+            }
+            System.out.println(screeningDTO.toString());
+            String email = user.getEmail();
+            Screening screening = roomService.findScreeningById(screeningDTO.getTheatre(),screeningDTO.getRoomNumber(),screeningDTO.getDate_and_time());
+            // Llamar al servicio para crear la reserva
             Reservation reservation = customerService.makeReservation(email, col, row, screening);
             return ResponseEntity.ok(reservation);
         } catch (InvalidDataException e) {
@@ -109,10 +125,11 @@ public class CustomerRestController {
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             Map<String, String> errors = new HashMap<>();
-            errors.put("error", "An unexpected error occurred. Please try again later.");
+            errors.put("error", "Ocurrió un error inesperado. Por favor, intente nuevamente.");
             return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
     @DeleteMapping("/cancelReservation")
