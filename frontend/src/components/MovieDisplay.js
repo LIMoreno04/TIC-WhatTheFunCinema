@@ -2,6 +2,7 @@ import { Box, CircularProgress, Paper, Tooltip, Typography } from "@mui/material
 import React, { useEffect, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import { format, parseISO } from "date-fns";
+import { useNavigate } from 'react-router-dom';
 
 const PGRatingTooltips = {
   G: "Para toda la familia!",
@@ -11,7 +12,8 @@ const PGRatingTooltips = {
   "NC-17": "+18. No se le permite la entrada a menores de 17 bajo ningún término.",
 };
 
-const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
+const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover }) => {
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(propMovie || null);
   const [loading, setLoading] = useState(!propMovie); // Skip loading if movie is provided.
   const [detailsDisplay, setDetailsDisplay] = useState("none");
@@ -65,9 +67,11 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
 
   return (
     <Paper
+      onClick={() => {navigate(`/movie/${movieId}`)}}
       sx={{
         aspectRatio: '2/3',
         maxHeight: "100%",
+        height:'100%',
         position: "relative",
         borderRadius: "15px",
         border: `4px solid ${outlineColor}`,
@@ -104,6 +108,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
         </Box>
       ) : (
         movie && (
+          detailsOnHover && (
           <>
             <Box
               className="movie-details"
@@ -112,8 +117,8 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
                 bottom: 0,
                 width: "100%",
                 height: "40%",
-                background: "rgba(0, 0, 0, 0.8)",
-                padding: "20px",
+                background: "rgba(0, 0, 0, 0.85)",
+                padding: "clamp(6px,5%,5%)",
                 boxSizing: "border-box",
                 display: detailsDisplay,
                 flexDirection: "column",
@@ -128,33 +133,33 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
             >
               <Typography
                 variant="neonCyan"
-                fontSize="2rem"
-                sx={{ marginBottom: "15px" }}
+                fontSize="clamp(20px, 170%, 170%)"
+                sx={{ marginBottom: "clamp(3px, 3%, 3%)", marginTop:'clamp(-2%,-2%,-3px)'}}
               >
-                {movie.title}
+                {movie.title.length > 16 ? `${movie.title.slice(0, 15)}...` : movie.title}
               </Typography>
-              <Typography fontSize="1rem" sx={{ marginBottom: "5px" }}>
+
+              <Typography fontSize="clamp(10px,90%,90%)" sx={{ marginBottom: "5px" }}>
                 Estreno: {format(parseISO(movie.releaseDate), "dd/MM/yyyy")}
               </Typography>
-              <Typography fontSize="1rem" sx={{ marginBottom: "5px" }}>
+              <Typography fontSize="clamp(10px,90%,90%)" sx={{ marginBottom: "5px" }}>
                 Duración:{" "}
                 {`${parseInt(movie.duration.split(":")[0])} hr ${parseInt(
                   movie.duration.split(":")[1]
                 )} min`}
               </Typography>
               <Box display="flex" alignItems="center">
-                <Typography fontSize="1rem" sx={{ marginRight: "5px" }}>
+                <Typography fontSize="clamp(10px,90%,90%)" sx={{ marginRight: "10px" }}>
                   Restricción: {movie.PGRating}
                 </Typography>
                 <Tooltip
-                  sx={{ fontSize: "5rem" }}
                   title={
-                    <h2>{PGRatingTooltips[movie.PGRating]}</h2> || "Unknown"
+                    <h3>{PGRatingTooltips[movie.PGRating]}</h3> || "Unknown"
                   }
                 >
                   <InfoIcon
                     sx={{
-                      fontSize: "1rem",
+                      fontSize: "clamp(10px,90%,90%)",
                       color: "#ff4081",
                       cursor: "pointer",
                     }}
@@ -163,6 +168,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay }) => {
               </Box>
             </Box>
           </>
+          )
         )
       )}
     </Paper>

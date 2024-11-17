@@ -9,14 +9,12 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class MoviePreviewDTO {
     private String title;
     private byte[] poster;
     private LocalTime duration;
     private String PGRating;
     private LocalDate releaseDate;
-    private List<Genre> genres;
 
     public MoviePreviewDTO(String title, byte[] poster, LocalTime duration, String PGRating, LocalDate releaseDate) {
         this.title = title;

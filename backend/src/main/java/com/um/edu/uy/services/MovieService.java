@@ -83,32 +83,20 @@ public class MovieService {
         return movieRepo.findAllOnDisplay(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
+    public List<Long> findAllOtherMovies() {
+        return movieRepo.findAllTheRest(LocalDateTime.now().minusWeeks(1)).orElse(new LinkedList<>());
+    }
+
     public List<Long> findAllMoviesComingSoon() {
-        return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()).orElse(new LinkedList<>());
+        return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1)).orElse(new LinkedList<>());
     }
 
-    public List<Movie> getByGenre(List<Genre> genres) {
-        List<Movie> foundMovies = getAllMovies();
-
-        for (int i = 0; i < foundMovies.size(); i++) {
-            Movie movie = foundMovies.get(i);
-            List<Genre> movieGenres = movie.getGenres();
-            for (int j = 0; j < genres.size(); j++) {
-                Genre genre = genres.get(j);
-                if (!movieGenres.contains(genre)) {
-                    foundMovies.remove(movie);
-                }
-            }
-        }
-
-        return foundMovies;
+    public List<MoviePreviewDTO> getByGenre(List<Genre> genres) {
+        return movieRepo.findByGenres(genres,genres.size()).orElse(new LinkedList<>());
     }
 
-    public List<Movie> getByDirector(String director) {
-        return movieRepo.findByDirector(director).orElse(new LinkedList<>());
-    }
 
-    public List<Movie> getByPGRating(String pgrating) {
+    public List<MoviePreviewDTO> getByPGRating(String pgrating) {
         return movieRepo.findByPGRating(pgrating).orElse(new LinkedList<>());
     }
 

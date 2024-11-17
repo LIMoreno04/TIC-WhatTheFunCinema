@@ -47,12 +47,36 @@ public class TicWtfcinemaApplication {
 
 	@Autowired
 	private ScreeningRepository screeningRepository;
+
+	@Autowired
+	private GenreService genreService;
 	public static void main(String[] args) throws InvalidDataException, IOException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
 		app.runInCommandLine();
 	}
-	
+
+
+	public void prueba2(int ultimaMovieId) {
+		List<Genre> genero = new LinkedList<>();
+		genero.add(genreService.findByGenreNameElseAdd("test"));
+		String path = "C:\\Users\\Nacho\\Desktop\\endgame.jpg";
+        try {
+			for (int i = 0; i < 10; i++) {
+				movieService.addMovie("prueba"+i,LocalTime.parse("00:00:10"),"PRUEBA PRUEBA PRUEBA TESTING TESTING",
+						LocalDate.now(),"yo",genero,loadPosterFromFile(path),"G");
+				roomService.addScreening(ultimaMovieId+i,10,LocalDateTime.now().minusDays(2).minusMinutes(i),5,"Punta Carretas","Español");
+				roomService.addScreening(ultimaMovieId+i,10,LocalDateTime.now().plusDays(2).plusMinutes(i),5,"Punta Carretas","Español");
+			}
+
+
+		} catch (Exception e) {
+			System.out.println("PROBLEMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			System.out.println(e.getMessage());
+        }
+    }
+
+
 	public void runInCommandLine() throws InvalidDataException, IOException {
 		try {
 			Employee admin = employeeService.findEmployee("admin@admin.com");
@@ -61,6 +85,9 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
+
+		//prueba2();
+
 	}
 
 	public byte[] loadPosterFromFile(String filePath) throws IOException {

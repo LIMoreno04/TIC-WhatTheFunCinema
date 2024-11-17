@@ -1,19 +1,22 @@
 import React from 'react';
-import { Box, Paper, useMediaQuery } from '@mui/material';
+import { Box, Paper, Typography, useMediaQuery } from '@mui/material';
 import background from '../assets/background.png'; // Update with your image path
 import TicketsForm from '../components/TicketsForm';
 import MovieConveyorBelt from '../components/MoviesConveyorBelt';
+import Footer from '../components/Footer';
+import MovieDisplay from '../components/MovieDisplay';
 
 
 
 const HomePage = () => {
   const isSmallScreen = useMediaQuery('(max-width:1150px)');
-  const isMediumScreen = useMediaQuery('(max-width:1280px)');
+  const isMediumScreen = false;
+  const conveyorBeltHeight = isSmallScreen ? 600 : 500;
   return (
     <Box mt={-17}
     sx={{
       position: 'relative',
-      minHeight: isSmallScreen ? '150vh' : isMediumScreen ? '891px' : 'calc(99vw*(1350/1920))', 
+      minHeight: isSmallScreen ? '150vh' : isMediumScreen ? '891px' : 'calc(99vw*(1620/1920))', 
       minWidth: 'auto',
       width: 'auto',
       height:'auto',
@@ -34,8 +37,27 @@ const HomePage = () => {
         backgroundSize: 'cover',
       }}
       >
+        <Box sx={{
+          display: isSmallScreen ? 'none' : '',
+          width:'8.2%',
+          height:'16.4%',
+          marginTop:'16%',
+          marginLeft:'28.7%'
+        }}>
+          <MovieDisplay movieId={4} onDisplay={true}></MovieDisplay>
+        </Box>
+        <Box sx={{
+          display: isSmallScreen ? 'none' : '',
+          width:'8.2%',
+          height:'16.4%',
+          marginTop:'-5.5%',
+          marginLeft:'70%'
+        }}>
+          <MovieDisplay movieId={1} onDisplay={false}></MovieDisplay>
+        </Box>
 
       </Box>
+      
       <Paper
         sx={{
           position:'relative',
@@ -53,17 +75,18 @@ const HomePage = () => {
       >
         <TicketsForm /> 
       </Paper>
-
           <Box sx={{
             display:'flex',
             position:'relative', 
             width:'100%',
-            height: isMediumScreen ? 'calc(1280px * (400/1920))' : 'calc(100vw * (400/1920))',
-            marginTop: isSmallScreen ? 10 : isMediumScreen ? 'calc(1280px  * (50/1920))' : 'calc(100vw * (50/1920))'
+            height: isMediumScreen ? `calc(1280px * (${conveyorBeltHeight}/1920)/0.8)` : `calc(100vw * (${conveyorBeltHeight}/1920)/0.8)`,
+            marginTop: isSmallScreen ? 10 : isMediumScreen ? 'calc(1280px  * (20/1920))' : 'calc(100vw * (20/1920))'
 
              }}>
-              <MovieConveyorBelt></MovieConveyorBelt>
+              <MovieConveyorBelt itemHeightInFHD={conveyorBeltHeight-70}></MovieConveyorBelt>
           </Box>
+          
+
 
     </Box>
   );

@@ -20,7 +20,7 @@ function TicketsForm(){
         <Typography
     variant="neonCyan"
     sx={{
-    fontSize: isSmallScreen ? '8vw' : isMediumScreen ? 'calc(0.024 * 1280px)' : '2.4vw',
+    fontSize: isSmallScreen ? '8vw' : '2.4vw',
     }}
     >
     Comprar entradas

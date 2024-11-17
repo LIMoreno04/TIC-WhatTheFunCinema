@@ -185,7 +185,16 @@ public class MovieRestController {
         }
     }
 
+    @GetMapping("/allTheRest")
+    public ResponseEntity<?> showAllOtherMovies() {
+        List<Long> otherMovies = movieService.findAllOtherMovies();
 
+        if (otherMovies.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(otherMovies);
+        }
+    }
 
     @GetMapping("/title")
     public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) {
@@ -198,19 +207,8 @@ public class MovieRestController {
         }
     }
 
-    @GetMapping("/director")
-    public ResponseEntity<List<Movie>> showMoviesByDirector(@RequestBody String director) {
-        List<Movie> moviesByDirector = movieService.getByDirector(director);
-
-        if (moviesByDirector.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(moviesByDirector);
-        }
-    }
-
-    @GetMapping("/genre")
-    public ResponseEntity<List<Movie>> showMoviesByGenre(@RequestBody List<String> stringGenres) {
+    @GetMapping("/genreFilter/{stringGenres}")
+    public ResponseEntity<List<MoviePreviewDTO>> showMoviesByGenre(@PathVariable List<String> stringGenres) {
         List<Genre> genres = stringGenres.stream()
                 .map(genreName -> {
                     try {
@@ -221,7 +219,7 @@ public class MovieRestController {
                 })
                 .collect(Collectors.toList());
 
-        List<Movie> moviesByGenre = movieService.getByGenre(genres);
+        List<MoviePreviewDTO> moviesByGenre = movieService.getByGenre(genres);
 
         if (moviesByGenre.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -230,11 +228,11 @@ public class MovieRestController {
         }
     }
 
-    @GetMapping("/pgrating")
-    public ResponseEntity<List<Movie>> showByPGRating(@RequestBody String pgrating) {
+    @GetMapping("/pgratingFilter/{pgrating}")
+    public ResponseEntity<List<MoviePreviewDTO>> showByPGRating(@PathVariable String pgrating) {
         String realPgrating = PGRating.valueOf(pgrating).getPgrating();
 
-        List<Movie> moviesByPGRating = movieService.getByPGRating(realPgrating);
+        List<MoviePreviewDTO> moviesByPGRating = movieService.getByPGRating(realPgrating);
 
         if(moviesByPGRating.isEmpty()) {
             return ResponseEntity.notFound().build();

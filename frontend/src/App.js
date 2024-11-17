@@ -17,10 +17,12 @@ import NewMoviePage from './pages/AddMovie';
 import { Box } from '@mui/material';
 import AddScreeningPage from './pages/AddScreening';
 import NewSnackPage from './pages/AddSnack';
+import MoviePage from './pages/SingleMoviePage';
+import Footer from './components/Footer';
 
 function App() {
   const location = useLocation();
-  const [userRole, setUserRole] = useState('notLoggedIn')
+  const [userRole, setUserRole] = useState('notLoggedIn');
 
   const fetchRole = () => {
     fetch('http://localhost:8080/api/user/role', {
@@ -37,29 +39,57 @@ function App() {
 
   useEffect(() => {
     fetchRole();
-    }, []);
+  }, []);
 
   return (
-      <ThemeProvider theme={neonTheme}>
-        <ResponsiveAppBar userRole={userRole} onUpdate={fetchRole}/>
-        <Box pt={'clamp(90px,11vh,11vh)'}>
-        <Routes>
-          <Route path='/home' element={<HomePage />} />
-          <Route path='/' element={<HomePage />} />
-          <Route path='/signup' element={<SignupPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/movies' element={<MoviesPage />} />
-          <Route path='/account' element={<MyAccountPage userRole={userRole}/>} />
-          <Route path='/theatres' element={<TheatresPage userRole={userRole}/>}/>
-          <Route path='/addEmployee' element={userRole==="employee" ? <AddEmployeePage/> : <NotFound/>} />
-          <Route path='/addTheatre' element={userRole==="employee" ? <NewTheatrePage/> : <NotFound/>} />
-          <Route path='/addMovie' element={userRole==="employee" ? <NewMoviePage/> : <NotFound/>}/>
-          <Route path='/addScreening' element={userRole==="employee" ? <AddScreeningPage/> : <NotFound/>}/>
-          <Route path='/addSnack' element={userRole==="employee" ? <NewSnackPage/> : <NotFound/>}/>
-          <Route path='*' element={<NotFound />} />
-        </Routes>
+    <ThemeProvider theme={neonTheme}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+        }}
+      >
+        <ResponsiveAppBar userRole={userRole} onUpdate={fetchRole} />
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            pt: 'clamp(90px,11vh,11vh)',
+          }}
+        >
+          <Routes>
+            <Route path='/home' element={<HomePage />} />
+            <Route path='/' element={<HomePage />} />
+            <Route path='/signup' element={<SignupPage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/movies' element={<MoviesPage />} />
+            <Route path='/account' element={<MyAccountPage userRole={userRole} />} />
+            <Route path='/theatres' element={<TheatresPage userRole={userRole} />} />
+            <Route path='/addEmployee' element={userRole === "employee" ? <AddEmployeePage /> : <NotFound />} />
+            <Route path='/addTheatre' element={userRole === "employee" ? <NewTheatrePage /> : <NotFound />} />
+            <Route path='/addMovie' element={userRole === "employee" ? <NewMoviePage /> : <NotFound />} />
+            <Route path='/addScreening' element={userRole === "employee" ? <AddScreeningPage /> : <NotFound />} />
+            <Route path='/movie/:id' element={<MoviePage />} />
+            <Route path='/addSnack' element={userRole === "employee" ? <NewSnackPage /> : <NotFound />} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
         </Box>
-      </ThemeProvider>
+        <Box
+          sx={{
+            backgroundColor: '#191331',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mt: 'auto',
+            py: 2, // Padding for the footer
+          }}
+        >
+          <Footer />
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
 
