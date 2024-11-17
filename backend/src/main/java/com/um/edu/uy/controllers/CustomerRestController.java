@@ -178,10 +178,10 @@ public class CustomerRestController {
     }
 
     @GetMapping("/seenMovies")
-    public ResponseEntity<List<Long>> seenMovies(HttpSession session) {
+    public ResponseEntity<List<Object[]>> seenMovies(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
 
-        List<Long> seenMovies = movieService.findSeenMoviesByCustomerId(customer.getEmail());
+        List<Object[]> seenMovies = movieService.findSeenMoviesByCustomerId(customer.getEmail());
 
         if (seenMovies.isEmpty()) {
             return ResponseEntity.notFound().build();

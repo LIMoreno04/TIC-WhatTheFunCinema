@@ -52,21 +52,7 @@ public class TicWtfcinemaApplication {
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
 		app.runInCommandLine();
 	}
-
-	public void prueba() throws InvalidDataException {
-		Movie movie = movieService.findById(10L);
-
-		Customer customer = customerService.findCustomer("ignamoreno04@gmail.com", "Abcd1234@@");
-
-		LocalDateTime date = LocalDateTime.of(2024, 11, 15, 18, 30, 8, 548_000_000);
-
-		Screening screening = screeningRepo.findById(new ScreeningID(new RoomID("Malvin",2),date)).get();
-
-		customerService.makeReservation(customer.getEmail(), 1, 1, screening);
-
-
-	}
-
+	
 	public void runInCommandLine() throws InvalidDataException, IOException {
 		try {
 			Employee admin = employeeService.findEmployee("admin@admin.com");
@@ -75,9 +61,6 @@ public class TicWtfcinemaApplication {
 			Employee admin = employeeService.addEmployee("admin@admin.com", "admin", "admin", LocalDate.of(1989, 4, 12), "+0", "7777777", "CI", "Uruguay", "00000000", "Admin@admin777", " ");
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
-
-		prueba();
-
 	}
 
 	public byte[] loadPosterFromFile(String filePath) throws IOException {

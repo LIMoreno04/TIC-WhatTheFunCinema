@@ -48,13 +48,13 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     public Optional<List<Movie>> findByPGRating(String pgrating);
 
-    @Query("SELECT DISTINCT m.Id " +
+    @Query("SELECT DISTINCT m.Id, s.date_and_time " +
             "FROM Movie m " +
             "JOIN m.screenings s " +
             "JOIN s.reservations r " +
             "WHERE r.customer.email = :customerEmail " +
             "AND s.date_and_time < CURRENT_TIMESTAMP")
-    List<Long> findSeenMoviesByCustomerId(@Param("customerEmail") String email);
+    List<Object[]> findSeenMoviesByCustomerId(@Param("customerEmail") String email);
 
 
 
