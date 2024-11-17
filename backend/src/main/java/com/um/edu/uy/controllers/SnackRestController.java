@@ -31,6 +31,8 @@ public class SnackRestController {
     @Autowired
     private SnackService snackService;
 
+
+
     @PostMapping(value = "/addSnack", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addSnack( HttpSession session,
                                        @RequestParam("name") String name,
@@ -110,4 +112,18 @@ public class SnackRestController {
             return ResponseEntity.ok(snack);
         }
     }
+    @GetMapping("/{snackId}")
+    public ResponseEntity<Snack> getSnackById(@PathVariable Long snackId) {
+        // Buscar el snack por ID
+        Snack snack = snackService.findById(snackId);
+
+        // Si el snack no se encuentra, devolver un código 404 (Not Found)
+        if (snack == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Si el snack existe, devolverlo con un código 200 (OK)
+        return ResponseEntity.ok(snack);
+    }
 }
+

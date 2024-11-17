@@ -20,6 +20,7 @@ import NewSnackPage from './pages/AddSnack';
 import MoviePage from './pages/SingleMoviePage';
 import Footer from './components/Footer';
 import MakeReservationPage from './components/TicketsForm';
+import ShowsnackPage from './pages/ShowsnackPage';
 
 function App() {
   const location = useLocation();
@@ -74,6 +75,7 @@ function App() {
             <Route path='/movie/:id' element={<MoviePage />} />
             <Route path='/addSnack' element={userRole === "employee" ? <NewSnackPage /> : <NotFound />} />
             <Route path='/makeReservation' element={userRole === "customer" ? <MakeReservationPage /> : <NotFound />}/>
+            <Route path='/snacks' element={<ShowsnackPage />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </Box>

@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { es } from 'date-fns/locale';
 import {
   TextField, Button, Typography, Box, Paper, CircularProgress,
-  IconButton, Dialog, DialogTitle, DialogContent, List,
-  ListItem, ListItemText, InputAdornment
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/system';
 
 const ErrorMessage = styled(Typography)({
@@ -26,7 +21,7 @@ const NewSnackForm = () => {
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -43,7 +38,7 @@ const NewSnackForm = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("image", image);
+      formData.append("picture", image); // Cambiado a "picture"
 
       const response = await fetch('http://localhost:8080/api/snacks/addSnack', {
         method: 'POST',
@@ -64,12 +59,12 @@ const NewSnackForm = () => {
     } catch (err) {
       setError('No se pudo conectar al servidor.');
     }
-    
+
     setLoading(false);
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
+    const file = e.target.files ? e.target.files[0] : null;
     if (file) setImage(file);
   };
 
@@ -95,16 +90,24 @@ const NewSnackForm = () => {
           </Box>
         )}
 
-        <Paper sx={{ border: '2px solid #ff66b2', borderRadius: '30px', padding: '40px', maxWidth: '850px', flexDirection: 'column', margin: 'auto', opacity: loading ? 0.5 : 1 }}>
-          <Box align={'center'} maxWidth={850} sx={{ margin: 'auto' }}>
-            <Box ml={3} display={'flex'} mt={-2} mb={3}>
+        <Paper sx={{
+          border: '2px solid #ff66b2',
+          borderRadius: '30px',
+          padding: '40px',
+          maxWidth: '850px',
+          flexDirection: 'column',
+          margin: 'auto',
+          opacity: loading ? 0.5 : 1,
+        }}>
+          <Box align="center" maxWidth={850} sx={{ margin: 'auto' }}>
+            <Box ml={3} display="flex" mt={-2} mb={3}>
               <Typography
                 variant="h5"
-                fontSize={'50px'}
+                fontSize="50px"
                 sx={{
-                  color: '#fff', // Letra blanca
-                  textShadow: '0 0 10px #ff66b2, 0 0 20px #ff66b2', // Efecto de sombra brillante
-                  fontWeight: 'bold', // Fuente más llamativa
+                  color: '#fff', 
+                  textShadow: '0 0 10px #ff66b2, 0 0 20px #ff66b2',
+                  fontWeight: 'bold',
                 }}
               >
                 Agregar Snack
@@ -112,12 +115,12 @@ const NewSnackForm = () => {
             </Box>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <Box sx={{ paddingY: 2, display: 'flex', gap: 2, maxWidth: 800, margin: 'auto' }}>
-              {/* Image section */}
+              {/* Sección para la imagen */}
               <Box sx={{ flex: 0.75, maxWidth: '50%' }}>
                 <Paper
                   elevation={3}
                   sx={{
-                    border: '2px dashed #ff66b2', // Borde rosado brillante
+                    border: '2px dashed #ff66b2',
                     p: 3,
                     textAlign: 'center',
                     cursor: 'pointer',
@@ -129,7 +132,9 @@ const NewSnackForm = () => {
                   }}
                   onClick={() => document.getElementById('file-input').click()}
                 >
-                  <Typography variant="subtitle1">{image ? image.name : 'Arrastre o elija el archivo de la imagen'}</Typography>
+                  <Typography variant="subtitle1">
+                    {image ? image.name : 'Arrastre o elija el archivo de la imagen'}
+                  </Typography>
                 </Paper>
                 <input
                   id="file-input"
@@ -141,15 +146,36 @@ const NewSnackForm = () => {
                 />
               </Box>
 
-              {/* Fields section */}
+              {/* Sección de campos */}
               <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField label="Nombre" value={name} onChange={(e) => setName(e.target.value)} required />
-                <TextField label="Descripción" value={description} onChange={(e) => setDescription(e.target.value)} required />
-                <TextField label="Precio" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                <TextField
+                  label="Nombre"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+                <TextField
+                  label="Descripción"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                />
+                <TextField
+                  label="Precio"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                />
               </Box>
             </Box>
 
-            <Button variant="contained" onClick={handleSubmit} disabled={!allFieldsFilled}>Enviar</Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={!allFieldsFilled}
+            >
+              Enviar
+            </Button>
           </Box>
         </Paper>
       </LocalizationProvider>

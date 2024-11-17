@@ -18,7 +18,7 @@ import { useMediaQuery } from '@mui/material';
 
 const pages = ['películas', 'sucursales', 'snacks'];
 const paths = ['/movies', '/theatres', '/snacks'];
-const customerSettings = ['Detalles de cuenta', 'Historial de compras','Hacer reserva' ,'Cerrar sesión'];
+const customerSettings = ['Detalles de cuenta', 'Historial de compras','Hacer reserva' , 'Comprar snack','Cerrar sesión'];
 const employeeSettings = ['Agregar función', 'Agregar película', 'Agregar empleado','Agregar sucursal', 'Agregar snack', 'Cerrar sesión'];
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
