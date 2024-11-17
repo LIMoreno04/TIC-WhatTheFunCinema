@@ -1,6 +1,7 @@
 package com.um.edu.uy;
 
 import com.um.edu.uy.controllers.UserRestController;
+import com.um.edu.uy.entities.DTOs.SnackPreviewDTO;
 import com.um.edu.uy.entities.ids.RoomID;
 import com.um.edu.uy.entities.ids.ScreeningID;
 import com.um.edu.uy.entities.plainEntities.*;
@@ -50,6 +51,9 @@ public class TicWtfcinemaApplication {
 
 	@Autowired
 	private GenreService genreService;
+
+	@Autowired
+	private SnackService snackService;
 	public static void main(String[] args) throws InvalidDataException, IOException {
 		ApplicationContext ctx = SpringApplication.run(TicWtfcinemaApplication.class, args);
 		TicWtfcinemaApplication app = ctx.getBean(TicWtfcinemaApplication.class);
@@ -86,6 +90,12 @@ public class TicWtfcinemaApplication {
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
 
+
+		SnackPreviewDTO dto = snackService.getPreview(1);
+
+		System.out.println(dto.getSnackName());
+		System.out.println(dto.getPicture());
+		System.out.println(dto.getPrice());
 		//prueba2();
 
 	}

@@ -1,10 +1,13 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
+import com.um.edu.uy.entities.DTOs.SnackPreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Snack;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.SnackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -50,5 +53,10 @@ public class SnackService {
 
     public Snack findById(long id) {
         return snackRepo.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public SnackPreviewDTO getPreview(long id) throws InvalidDataException {
+        return snackRepo.getPreview(id).orElseThrow(()->new InvalidDataException("Snack not found"));
     }
 }

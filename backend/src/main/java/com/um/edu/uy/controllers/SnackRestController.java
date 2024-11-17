@@ -1,10 +1,13 @@
 package com.um.edu.uy.controllers;
 
 
+import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.DTOs.SnackDTO;
+import com.um.edu.uy.entities.DTOs.SnackPreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.Snack;
+import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.SnackService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
@@ -112,18 +112,20 @@ public class SnackRestController {
             return ResponseEntity.ok(snack);
         }
     }
-    @GetMapping("/{snackId}")
-    public ResponseEntity<Snack> getSnackById(@PathVariable Long snackId) {
-        // Buscar el snack por ID
-        Snack snack = snackService.findById(snackId);
+    @GetMapping("/preview/{snackId}")
+    public ResponseEntity<?> getSnackById(@PathVariable Long snackId) {
 
-        // Si el snack no se encuentra, devolver un código 404 (Not Found)
-        if (snack == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            SnackPreviewDTO snackPreview = snackService.getPreview(snackId);
+            String pictureBase64 = Base64.getEncoder().encodeToString((byte[]) snackPreview.getPicture());
+            HashMap<String,String> snack = new HashMap<>();
+            snack.put("name",snackPreview.getSnackName());
+            snack.put("picture","data:image/jpeg;base64,"+ pictureBase64);
+            snack.put("price", String.valueOf(snackPreview.getPrice()));
+            return ResponseEntity.ok(snack);
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String,String>().put("snackId","Snack con id "+snackId+" no encontrado."));
         }
-
-        // Si el snack existe, devolverlo con un código 200 (OK)
-        return ResponseEntity.ok(snack);
     }
 
 

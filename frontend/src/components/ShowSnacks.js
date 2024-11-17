@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate } from "react-router-dom";
 
+const SnackAvailabilityTooltips = {
+  true: "Disponible para compra inmediata.",
+  false: "Actualmente no disponible.",
+};
+
 const SnackDisplay = ({ snackId, snack: propSnack, onDisplay, detailsOnHover }) => {
   const navigate = useNavigate();
   const [snack, setSnack] = useState(propSnack || null);
@@ -11,13 +16,8 @@ const SnackDisplay = ({ snackId, snack: propSnack, onDisplay, detailsOnHover }) 
 
   const fetchSnack = () => {
     setLoading(true);
-    fetch(`http://localhost:8080/api/snacks/${snackId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener el snack");
-        }
-        return response.json();
-      })
+    fetch(`http://localhost:8080/api/snacks/preview/${snackId}`)
+      .then((response) => response.json())
       .then((data) => {
         setSnack(data);
         setLoading(false);
@@ -143,9 +143,6 @@ const SnackDisplay = ({ snackId, snack: propSnack, onDisplay, detailsOnHover }) 
                 </Typography>
 
                 <Typography fontSize="clamp(10px,90%,90%)" sx={{ marginBottom: "5px" }}>
-                  Descripción: {snack.description}
-                </Typography>
-                <Typography fontSize="clamp(10px,90%,90%)" sx={{ marginBottom: "5px" }}>
                   Precio: ${snack.price}
                 </Typography>
                 <Box display="flex" alignItems="center">
@@ -157,11 +154,7 @@ const SnackDisplay = ({ snackId, snack: propSnack, onDisplay, detailsOnHover }) 
                   </Typography>
                   <Tooltip
                     title={
-                      <h3>
-                        {snack.available
-                          ? "Disponible para compra inmediata."
-                          : "Actualmente no disponible."}
-                      </h3>
+                      <h3>{SnackAvailabilityTooltips[snack.available]}</h3> || "Desconocido"
                     }
                   >
                     <InfoIcon
