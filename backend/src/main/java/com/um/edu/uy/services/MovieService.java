@@ -94,7 +94,7 @@ public class MovieService {
     }
 
     public List<Long> findAllOtherMovies() {
-        return movieRepo.findAllTheRest(LocalDateTime.now().minusWeeks(1)).orElse(new LinkedList<>());
+        return movieRepo.findAllTheRest(LocalDateTime.now().minusWeeks(1),LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
     public List<Long> findAllMoviesComingSoon() {

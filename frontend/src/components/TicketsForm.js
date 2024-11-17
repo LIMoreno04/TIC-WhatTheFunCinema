@@ -16,6 +16,7 @@ import {
   Divider
 } from "@mui/material";
 import SeatIcon from "@mui/icons-material/EventSeat";
+import { format } from "date-fns";
 
 const ReservationForm = () => {
   const [movies, setMovies] = useState([]);
@@ -209,7 +210,18 @@ const ReservationForm = () => {
 
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", display:'flex',flexDirection:'column',alignItems:'center'}}>
+    <Box component="form" onSubmit={handleSubmit} 
+    sx={{
+      boxSizing:'border-box',
+      padding: isSmallScreen ? '30px' : '1.5vw', width: "100%",
+      display:'flex',
+      flexDirection:'column',
+      alignItems:'center', 
+      overflowY:'auto', 
+      height:'100%',
+      }}>
+
+
       {loading && (
         <Box
           sx={{
@@ -227,28 +239,47 @@ const ReservationForm = () => {
           <CircularProgress />
         </Box>
       )}
+
+
       <Typography
           variant="neonCyan"
           sx={{
-            marginBottom: isSmallScreen ? '4vw' : '2vw',
-          fontSize: isSmallScreen ? '8vw' : '2.4vw',
+            marginBottom: isSmallScreen ? '20px' : '1vw',
+            fontSize: isSmallScreen ? 'clamp(20px,8vw,40px)' : '2vw',
           }}
           >
           Comprar entradas
       </Typography>
 
       <Autocomplete
-      fullWidth
+        fullWidth
         options={movies}
         getOptionLabel={(option) => option.movieTitle}
         value={selectedMovie}
         onChange={(e, newValue) => setSelectedMovie(newValue)}
-        renderInput={(params) => <TextField {...params} label="Película" required />}
-        sx={{ marginBottom: 2 }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Película"
+            required
+            sx={{
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputBase-root": {
+                fontSize: isSmallScreen ? "auto" : "1vw",
+              },
+            }}
+          />
+        )}
+        sx={{
+          marginBottom: "1vw",
+          "& .MuiInputBase-root": {
+            height: isSmallScreen ? "auto" : "3vw",
+          },
+        }}
       />
 
       <Autocomplete
-      fullWidth
+        fullWidth
         options={theatres}
         value={selectedTheatre}
         onChange={(e, newValue) => setSelectedTheatre(newValue)}
@@ -258,13 +289,24 @@ const ReservationForm = () => {
             label="Sucursal"
             required
             disabled={!selectedMovie}
+            sx={{
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputBase-root": {
+                fontSize: isSmallScreen ? "auto" : "1vw",
+              },
+            }}
           />
         )}
-        sx={{ marginBottom: 2 }}
+        sx={{
+          marginBottom: "1vw",
+          "& .MuiInputBase-root": {
+            height: isSmallScreen ? "auto" : "3vw",
+          },
+        }}
       />
 
       <Autocomplete
-      fullWidth
+        fullWidth
         options={availableDates}
         value={selectedDate}
         onChange={(e, newValue) => setSelectedDate(newValue)}
@@ -274,13 +316,24 @@ const ReservationForm = () => {
             label="Cuando"
             required
             disabled={!selectedTheatre}
+            sx={{
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputBase-root": {
+                fontSize: isSmallScreen ? "auto" : "1vw",
+              },
+            }}
           />
         )}
-        sx={{ marginBottom: 2 }}
+        sx={{
+          marginBottom: "1vw",
+          "& .MuiInputBase-root": {
+            height: isSmallScreen ? "auto" : "3vw",
+          },
+        }}
       />
 
       <Autocomplete
-      fullWidth
+        fullWidth
         options={availableTimes}
         value={selectedTime}
         onChange={(e, newValue) => setSelectedTime(newValue)}
@@ -290,80 +343,148 @@ const ReservationForm = () => {
             label="Hora"
             required
             disabled={!selectedDate}
+            sx={{
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputBase-root": {
+                fontSize: isSmallScreen ? "auto" : "1vw",
+              },
+            }}
           />
         )}
-        sx={{ marginBottom: 2 }}
+        sx={{
+          marginBottom: "1vw",
+          "& .MuiInputBase-root": {
+            height: isSmallScreen ? "auto" : "3vw",
+          },
+        }}
       />
 
-      <TextField
-      fullWidth
-        label="¿Cuántos boletos?"
-        type="number"
-        value={tickets}
-        onChange={(e) => setTickets(e.target.value)}
-        required
-        disabled={!selectedTime}
-        sx={{ marginBottom: 2 }}
-      />
+        <TextField
+          fullWidth
+          label="¿Cuántas entradas?"
+          type="number"
+          value={tickets}
+          onChange={(e) => {
+            // Allow only positive integers
+            const value = e.target.value;
+            const positiveInteger = value === "" ? "" : Math.max(0, Math.floor(Number(value)));
+            setTickets(positiveInteger);
+          }}
+          required
+          disabled={!selectedTime}
+          sx={{
+            marginBottom: "1vw",
+            "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+            "& .MuiInputBase-root": {
+              height: isSmallScreen ? "auto" : "3vw",
+              fontSize: isSmallScreen ? "auto" : "1vw",
+            },
+          }}
+        />
+
+
 
       {serverError && <Typography color="error">{serverError}</Typography>}
 
-      <Button fullWidth variant="contained" type="submit" disabled={!isFormValid || loading}>
-        Consultar
+      <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="contained" type="submit" disabled={!isFormValid || loading}>
+        Comprar
       </Button>
 
         {/* Seat Selector Dialog */}
-        <Dialog open={openSeatSelector} onClose={() => setOpenSeatSelector(false)} maxWidth="lg">
+        <Dialog open={openSeatSelector} onClose={() => {setOpenSeatSelector(false); setSelectedSeats([])}} maxWidth="lg">
         <DialogTitle>Selecciona tus asientos</DialogTitle>
-        <DialogContent>
-          {reservationData && (
-            <>
-              <Grid container spacing={1} justifyContent="center">
-                {Array.from({ length: reservationData[0] })
-                  .reverse()
-                  .map((_, row) => (
-                    <Grid container key={row} justifyContent="center">
-                      {Array.from({ length: reservationData[1] }).map((_, col) => {
-                        const isReserved = reservationData[2].some(
-                          (r) => r.row === row && r.col === col
-                        );
-                        const isSelected = selectedSeats.some(
-                          (seat) => seat[0] === row && seat[1] === col
-                        );
-
-                        return (
-                          <IconButton
-                            key={`${row}-${col}`}
-                            onClick={() => !isReserved && toggleSeatSelection(row, col)}
-                            disabled={isReserved}
-                            sx={{
-                              color: isReserved
-                                ? "red"
-                                : isSelected
-                                ? "green"
-                                : "gray",
-                              margin: 0.5,
-                            }}
-                          >
-                            <SeatIcon />
-                          </IconButton>
-                        );
-                      })}
-                    </Grid>
-                  ))}
-              </Grid>
-              <Divider sx={{ marginTop: 2, marginBottom: 1}} />
-              <Typography align="center" variant="subtitle1">
-                Pantalla
-              </Typography>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleReservation} disabled={selectedSeats.length !== Number(tickets)}>
-            Comprar
-          </Button>
-        </DialogActions>
+          <DialogContent>
+            <Box sx={{display:'flex', flexDirection:'row', maxWidth:'55vw', gap:3}}>
+            <Box overflow={'auto'} maxWidth={'60%'}
+                sx={{overflow:'auto',
+                    maxWidth:'60%',
+                }}>
+            <Grid container spacing={1}>
+              {reservationData &&
+                Array.from({ length: reservationData[0] }).map((_, row) => (
+                  <Grid key={row} container>
+                    {Array.from({ length: reservationData[1] }).map((_, col) => {
+                      const isReserved = reservationData[2].some(
+                        (seat) => seat.row === row && seat.col === col
+                      );
+                      const isSelected = selectedSeats.some(
+                        (seat) => seat[0] === row && seat[1] === col
+                      );
+                      return (
+                        <IconButton
+                          key={`${row}-${col}`}
+                          onClick={() =>
+                            !isReserved && toggleSeatSelection(row, col)
+                          }
+                          disabled={isReserved}
+                          sx={{
+                            color: isReserved
+                              ? "red"
+                              : isSelected
+                              ? "green"
+                              : "gray", '&:disabled':{color:'red'}
+                          }}
+                        >
+                          <SeatIcon />
+                        </IconButton>
+                      );
+                    })}
+                  </Grid>
+                ))}
+            </Grid>
+            </Box>
+            <Divider
+                sx={{
+                    width: '2px',
+                    backgroundColor: '#ffffff', // Neon cyan color
+                    boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff', // Neon glow effect
+                    marginLeft:-3,
+                }}
+                />  
+            {(selectedMovie && selectedTheatre && reservationData && selectedDate &&selectedTime) && (
+              <Box sx={{display:'flex', flexDirection:'column', flexGrow:1, gap:4}}>
+                <Typography variant="h6" gutterBottom>
+                  <strong>Película:</strong> {selectedMovie.movieTitle}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  <strong>Sucursal:</strong> {selectedTheatre}
+                  </Typography>
+                  <Typography variant="h6" gutterBottom>
+                  <strong>Sala:</strong> {reservationData[3]}
+                  </Typography>
+                <Typography variant="h6" gutterBottom>
+                  <strong>Fecha:</strong> {format(new Date(selectedDate.substring(0,10) + 'T00:00:00'),"dd/MM/yyyy")}
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  <strong>Hora:</strong> {selectedTime.substring(0,5)}
+                </Typography>
+                <TextField
+                  label="¿Cuántos asientos?"
+                  type="number"
+                  value={tickets}
+                  onChange={(e) =>
+                    setTickets(Math.max(0, Math.min(e.target.value, 10)))
+                  }
+                  fullWidth
+                />
+              </Box>
+            )}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+          <Button
+              onClick={()=>{setOpenSeatSelector(false); setSelectedSeats([])}}
+              disabled={selectedSeats.length !== Number(tickets)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleReservation}
+              disabled={selectedSeats.length !== Number(tickets)}
+            >
+              Reservar
+            </Button>
+          </DialogActions>
       </Dialog>
 
     </Box>

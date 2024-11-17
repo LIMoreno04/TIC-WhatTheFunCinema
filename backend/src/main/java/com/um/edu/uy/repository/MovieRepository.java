@@ -27,7 +27,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     @Query("SELECT m.duration FROM Movie m WHERE m.Id =:id")
     Optional<LocalTime> getDurationById(@Param("id")long id);
 
-    @Query("SELECT m.Id FROM Movie m " +
+    @Query("SELECT DISTINCT m.Id FROM Movie m " +
             "JOIN m.screenings s " +
             "WHERE s.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP " +
             "OR s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek " +
@@ -45,16 +45,24 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "AND COUNT(CASE WHEN s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0")
     Optional<List<Object[]>> findAllOnDisplayWithTitles(LocalDateTime previousWeek, LocalDateTime nextWeek);
 
-    @Query("SELECT m.Id " +
-            "FROM Movie m " +
-            "LEFT JOIN m.screenings s " +
-            "ON s.date_and_time >= :previousWeek " +
-            "WHERE s.date_and_time IS NULL OR " +
-            "NOT EXISTS (" +
-            "    SELECT 1 FROM Screening past " +
-            "    WHERE past.movie = m AND past.date_and_time >= :previousWeek" +
+    @Query(" SELECT DISTINCT m.Id FROM Movie m " +
+            "WHERE m.Id NOT IN (" +
+            "(SELECT DISTINCT ma.Id FROM Movie ma " +
+            "   JOIN ma.screenings sa " +
+            "   WHERE sa.date_and_time > CURRENT_TIMESTAMP  " +
+            "   AND NOT EXISTS (" +
+            "   SELECT 1 FROM Screening past WHERE past.movie = ma " +
+            "   AND past.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP))" +
+            " UNION (" +
+            "   SELECT DISTINCT mb.Id FROM Movie mb" +
+            "   JOIN mb.screenings sb" +
+            "   WHERE sb.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP" +
+            "   OR sb.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek" +
+            "   GROUP BY mb.Id " +
+            "   HAVING COUNT(CASE WHEN sb.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP THEN 1 END) > 0 " +
+            "   AND COUNT(CASE WHEN sb.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0) " +
             ")")
-    Optional<List<Long>> findAllTheRest(LocalDateTime previousWeek);
+    Optional<List<Long>> findAllTheRest(LocalDateTime previousWeek, LocalDateTime nextWeek);
 
 
     @Query("SELECT DISTINCT m.Id FROM Movie m " +

@@ -9,6 +9,7 @@ export default function MoviesPage() {
         <Box
             sx={{
                 padding: 10,
+                paddingTop:1,
                 paddingBottom:15,
                 }}
         >

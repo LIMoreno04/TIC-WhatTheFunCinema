@@ -11,6 +11,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
+import ScreeningsBox from './ScreeningsBox';
 
 const PGRatingTooltips = {
     G: "Para toda la familia!",
@@ -116,7 +117,7 @@ const MovieProfile = () => {
 
 
         {/* Movie Details */}
-        <Box flex={1}>
+        <Box flex={1} sx={{display:'flex',flexDirection:'column'}}>
           <Typography variant="neonPink" fontSize={'4rem'} sx={{ marginBottom: 2 }} className="neonPink">
             {movie.title}
           </Typography>
@@ -124,7 +125,7 @@ const MovieProfile = () => {
             <strong>Dirigido por:</strong> {movie.director}
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Duración:</strong> {movie.duration} minutes
+            <strong>Duración:</strong> {`${parseInt(movie.duration.split(":")[0])} hr ${parseInt(movie.duration.split(":")[1])} min`}
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
             <strong>Fecha de estreno:</strong> {format(new Date(movie.releaseDate),'dd/MM/yyyy')}
@@ -153,10 +154,13 @@ const MovieProfile = () => {
                 key={index}
                 label={genre}
                 sx={{
+                  alignContent:'center',
+                  alignItems:'center',
+                  justifyContent:'center',
                   backgroundColor: '#252d3a',
                   color: '#0ff0fc',
-                  border: '1px solid #0ff0fc',
-                  boxShadow: '0 0 5px #0ff0fc, 0 0 10px #0ff0fc',
+                  border: '2px solid #0ff0fc',
+                  boxShadow: 'inset 0 0 5px #0ff0fc,0 0 5px #0ff0fc, 0 0 10px #0ff0fc',
                 }}
               />
             ))}
@@ -175,6 +179,27 @@ const MovieProfile = () => {
                 {movie.description}
             </Typography>
           </Box>
+          
+          <Box
+          sx={{
+            position:'relative',
+            mt: 5,
+            flexGrow: 1, // Make the box take up the remaining space in the parent
+            overflowY: 'auto', // Allow scrolling for overflow content
+            borderRadius: '10px',
+            border: '2px solid #9df8fc',
+            boxShadow: `
+              inset 0 0 15px #0ff0fc,
+              0 0 15px #0ff0fc,
+              0 0 5px #0ff0fc`,
+            display: 'flex', // Ensure flexible layout
+            flexDirection: 'column', // Maintain proper layout for children
+          }}
+        >
+          <ScreeningsBox movieId={id} />
+        </Box>
+
+
         </Box>
       </Box>
     </Box>

@@ -59,7 +59,7 @@ const MoviesDisplay = () => {
 
   const filteredMovies =
     filter === 'all'
-      ? [...onDisplayMovies, ...comingSoonMovies]
+      ? [...onDisplayMovies, ...comingSoonMovies,...otherMovies]
       : filter === 'onDisplay'
       ? onDisplayMovies
       : filter === 'other'
@@ -79,6 +79,7 @@ const MoviesDisplay = () => {
           boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
           borderRadius: '40px',
           border: '2px solid #e4b4e6',
+          justifyContent:'center',
           py: 5,
           px: 5,
           backgroundColor: 'rgba(0,0,0,0.3)',
@@ -137,12 +138,13 @@ const MoviesDisplay = () => {
             sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: 2, // Space between items
+                gap: 10, // Space between items
             }}
             >
                 {filteredMovies.map((movie, index) => (
                 <Box sx={{height:'360px', width:'240px'}}>
                     <MovieDisplay
+                      onDisplay={filter==='onDisplay' ? true : filter==='comingSoon' ? false : null}
                         key={index}
                         movieId={movie}
                     />
