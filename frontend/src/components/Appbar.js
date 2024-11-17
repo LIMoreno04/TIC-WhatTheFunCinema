@@ -75,7 +75,10 @@ function ResponsiveAppBar({userRole, onUpdate}) {
     } else if (setting === customerSettings[2]){
       navigate('/makeReservation');
       handleCloseUserMenu();
-    } 
+    } else if(setting === customerSettings[3]){
+      navigate('/buySnack');
+      handleCloseUserMenu();
+    }
     else {
       handleCloseUserMenu();
     }
