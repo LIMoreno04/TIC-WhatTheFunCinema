@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.CardDTO;
+import com.um.edu.uy.entities.DTOs.MovieReservationDTO;
 import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.entities.DTOs.UserDTO;
@@ -252,4 +253,32 @@ public class CustomerRestController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-}
+    @GetMapping("/shoppingHistory")
+    public ResponseEntity<?> shoppingHistory(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+
+        List<Reservation> reservations = customerService.getReservations(customer.getEmail());
+
+        if(reservations.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<MovieReservationDTO> dtos = new LinkedList<>();
+
+        for (Reservation res : reservations) {
+            Screening s = res.getScreening();
+            String t = s.getRoom().getTheatre().getLocation();
+            int r = s.getRoom().getRoom_number();
+            LocalDateTime d = s.getDate_and_time();
+            int col = res.getCol();
+            int row = res.getRow();
+            String mt = s.getMovie().getTitle();
+            long mid = s.getMovie().getId();
+
+            MovieReservationDTO dto = new MovieReservationDTO(t, r, d, col, row, mt, mid);
+
+            dtos.add(dto);
+        }
+
+        return ResponseEntity.ok(dtos);
+    }
+    }
