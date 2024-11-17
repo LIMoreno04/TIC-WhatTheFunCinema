@@ -60,27 +60,19 @@ public class MovieRestController {
 
             Map<String, String> errors = new HashMap<>();
 
-            // Duration validation
-            try {
-                LocalTime.parse(duration);
-            } catch (Exception e) {
-                errors.put("duration", "Formato de duración inválido. Use el formato HH:mm:ss.");
+
+            // Genre handling
+            List<Genre> genreList = new LinkedList<>();
+            for (String genreName : genres) {
+                if(genreName.isEmpty() || genreName.isBlank()) {
+                    errors.put("genres","Género no puede ser vacío.");
+                }
+                genreList.add(genreService.findByGenreNameElseAdd(genreName));
             }
 
             // PG Rating validation
             if (!Pattern.matches("^(G|PG|PG-13|R|NC-17)$", PGRating)) {
                 errors.put("PGRating", "Calificación de película inválida. Use: G, PG, PG-13, R, o NC-17.");
-            }
-
-            // Return validation errors if any
-            if (!errors.isEmpty()) {
-                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-            }
-
-            // Genre handling
-            List<Genre> genreList = new LinkedList<>();
-            for (String genreName : genres) {
-                genreList.add(genreService.findByGenreNameElseAdd(genreName));
             }
 
             // Parse other fields
@@ -92,7 +84,13 @@ public class MovieRestController {
             try {
                 posterBytes = poster.getBytes();
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
+                errors.put("poster", "Error leyendo el archivo.");
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            }
+
+            // Return validation errors if any
+            if (!errors.isEmpty()) {
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
             }
 
             // Create and save the movie
@@ -107,7 +105,7 @@ public class MovieRestController {
                     PGRating
             );
 
-            return ResponseEntity.ok("Película agregada.");
+            return ResponseEntity.ok(new HashMap<>().put("ok","Película agregada."));
         } else { return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sin permisos."); }
     }
 
@@ -175,6 +173,19 @@ public class MovieRestController {
             return ResponseEntity.ok(moviesOnDisplay);
         }
     }
+
+    @GetMapping("/allComingSoon")
+    public ResponseEntity<?> showAllMoviesComingSoon() {
+        List<Long> moviesComingSoon = movieService.findAllMoviesComingSoon();
+
+        if (moviesComingSoon.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(moviesComingSoon);
+        }
+    }
+
+
 
     @GetMapping("/title")
     public ResponseEntity<List<Movie>> showMoviesByTitle(@RequestBody String title) {

@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { es } from "date-fns/locale";
+import { da, es } from "date-fns/locale";
 
 const languages = ["Español", "Inglés"];
 
@@ -30,6 +30,25 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
   const [time, setTime] = useState(null);
   const [screeningPrice, setScreeningPrice] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [serverError, setServerError] = useState('');
+  useEffect(() => {
+    const allFieldsFilled = theatre && roomNumber && selectedMovieTitle && date && time && screeningPrice && language;
+    setIsFormValid(allFieldsFilled);
+  }, [theatre,roomNumber,selectedMovieTitle,date,time,screeningPrice,language]);
+
+  const adjustTimeToGMT0 = (time) => {
+    const adjustedTime = new Date(time);
+    adjustedTime.setUTCHours(time.getHours());
+    adjustedTime.setUTCMinutes(time.getMinutes());
+    adjustedTime.setUTCSeconds(time.getSeconds());
+    adjustedTime.setUTCMilliseconds(time.getMilliseconds());
+    return adjustedTime;
+  };
+  
+
+
 
   // Fetch all possible theatres if not given
   useEffect(() => {
@@ -78,8 +97,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
         date.getFullYear(),
         date.getMonth(),
         date.getDate(),
-        time.getHours(),
-        time.getMinutes()
+        adjustTimeToGMT0(time).getHours(),
+        adjustTimeToGMT0(time).getMinutes()
       );
       dateTime = combinedDateTime.toISOString();
     }
@@ -102,10 +121,18 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error:", errorData);
+        if (response.status===400) {
+          const errorData = await response.json();
+          console.error("Error:", errorData);
+          setFormErrors(errorData);
+        } else if(response.status===403) {
+          setServerError('Acceso denegado.')
+        } 
+        else {
+          setServerError('Error conectándose con el servidor.')
+        }
       } else {
-        alert("Screening added successfully!");
+        alert("Función agregada con éxito!");
         // Reset the form
         setTheatre("");
         setRoomNumber("");
@@ -114,6 +141,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
         setDate(null);
         setTime(null);
         setScreeningPrice("");
+        setFormErrors({});
+        setServerError('');
       }
     } catch (error) {
       console.error("Failed to submit:", error);
@@ -162,6 +191,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               <Autocomplete
                 options={theatres}
                 value={theatre}
+                error={!!formErrors.room}
+                helperText={formErrors.room}
                 onChange={(e, newValue) => setTheatre(newValue)}
                 renderInput={(params) => <TextField {...params} label="Sucursal" required />}
               />
@@ -171,6 +202,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               <Autocomplete
               options={rooms}
               value={roomNumber}
+              error={!!formErrors.room}
+              helperText={formErrors.room}
               onChange={(e, newValue) => setRoomNumber(newValue)}
               getOptionLabel={(option) => (option ? String(option) : "")} // Ensure a string is returned
               renderInput={(params) => <TextField {...params} label="Sala" required />}
@@ -185,6 +218,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               onChange={(newValue) => setDate(newValue)}
               renderInput={(params) => <TextField {...params} required />}
             />
+            {!!formErrors.dateAndTime && (<Typography marginLeft={2} variant="b1" fontSize={'0.75rem'} fontFamily={'InfinityThin'} color='error'>{formErrors.dateAndTime}</Typography>)}
+
 
             <TimePicker
               label="Horario"
@@ -193,9 +228,13 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               renderInput={(params) => <TextField {...params} required />}
             />
 
+            {!!formErrors.dateAndTime && (<Typography marginLeft={2} variant="b1" fontSize={'0.75rem'} fontFamily={'InfinityThin'} color='error'>{formErrors.dateAndTime}</Typography>)}
+
             {!initialMovieId && (
               <Autocomplete
                 options={movieOptions}
+                error={!!formErrors.movieId}
+                helperText={formErrors.movieId}
                 value={selectedMovieTitle}
                 onChange={(e, newValue) => setSelectedMovieTitle(newValue)}
                 renderInput={(params) => <TextField {...params} label="Película" required />}
@@ -215,9 +254,12 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
               value={screeningPrice}
               onChange={(e) => setScreeningPrice(e.target.value)}
               required
+              error={!!formErrors.screeningPrice}
+              helperText={formErrors.screeningPrice}
             />
+            {serverError && <Typography color="error">{serverError}</Typography>}
 
-            <Button variant="contained" type="submit" disabled={loading}>
+            <Button variant="contained" type="submit" disabled={!isFormValid || loading}>
               Submit
             </Button>
           </Box>

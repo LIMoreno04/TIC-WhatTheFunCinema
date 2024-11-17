@@ -5,7 +5,7 @@ export default function NotFound()
 {
     const paperStyle = { padding: '40px 30px', width: 800, margin: '20px auto' };
     return (
-        <Box>
+        <Box mt={10}>
             <Error404></Error404>
         </Box>
     )

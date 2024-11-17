@@ -50,7 +50,8 @@ const NewMovieForm = () => {
   const [filteredGenres, setFilteredGenres] = useState([]);
   const [genreDialogOpen, setGenreDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [emptyGenreError,setEmptyGenreError] = useState('');
+  const [serverError, setServerError] = useState('');
   
   const Overlay = styled(Box)({
     position: 'fixed',
@@ -113,9 +114,16 @@ const NewMovieForm = () => {
       });
 
       if (!response.ok) {
+        if (response.status===400) {
         const errorData = await response.json();
         console.log('Error: ', errorData);
-        setErrorMessage(errorData || 'Error inesperado.');
+        setErrorMessage(errorData);
+        } else if(response.status===403) {
+          setServerError('Acceso denegado.')
+        } 
+        else {
+          setServerError('Error conectándose con el servidor.')
+        }
       } else {
         alert("Película agregada con éxito.");
         setTitle('');
@@ -127,6 +135,8 @@ const NewMovieForm = () => {
         setPoster(null);
         setPGRating('');
         fetchGenres();
+        setErrorMessage({});
+        setServerError('');
       }
     } catch (err) {
       setError('Failed to connect to server.');
@@ -160,10 +170,15 @@ const NewMovieForm = () => {
   };
 
   const handleAddGenre = (genre) => {
-    if (!genres.includes(genre)) {
-      setGenres([...genres, genre]);
+    if (genre) {
+      if (!genres.includes(genre)) {
+        setGenres([...genres, genre]);
+      }
+      setEmptyGenreError('');
+      handleCloseGenreDialog();
+    } else {
+        setEmptyGenreError('El género a agregar no puede ser vacío.')
     }
-    handleCloseGenreDialog();
   };
   
 
@@ -258,7 +273,7 @@ const NewMovieForm = () => {
                 onChange={(newValue) => setReleaseDate(newValue)}
             />
 
-          <TextField label="Dirección" value={director} onChange={(e) => setDirector(e.target.value)} required />
+          <TextField label="Dirigida por" value={director} onChange={(e) => setDirector(e.target.value)} required />
 
           <Autocomplete
             options={PGRatings}
@@ -351,6 +366,8 @@ const NewMovieForm = () => {
                         value={newGenre}
                         onChange={(e) => setNewGenre(e.target.value)}
                         fullWidth
+                        error={!!emptyGenreError}
+                        helperText={emptyGenreError}
                         InputProps={{
                           endAdornment: (
                             <IconButton onClick={() => handleAddGenre(newGenre)}>
@@ -369,6 +386,8 @@ const NewMovieForm = () => {
             </Box>
           )}
         </Box>
+        
+        {serverError && <Typography color="error">{serverError}</Typography>}
 
         <Button variant="contained" onClick={handleSubmit} disabled={!allFieldsFilled}>Enviar</Button>
       </Box>
