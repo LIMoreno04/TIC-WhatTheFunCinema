@@ -9,6 +9,7 @@ import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.services.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -130,9 +131,18 @@ public class CustomerRestController {
 
 
     @DeleteMapping("/cancelReservation/{theatre}/{roomNumber}/{date_and_time}/{row}/{col}")
-    public ResponseEntity<String> cancelReservation(HttpSession session, @PathVariable Integer col, @PathVariable Integer row, @PathVariable String theatre, @PathVariable int roomNumber, @PathVariable LocalDateTime date_and_time) {
+    public ResponseEntity<String> cancelReservation(HttpSession session,
+                                                    @PathVariable Integer col,
+                                                    @PathVariable Integer row,
+                                                    @PathVariable String theatre,
+                                                    @PathVariable int roomNumber,
+                                                    @PathVariable LocalDateTime date_and_time) {
         try {
-            customerService.cancelReservation(email, col, row, screening);
+            Customer customer = (Customer) session.getAttribute("user");
+
+            Screening screening = roomService.findScreeningById(theatre, roomNumber, date_and_time);
+
+            customerService.cancelReservation(customer.getEmail(), col, row, screening);
             return ResponseEntity.ok("Reservation canceled successfully.");
         } catch (InvalidDataException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -253,29 +263,28 @@ public class CustomerRestController {
     public ResponseEntity<?> shoppingHistory(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
 
-        List<Reservation> reservations = customerService.getReservations(customer.getEmail());
+        List<Object[]> reservations = customerService.getReservations(customer.getEmail());
 
         if(reservations.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        List<MovieReservationDTO> dtos = new LinkedList<>();
 
-        for (Reservation res : reservations) {
-            Screening s = res.getScreening();
-            String t = s.getRoom().getTheatre().getLocation();
-            int r = s.getRoom().getRoom_number();
-            LocalDateTime d = s.getDate_and_time();
-            int col = res.getCol();
-            int row = res.getRow();
-            String mt = s.getMovie().getTitle();
-            long mid = s.getMovie().getId();
+        List<HashMap<String, Object>> history = new LinkedList<>();
 
-            MovieReservationDTO dto = new MovieReservationDTO(t, r, d, col, row, mt, mid);
+        for (Object[] res : reservations) {
 
-            dtos.add(dto);
+            HashMap<String, Object> reservation = new HashMap<>();
+            reservation.put("theatre", res[0]);
+            reservation.put("roomNumber", res[1]);
+            reservation.put("date_and_time", res[2]);
+            reservation.put("movieTitle", res[3]);
+            reservation.put("row", res[4]);
+            reservation.put("col", res[5]);
+
+            history.add(reservation);
         }
 
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(history);
     }
 
     @PostMapping("/buySnack")

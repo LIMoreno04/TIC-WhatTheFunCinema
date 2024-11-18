@@ -250,7 +250,7 @@ public class CustomerService {
         return movieCustomerRankRepo.save(movieRank);
     }
 
-    public List<Reservation> getReservations(String email) {
+    public List<Object[]> getReservations(String email) {
         return reservationRepo.findAllByCustomerEmail(email).orElse(new LinkedList<>());
     }
 
