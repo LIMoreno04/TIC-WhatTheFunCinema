@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerSnackID implements Serializable {
+public class SnackPurchaseID implements Serializable {
     String customerEmail;
     long snackId;
 }

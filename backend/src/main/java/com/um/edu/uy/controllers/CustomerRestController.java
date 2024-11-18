@@ -1,24 +1,17 @@
 package com.um.edu.uy.controllers;
 
-import com.um.edu.uy.entities.DTOs.CardDTO;
-import com.um.edu.uy.entities.DTOs.MovieReservationDTO;
-import com.um.edu.uy.entities.DTOs.ScreeningDTO;
+import com.um.edu.uy.entities.DTOs.*;
 import com.um.edu.uy.entities.plainEntities.*;
-import com.um.edu.uy.entities.DTOs.UserDTO;
 import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.services.CustomerService;
-import com.um.edu.uy.services.MovieService;
-import com.um.edu.uy.services.RoomService;
-import com.um.edu.uy.services.UserService;
+import com.um.edu.uy.services.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +39,9 @@ public class CustomerRestController {
 
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private SnackService snackService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -282,9 +278,14 @@ public class CustomerRestController {
         return ResponseEntity.ok(dtos);
     }
 
-//    @PostMapping("/buySnack")
-//    public ResponseEntity<?> buySnack(@RequestBody long snackId, @RequestBody int quantity, HttpSession session) {
-//        Customer customer = (Customer) session.getAttribute("user");
-//
-//    }
+    @PostMapping("/buySnack")
+    public ResponseEntity<?> buySnack(@RequestBody SnackPurchaseDTO snackPurchaseDTO, HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+
+        Snack snack = snackService.findById(snackPurchaseDTO.getSnackId());
+
+        SnackPurchase snackPurchase = customerService.buySnack(customer, snack, snackPurchaseDTO.getQuantity());
+
+        return ResponseEntity.ok(snackPurchase);
+    }
 }

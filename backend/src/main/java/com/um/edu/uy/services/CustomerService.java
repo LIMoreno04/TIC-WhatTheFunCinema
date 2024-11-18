@@ -36,7 +36,7 @@ public class CustomerService {
     private MovieCustomerRankRepository movieCustomerRankRepo;
 
     @Autowired
-    private CustomerSnackRepository customerSnackRepo;
+    private SnackPurchaseRepository customerSnackRepo;
 
     public List<Customer> getAll() {return customerRepo.findAll();}
 
@@ -254,9 +254,9 @@ public class CustomerService {
         return reservationRepo.findAllByCustomerEmail(email).orElse(new LinkedList<>());
     }
 
-    public CustomerSnack buySnack(Customer customerEmail, Snack snackId, int quantity) {
+    public SnackPurchase buySnack(Customer customerEmail, Snack snackId, int quantity) {
 
-        CustomerSnack customerSnack = CustomerSnack.builder()
+        SnackPurchase customerSnack = SnackPurchase.builder()
                 .customerEmail(customerEmail)
                 .snackId(snackId)
                 .quantity(quantity)
