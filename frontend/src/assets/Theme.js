@@ -122,13 +122,18 @@ const neonTheme = createTheme({
             },
           },
           superFancy: {
-            background: 'linear-gradient(45deg, cyan, pink)',
+            background: 'linear-gradient(45deg, cyan, purple)',
             color: 'white',
             fontWeight: 'bold',
             boxShadow: '0 0 5px cyan, 0 0 10px pink',
             '&:hover': {
-              background: 'linear-gradient(45deg, pink, cyan)',
+              background: 'linear-gradient(45deg, cyan, purple)',
               boxShadow: '0 0 10px pink, 0 0 15px cyan',
+            },'&.Mui-disabled': {
+              background: 'linear-gradient(45deg, grey, violet)',
+              color: '#52566a',
+              borderColor: '#52566a',
+              boxShadow: 'none',
             },
           },
         },

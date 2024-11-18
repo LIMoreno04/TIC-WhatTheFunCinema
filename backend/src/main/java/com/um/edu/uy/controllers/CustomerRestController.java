@@ -45,8 +45,8 @@ public class CustomerRestController {
     @Autowired
     private SnackService snackService;
 
-//    @Autowired
-//    private HomePageMoviesRepository homePageMoviesRepo;
+    // @Autowired
+    // private HomePageMoviesRepository homePageMoviesRepo;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -99,9 +99,21 @@ public class CustomerRestController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<Customer> getCurrentAccount(HttpSession session) {
+    public ResponseEntity<?> getCurrentAccount(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
-        return ResponseEntity.ok(customer);
+        HashMap<String, Object> cust = new HashMap<>();
+        cust.put("firstName", customer.getFirstName());
+        cust.put("lastName", customer.getLastName());
+        cust.put("password", customer.getPassword());
+        cust.put("paymentMethods", customer.getPaymentMethods());
+        cust.put("email", customer.getEmail());
+        cust.put("celCountryCode", customer.getCelCountryCode());
+        cust.put("dateOfBirth", customer.getDateOfBirth());
+        cust.put("idCountry", customer.getIdCountry());
+        cust.put("idNumber", customer.getIdNumber());
+        cust.put("idType", customer.getIdType());
+        cust.put("celNumber", customer.getCelNumber());
+        return ResponseEntity.ok(cust);
     }
 
     @PostMapping("/makeReservation/{col}/{row}")
@@ -307,15 +319,17 @@ public class CustomerRestController {
         return ResponseEntity.ok(snackPurchase);
     }
 
-//    @PostMapping("/{oMovie}/{nMovie}")
-//    public ResponseEntity<?> swapHomePageMovies(@PathVariable long oMovie, @PathVariable long nMovie) throws InvalidDataException {
-//        HomePageMovies o = homePageMoviesRepo.findById(oMovie).get();
-//
-//        homePageMoviesRepo.delete(o);
-//
-//        HomePageMovies n = homePageMoviesRepo.save(new HomePageMovies(movieService.findById(nMovie)));
-//
-//        return ResponseEntity.ok(n);
-//
-//    }
+    // @PostMapping("/{oMovie}/{nMovie}")
+    // public ResponseEntity<?> swapHomePageMovies(@PathVariable long oMovie,
+    // @PathVariable long nMovie) throws InvalidDataException {
+    // HomePageMovies o = homePageMoviesRepo.findById(oMovie).get();
+    //
+    // homePageMoviesRepo.delete(o);
+    //
+    // HomePageMovies n = homePageMoviesRepo.save(new
+    // HomePageMovies(movieService.findById(nMovie)));
+    //
+    // return ResponseEntity.ok(n);
+    //
+    // }
 }

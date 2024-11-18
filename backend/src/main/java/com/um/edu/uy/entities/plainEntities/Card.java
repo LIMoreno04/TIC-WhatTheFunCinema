@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,7 @@ public class Card {
 
     @NotNull
     @JsonIgnore
+    @JsonBackReference
     @ManyToMany(mappedBy = "paymentMethods",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Customer> customerList;
 }

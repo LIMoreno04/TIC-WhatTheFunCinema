@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
+const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -166,6 +166,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
       {cards && cards.length > 0 ? (
         cards.map((card, index) => (
           <Paper 
+            onClick={()=>(!!onSelect ? onSelect(card) : null)}
             key={index}
             sx={{
               padding: 3,
@@ -180,6 +181,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate }) => {
                 0 0 5px #0ff0fc`,
               borderRadius: '40px',
               position: 'relative',
+              cursor: !!onSelect ? 'pointer' : 'auto'
             }}
           >
             <Box display={'flex'} flexDirection={'row'}>

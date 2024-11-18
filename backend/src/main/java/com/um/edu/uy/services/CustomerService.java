@@ -197,6 +197,7 @@ public class CustomerService {
         return reservation;
     }
 
+    @Transactional
     public void cancelReservation(String email, Integer col, Integer row, Screening screening)
             throws InvalidDataException {
         Optional<Customer> customerOpt = customerRepo.findByEmail(email);
