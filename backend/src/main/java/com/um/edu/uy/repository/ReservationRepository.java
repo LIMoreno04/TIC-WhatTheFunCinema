@@ -13,19 +13,21 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, ReservationIdD> {
     Optional<Reservation> findByScreeningAndColAndRow(Screening screening, Integer col, Integer row);
+
     List<Reservation> findAllByScreening(Screening screening);
 
-    @Query("SELECT r.screening.room.theatre,r.screening.room.room_number,r.screening.date_and_time,r.screening.movie.title,r.row,r.col, r.screening.screeningPrice" +
+    @Query("SELECT r.screening.room.theatre.location,r.screening.room.room_number,r.screening.date_and_time,r.screening.movie.title,r.row,r.col"
+            +
             " FROM Reservation r WHERE r.customer.email =:e")
     public Optional<List<Object[]>> findAllByCustomerEmail(@Param("e") String email);
 
     @Query("""
-    SELECT new com.um.edu.uy.entities.DTOs.MovieRevenueDTO(m.Id, m.title, m.poster, m.PGRating, SUM(s.screeningPrice))
-    FROM Reservation r
-    JOIN r.screening s
-    JOIN s.movie m
-    GROUP BY s.movie.Id
-    ORDER BY SUM(s.screeningPrice) DESC
-       """)
+            SELECT new com.um.edu.uy.entities.DTOs.MovieRevenueDTO(m.Id, m.title, m.poster, m.PGRating, SUM(s.screeningPrice))
+            FROM Reservation r
+            JOIN r.screening s
+            JOIN s.movie m
+            GROUP BY s.movie.Id
+            ORDER BY SUM(s.screeningPrice) DESC
+               """)
     public List<MovieRevenueDTO> findMoviesWithHighestRevenue();
 }

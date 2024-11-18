@@ -96,7 +96,7 @@ const SnackDisplay = () => {
           border: "2px solid #e4b4e6",
           p: 5,
           backgroundColor: "rgba(0, 0, 0, 0.3)",
-          width: "80vw",
+          width: "88vw",
           minHeight: "65vh",
           overflowY: "auto",
           "&::-webkit-scrollbar": {
@@ -160,7 +160,6 @@ const SnackDisplay = () => {
               <Box mt={2} display="flex" flexDirection={'row'} justifyContent="center" gap={1}>
                 <TextField
                   type="number"
-                  size="small"
                   label='Cantidad'
                   variant="outlined"
                   value={quantities[snack.id] || ""}

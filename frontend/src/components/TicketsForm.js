@@ -17,8 +17,9 @@ import {
 } from "@mui/material";
 import SeatIcon from "@mui/icons-material/EventSeat";
 import { format } from "date-fns";
+import LoginForm from './LoginForm'
 
-const ReservationForm = () => {
+const ReservationForm = ({userRole}) => {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [screenings, setScreenings] = useState([]);
@@ -337,6 +338,7 @@ const ReservationForm = () => {
         options={availableTimes}
         value={selectedTime}
         onChange={(e, newValue) => setSelectedTime(newValue)}
+        getOptionLabel={(option) => option.slice(0, 5)} // Display only the first 5 characters
         renderInput={(params) => (
           <TextField
             {...params}
@@ -358,6 +360,7 @@ const ReservationForm = () => {
           },
         }}
       />
+
 
         <TextField
           fullWidth
@@ -386,9 +389,16 @@ const ReservationForm = () => {
 
       {serverError && <Typography color="error">{serverError}</Typography>}
 
-      <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="contained" type="submit" disabled={!isFormValid || loading}>
+      {userRole === 'customer' &&
+        <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
         Comprar
-      </Button>
+      </Button>}
+      {userRole === 'notLoggedIn' &&
+        <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" href="/login" disabled={loading}>
+        Iniciar sesión para comprar
+        </Button>
+      
+      }
 
         {/* Seat Selector Dialog */}
         <Dialog open={openSeatSelector} onClose={() => {setOpenSeatSelector(false); setSelectedSeats([])}} maxWidth="lg">

@@ -64,7 +64,7 @@ function App() {
           }}
         >
           <Routes>
-            <Route path='/home' element={<HomePage />} />
+            <Route path='/home' element={<HomePage userRole={userRole} />} /> 
             <Route path='/' element={<HomePage />} />
             <Route path='/signup' element={<SignupPage />} />
             <Route path='/login' element={<LoginPage />} />
@@ -84,6 +84,7 @@ function App() {
             <Route path='*' element={<NotFound />} />
           </Routes>
         </Box>
+        <Box height={'60px'}></Box>
         <Box
           sx={{
             backgroundColor: '#191331',

@@ -8,6 +8,8 @@ export default function ShowsnackPage() {
     return (
         <Box
             sx={{
+                display:'flex',
+                justifyContent:'center',
                 padding: 10,
                 paddingBottom:15,
                 }}

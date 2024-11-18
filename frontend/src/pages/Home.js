@@ -9,12 +9,12 @@ import EmployeeOptions from '../components/EmployeeOptions';
 
 
 
-const HomePage = (userRole) => {
+const HomePage = ({userRole}) => {
   const isSmallScreen = useMediaQuery('(max-width:1150px)');
   const isMediumScreen = false;
   const conveyorBeltHeight = isSmallScreen ? 600 : 500;
   return (
-    <Box mt={-17}
+    <Box mt={-17} mb={'-60px'}
     sx={{
       position: 'relative',
       minHeight: isSmallScreen ? '150vh' : isMediumScreen ? '891px' : 'calc(99vw*(1620/1920))', 
@@ -76,7 +76,7 @@ const HomePage = (userRole) => {
         { userRole==='employee' ? 
             <EmployeeOptions/>
           :
-            <TicketsForm /> 
+            <TicketsForm userRole={userRole}/> 
         }
 
       </Paper>

@@ -116,12 +116,22 @@ public class MovieRestController {
     public ResponseEntity<?> getMovieById(@PathVariable Long id) {
         try {
             Movie movie = movieService.findById(id);
-
-            // Encode the byte array to a Base64 string
             String posterBase64 = Base64.getEncoder().encodeToString(movie.getPoster());
-            MovieDTO movieDTO = getMovieDTO(movie, posterBase64);
+            Double avgRanking = movieService.findAverageRankByMovieId(id);
 
-            return ResponseEntity.ok(movieDTO);
+            HashMap<String, Object> movieInfo = new HashMap<>();
+
+            movieInfo.put("Id", movie.getId());
+            movieInfo.put("duration", movie.getDuration());
+            movieInfo.put("description", movie.getDescription());
+            movieInfo.put("releaseDate", movie.getReleaseDate());
+            movieInfo.put("director", movie.getDirector());
+            movieInfo.put("genres", movie.getGenres());
+            movieInfo.put("poster", posterBase64);
+            movieInfo.put("PGRating", movie.getPGRating());
+            movieInfo.put("avgRanking", avgRanking);
+
+            return ResponseEntity.ok(movieInfo);
 
         } catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Película con id "+id+" no encontrada.");

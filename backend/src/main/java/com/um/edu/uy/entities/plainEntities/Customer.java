@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Customer extends User {
 
+    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "customer_card",

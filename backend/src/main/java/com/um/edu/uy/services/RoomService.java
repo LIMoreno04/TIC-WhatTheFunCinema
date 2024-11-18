@@ -67,6 +67,7 @@ public class RoomService {
         return (opt.isEmpty() || opt.get().isEmpty());
     }
 
+    @Transactional
     public Screening findScreeningById(String theatre,int roomNumber,LocalDateTime date_and_time) throws InvalidDataException {
         return screeningRepo.findByIdMyself(theatre,roomNumber,date_and_time).orElseThrow(()->new InvalidDataException("Función inexistente."));
     }
