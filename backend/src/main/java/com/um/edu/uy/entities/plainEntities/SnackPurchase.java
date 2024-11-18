@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @IdClass(SnackPurchaseID.class)
 @Builder
@@ -27,4 +29,7 @@ public class SnackPurchase {
 
     @NotNull
     private int purchasePrice;
+
+    @NotNull
+    private LocalDateTime purchaseDate;
 }
