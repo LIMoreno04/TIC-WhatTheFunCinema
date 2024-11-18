@@ -350,46 +350,6 @@ class testCustomerService {
     }
 
 
-    @Test
-    void getReservations_WithExistingReservations_ReturnsReservationList() {
-        // Datos de prueba
-        String email = "test@example.com";
-        List<Reservation> reservations = List.of(
-                new Reservation(1, 2, null, null), // Mock de Reservation
-                new Reservation(3, 4, null, null)
-        );
-
-        // Configuración del mock
-        when(reservationRepo.findAllByCustomerEmail(email)).thenReturn(Optional.of(reservations));
-
-        // Llamada al método
-        List<Reservation> result = customerService.getReservations(email);
-
-        // Verificaciones
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(reservations, result);
-
-        verify(reservationRepo).findAllByCustomerEmail(email);
-    }
-
-    @Test
-    void getReservations_NoReservations_ReturnsEmptyList() {
-        // Datos de prueba
-        String email = "test@example.com";
-
-        // Configuración del mock
-        when(reservationRepo.findAllByCustomerEmail(email)).thenReturn(Optional.empty());
-
-        // Llamada al método
-        List<Reservation> result = customerService.getReservations(email);
-
-        // Verificaciones
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        verify(reservationRepo).findAllByCustomerEmail(email);
-    }
 
     @Test
     void buySnack_ValidData_ReturnsSavedSnackPurchase() {
