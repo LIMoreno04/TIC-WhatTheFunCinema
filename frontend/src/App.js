@@ -22,6 +22,7 @@ import Footer from './components/Footer';
 import MakeReservationPage from './components/TicketsForm';
 import ShowsnackPage from './pages/ShowsnackPage';
 import BuySnackPage from './pages/BuySnack';
+import PurchaseHistory from './pages/PurchaseHistory';
 
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
             <Route path='/addSnack' element={userRole === "employee" ? <NewSnackPage /> : <NotFound />} />
             <Route path='/makeReservation' element={userRole === "customer" ? <MakeReservationPage /> : <NotFound />}/>
             <Route path='/buySnack' element={userRole === "customer" ? <BuySnackPage /> : <NotFound />}/>
+            <Route path='/purchase-history' element={userRole==='customer' ? <PurchaseHistory/> : <NotFound/>}/>
             <Route path='/snacks' element={<ShowsnackPage />} />
             <Route path='*' element={<NotFound />} />
           </Routes>

@@ -121,7 +121,9 @@ const SnackPurchase = () => {
           Compra de Snacks
         </Typography>
         {loading ? (
+          <Box display={'flex'} justifyContent={'center'}>
           <CircularProgress />
+          </Box>
         ) : (
           <>
             {/* Autocomplete for Snack selection */}
