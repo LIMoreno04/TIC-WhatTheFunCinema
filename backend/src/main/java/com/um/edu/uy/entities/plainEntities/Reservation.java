@@ -1,6 +1,7 @@
 package com.um.edu.uy.entities.plainEntities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.um.edu.uy.entities.ids.ReservationIdD;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "email")
     @JsonBackReference
+    @JsonIgnore
     private Customer customer;
 
     @NotNull

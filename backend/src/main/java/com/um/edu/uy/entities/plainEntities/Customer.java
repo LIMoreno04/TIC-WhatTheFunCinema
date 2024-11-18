@@ -32,9 +32,11 @@ public class Customer extends User {
         super(email, firstName, lastName, dateOfBirth, celCountryCode, celNumber, idType, idCountry, idNumber, password);
     }
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reservation> reservations = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "customerEmail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovieCustomerRank> ratings;
 
