@@ -48,26 +48,29 @@ public class CustomerRestController {
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
         if (userService.ExistsById(userDTO.getEmail().toLowerCase())) {
             Map<String, String> errors = new HashMap<>();
-            errors.put("email","Ya existe una cuenta con ese e-mail.");
+            errors.put("email", "Ya existe una cuenta con ese e-mail.");
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        if (Objects.equals(userDTO.getIdType(), "CI") && !Objects.equals(userDTO.getIdCountry().toUpperCase(),"UY")) {
+        if (Objects.equals(userDTO.getIdType(), "CI") && !Objects.equals(userDTO.getIdCountry().toUpperCase(), "UY")) {
             Map<String, String> errors = new HashMap<>();
-            errors.put("idType","Solo se aceptan cédulas uruguayas. Si no posee una, utilice pasaporte.");
+            errors.put("idType", "Solo se aceptan cédulas uruguayas. Si no posee una, utilice pasaporte.");
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        if ((Objects.equals(userDTO.getIdType(), "CI") && !Pattern.matches("^\\d{7,8}$",userDTO.getIdNumber())) ||
-                (Objects.equals(userDTO.getIdType(), "Pasaporte") && !Pattern.matches("^[A-Z]{1,2}[0-9]{6,7}$",userDTO.getIdNumber()))) {
+        if ((Objects.equals(userDTO.getIdType(), "CI") && !Pattern.matches("^\\d{7,8}$", userDTO.getIdNumber())) ||
+                (Objects.equals(userDTO.getIdType(), "Pasaporte")
+                        && !Pattern.matches("^[A-Z]{1,2}[0-9]{6,7}$", userDTO.getIdNumber()))) {
             Map<String, String> errors = new HashMap<>();
-            errors.put("idNumber","Número de documento inválido. Ingrese sin puntos ni guiones y verifique que el tipo de documento seleccionado coincida.");
+            errors.put("idNumber",
+                    "Número de documento inválido. Ingrese sin puntos ni guiones y verifique que el tipo de documento seleccionado coincida.");
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
-        String realCelNumber = (Character.getNumericValue(userDTO.getCelNumber().charAt(0))==0) ? userDTO.getCelNumber().substring(1) : userDTO.getCelNumber();
+        String realCelNumber = (Character.getNumericValue(userDTO.getCelNumber().charAt(0)) == 0)
+                ? userDTO.getCelNumber().substring(1)
+                : userDTO.getCelNumber();
         String realCelCountryCode = CountryCode.valueOf(userDTO.getCelCountryCode().toUpperCase()).getCelCode();
         String realIdType = IdDocumentType.valueOf(userDTO.getIdType()).getType();
         String realIdCountryCode = CountryCode.valueOf(userDTO.getIdCountry().toUpperCase()).getCountryName();
-
 
         Customer newCustomer = customerService.addCustomer(
                 userDTO.getEmail().toLowerCase(),
@@ -79,10 +82,10 @@ public class CustomerRestController {
                 realIdType,
                 realIdCountryCode,
                 userDTO.getIdNumber(),
-                userDTO.getPassword()
-        );
+                userDTO.getPassword());
         try {
-            session.setAttribute("user", customerService.findCustomer(newCustomer.getEmail(), newCustomer.getPassword()));
+            session.setAttribute("user",
+                    customerService.findCustomer(newCustomer.getEmail(), newCustomer.getPassword()));
             session.setAttribute("role", "customer");
             System.out.println("Session ID: " + session.getId());
         } catch (InvalidDataException e) {
@@ -113,7 +116,8 @@ public class CustomerRestController {
             }
             System.out.println(screeningDTO.toString());
             String email = user.getEmail();
-            Screening screening = roomService.findScreeningById(screeningDTO.getTheatre(),screeningDTO.getRoomNumber(),screeningDTO.getDate_and_time());
+            Screening screening = roomService.findScreeningById(screeningDTO.getTheatre(), screeningDTO.getRoomNumber(),
+                    screeningDTO.getDate_and_time());
             // Llamar al servicio para crear la reserva
             Reservation reservation = customerService.makeReservation(email, col, row, screening);
             return ResponseEntity.ok(reservation);
@@ -128,15 +132,13 @@ public class CustomerRestController {
         }
     }
 
-
-
     @DeleteMapping("/cancelReservation/{theatre}/{roomNumber}/{date_and_time}/{row}/{col}")
     public ResponseEntity<String> cancelReservation(HttpSession session,
-                                                    @PathVariable Integer col,
-                                                    @PathVariable Integer row,
-                                                    @PathVariable String theatre,
-                                                    @PathVariable int roomNumber,
-                                                    @PathVariable LocalDateTime date_and_time) {
+            @PathVariable Integer col,
+            @PathVariable Integer row,
+            @PathVariable String theatre,
+            @PathVariable int roomNumber,
+            @PathVariable LocalDateTime date_and_time) {
         try {
             Customer customer = (Customer) session.getAttribute("user");
 
@@ -149,12 +151,12 @@ public class CustomerRestController {
         }
     }
 
-
     @PostMapping("/addCard")
     public ResponseEntity<?> addCard(@Valid @RequestBody CardDTO cardDTO, HttpSession session) {
         // Validate Card Number: must be numeric and 16 digits
         if (!cardDTO.getCardNumber().matches("\\d{16}")) {
-            return new ResponseEntity<>("Número de tarjeta inválido. Debe tener 16 dígitos numéricos.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Número de tarjeta inválido. Debe tener 16 dígitos numéricos.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         // Validate CVV: must be numeric and either 3 or 4 digits
@@ -164,9 +166,11 @@ public class CustomerRestController {
 
         // Validate Expiration Date: must be in the format MM/YY and not expired
         try {
-            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(), DateTimeFormatter.ofPattern("MM/yy"));
+            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(),
+                    DateTimeFormatter.ofPattern("MM/yy"));
             if (YearMonth.now().isAfter(expirationDate)) {
-                return new ResponseEntity<>("La tarjeta ha expirado. Por favor, use una tarjeta válida.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("La tarjeta ha expirado. Por favor, use una tarjeta válida.",
+                        HttpStatus.BAD_REQUEST);
             }
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Fecha de vencimiento inválida. Use el formato MM/YY.", HttpStatus.BAD_REQUEST);
@@ -181,40 +185,39 @@ public class CustomerRestController {
         try {
             CardType.valueOf(cardDTO.getCardType()); // Throws exception if invalid
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Tipo de tarjeta inválido. Por favor, seleccione un tipo de tarjeta válido.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Tipo de tarjeta inválido. Por favor, seleccione un tipo de tarjeta válido.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         try {
             // Retrieve the customer from session and add the card
             Customer customer = (Customer) session.getAttribute("user");
-            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(), DateTimeFormatter.ofPattern("MM/yy"));
+            YearMonth expirationDate = YearMonth.parse(cardDTO.getExpirationDate(),
+                    DateTimeFormatter.ofPattern("MM/yy"));
             Card newCard = customerService.addCard(
                     customer.getEmail(),
                     CardType.valueOf(cardDTO.getCardType()).getType(),
                     cardDTO.getHolderName(),
                     cardDTO.getCardNumber(),
                     expirationDate,
-                    cardDTO.getCvv()
-            );
-            session.setAttribute("user",customerService.findCustomer(customer.getEmail(), customer.getPassword()));
+                    cardDTO.getCvv());
+            session.setAttribute("user", customerService.findCustomer(customer.getEmail(), customer.getPassword()));
             return ResponseEntity.ok(newCard);
         } catch (InvalidDataException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-
     @DeleteMapping("/removeCard")
     public ResponseEntity<?> removeCard(@RequestBody CardDTO cardDTO, HttpSession session) {
         try {
             Customer customer = (Customer) session.getAttribute("user");
             customerService.removeCard(customer.getEmail(), cardDTO.getCardNumber());
-            session.setAttribute("user",customerService.findCustomer(customer.getEmail(), customer.getPassword()));
+            session.setAttribute("user", customerService.findCustomer(customer.getEmail(), customer.getPassword()));
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (InvalidDataException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-         catch (InvalidDataException e) {
-             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-         }
     }
 
     @GetMapping("/seenMovies")
@@ -231,7 +234,8 @@ public class CustomerRestController {
     }
 
     @PostMapping("/rankMovie")
-    public ResponseEntity<?> rankMovie(@RequestBody Long movieId, @RequestBody int rank, HttpSession session) throws InvalidDataException {
+    public ResponseEntity<?> rankMovie(@RequestBody Long movieId, @RequestBody int rank, HttpSession session)
+            throws InvalidDataException {
         Customer customer = (Customer) session.getAttribute("user");
 
         Movie movie = movieService.findById(movieId);
@@ -243,7 +247,7 @@ public class CustomerRestController {
         } else {
             return ResponseEntity.ok(movieRank);
         }
-}
+    }
 
     // Exception handler for validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -265,7 +269,7 @@ public class CustomerRestController {
 
         List<Object[]> reservations = customerService.getReservations(customer.getEmail());
 
-        if(reservations.isEmpty()) {
+        if (reservations.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 

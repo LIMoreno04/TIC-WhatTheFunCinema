@@ -5,10 +5,11 @@ import TicketsForm from '../components/TicketsForm';
 import MovieConveyorBelt from '../components/MoviesConveyorBelt';
 import Footer from '../components/Footer';
 import MovieDisplay from '../components/MovieDisplay';
+import EmployeeOptions from '../components/EmployeeOptions';
 
 
 
-const HomePage = () => {
+const HomePage = (userRole) => {
   const isSmallScreen = useMediaQuery('(max-width:1150px)');
   const isMediumScreen = false;
   const conveyorBeltHeight = isSmallScreen ? 600 : 500;
@@ -72,7 +73,12 @@ const HomePage = () => {
           border: `2px solid #e4b4e6`,
           }}
       >
-        <TicketsForm /> 
+        { userRole==='employee' ? 
+            <EmployeeOptions/>
+          :
+            <TicketsForm /> 
+        }
+
       </Paper>
           <Box sx={{
             display:'flex',
