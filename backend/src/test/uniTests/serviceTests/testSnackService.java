@@ -20,7 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class SnackServiceTest {
+class testSnackService {
 
     @Mock
     private SnackRepository snackRepo;
@@ -114,7 +114,7 @@ class SnackServiceTest {
         verify(snackRepo, times(1)).findById(1L);
     }
 
-    
+
 
     @Test
     void testGetPreview_ThrowsInvalidDataException() {
