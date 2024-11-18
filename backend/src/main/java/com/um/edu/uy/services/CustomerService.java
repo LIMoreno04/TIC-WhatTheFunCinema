@@ -1,9 +1,6 @@
 package com.um.edu.uy.services;
 
-import com.um.edu.uy.entities.ids.CustomerRankID;
-import com.um.edu.uy.entities.ids.ReservationId;
-import com.um.edu.uy.entities.ids.RoomID;
-import com.um.edu.uy.entities.ids.ScreeningID;
+import com.um.edu.uy.entities.ids.*;
 import com.um.edu.uy.entities.plainEntities.*;
 import com.um.edu.uy.exceptions.InvalidDataException;
 import com.um.edu.uy.repository.*;
@@ -37,6 +34,9 @@ public class CustomerService {
 
     @Autowired
     private MovieCustomerRankRepository movieCustomerRankRepo;
+
+    @Autowired
+    private CustomerSnackRepository customerSnackRepo;
 
     public List<Customer> getAll() {return customerRepo.findAll();}
 
@@ -252,5 +252,17 @@ public class CustomerService {
 
     public List<Reservation> getReservations(String email) {
         return reservationRepo.findAllByCustomerEmail(email).orElse(new LinkedList<>());
+    }
+
+    public CustomerSnack buySnack(Customer customerEmail, Snack snackId, int quantity) {
+
+        CustomerSnack customerSnack = CustomerSnack.builder()
+                .customerEmail(customerEmail)
+                .snackId(snackId)
+                .quantity(quantity)
+                .purchasePrice(quantity*(snackId.getPrice()))
+                .build();
+
+        return customerSnackRepo.save(customerSnack);
     }
 }

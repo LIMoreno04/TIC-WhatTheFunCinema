@@ -281,4 +281,10 @@ public class CustomerRestController {
 
         return ResponseEntity.ok(dtos);
     }
-    }
+
+//    @PostMapping("/buySnack")
+//    public ResponseEntity<?> buySnack(@RequestBody long snackId, @RequestBody int quantity, HttpSession session) {
+//        Customer customer = (Customer) session.getAttribute("user");
+//
+//    }
+}

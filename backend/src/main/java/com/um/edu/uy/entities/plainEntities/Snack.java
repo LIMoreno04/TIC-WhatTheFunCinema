@@ -1,10 +1,7 @@
 package com.um.edu.uy.entities.plainEntities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +28,6 @@ public class Snack {
     @NotNull
     private String snackDescription;
 
-    @NotNull
+    @Lob
     private byte[] snackPicture;
 }
