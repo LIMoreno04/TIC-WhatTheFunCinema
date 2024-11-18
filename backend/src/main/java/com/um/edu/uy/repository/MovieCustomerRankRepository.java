@@ -12,7 +12,7 @@ import java.util.List;
 public interface MovieCustomerRankRepository extends JpaRepository<MovieCustomerRank, CustomerRankID> {
 
 
-    @Query("SELECT new com.um.edu.uy.entities.DTOs.MovieRankingDTO(m.movieId, m.title, m.poster, m.PGRating, AVG(m.rank)) " +
+    @Query("SELECT new com.um.edu.uy.entities.DTOs.MovieRankingDTO(m.movieId.Id, m.movieId.title, m.movieId.poster, m.movieId.PGRating, AVG(m.rank)) " +
             "FROM MovieCustomerRank m " +
             "GROUP BY m.movieId " +
             "ORDER BY AVG(m.rank) DESC")

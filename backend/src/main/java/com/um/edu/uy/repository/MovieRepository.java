@@ -76,17 +76,17 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
 
     @Query(value = """
-    SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.title, m.poster, m.duration, m.PGRating, m.releaseDate)
+    SELECT m.Id
     FROM Movie m
     JOIN m.genres g
     WHERE g IN :generos
     GROUP BY m.Id
     HAVING COUNT(DISTINCT g.genreName) = :sizeOfList
     """)
-    Optional<List<MoviePreviewDTO>> findByGenres(@Param("generos") List<Genre> genres, @Param("sizeOfList") int sizeOfList);
+    Optional<List<Long>> findByGenres(@Param("generos") List<Genre> genres, @Param("sizeOfList") int sizeOfList);
 
 
-    @Query("SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.title, m.poster, m.duration, m.PGRating, m.releaseDate) " +
+    @Query("SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.Id,m.title, m.poster, m.duration, m.PGRating, m.releaseDate) " +
             "FROM Movie m WHERE m.PGRating = :pg")
     public Optional<List<MoviePreviewDTO>> findByPGRating(@Param("pg") String pgrating);
 
@@ -100,7 +100,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
 
 
-    @Query("SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.title, m.poster, m.duration, m.PGRating, m.releaseDate) " +
+    @Query("SELECT new com.um.edu.uy.entities.DTOs.MoviePreviewDTO(m.Id,m.title, m.poster, m.duration, m.PGRating, m.releaseDate) " +
             "FROM Movie m WHERE m.Id = :id")
     Optional<MoviePreviewDTO> getPreview(@Param("id") long id);
 

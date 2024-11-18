@@ -1,6 +1,8 @@
 package com.um.edu.uy.services;
 
+import com.um.edu.uy.entities.DTOs.FullSnackDTO;
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
+import com.um.edu.uy.entities.DTOs.SnackDTO;
 import com.um.edu.uy.entities.DTOs.SnackPreviewDTO;
 import com.um.edu.uy.entities.plainEntities.Snack;
 import com.um.edu.uy.exceptions.InvalidDataException;
@@ -19,10 +21,12 @@ public class SnackService {
     @Autowired
     private SnackRepository snackRepo;
 
-    public List<Snack> allSnacks() {
-        return snackRepo.findAll();
+    public List<SnackDTO> allSnacks() {
+        return snackRepo.findAllDto().orElse(new LinkedList<>());
     }
 
+    @Transactional
+    public List<FullSnackDTO> allPreviews() {return snackRepo.allPreviews().orElse(new LinkedList<>());}
     public Snack findByExactName(String name) {
         return snackRepo.findBySnackName(name).orElse(null);
     }

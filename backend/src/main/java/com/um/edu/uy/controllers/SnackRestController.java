@@ -1,6 +1,7 @@
 package com.um.edu.uy.controllers;
 
 
+import com.um.edu.uy.entities.DTOs.FullSnackDTO;
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
 import com.um.edu.uy.entities.DTOs.SnackDTO;
 import com.um.edu.uy.entities.DTOs.SnackPreviewDTO;
@@ -69,8 +70,8 @@ public class SnackRestController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Snack>> showAllSnacks() {
-        List<Snack> allSnacks = snackService.allSnacks();
+    public ResponseEntity<List<SnackDTO>> showAllSnacks() {
+        List<SnackDTO> allSnacks = snackService.allSnacks();
 
         if (allSnacks.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -128,6 +129,22 @@ public class SnackRestController {
         }
     }
 
+    @GetMapping("/preview/all")
+    public ResponseEntity<?> allPreviews() {
+        List<FullSnackDTO> snacks = snackService.allPreviews();
+        List<HashMap<String,String>> Snacks = new LinkedList<>();
+        for(FullSnackDTO snack : snacks) {
+            HashMap<String,String> Snack = new HashMap<>();
+            Snack.put("id",""+snack.getId());
+            Snack.put("name",snack.getName());
+            Snack.put("image","data:image/jpeg;base64,"+Base64.getEncoder().encodeToString((byte[]) snack.getImage()));
+            Snack.put("price",""+snack.getPrice());
+            Snack.put("description",snack.getDescription());
+            Snacks.add(Snack);
+        }
+
+        return ResponseEntity.ok(Snacks);
+    }
 
 }
 

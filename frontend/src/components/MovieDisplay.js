@@ -12,11 +12,13 @@ const PGRatingTooltips = {
   "NC-17": "+18. No se le permite la entrada a menores de 17 bajo ningún término.",
 };
 
-const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover }) => {
+const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover,addingFunction }) => {
   const navigate = useNavigate();
   const [movie, setMovie] = useState(propMovie || null);
   const [loading, setLoading] = useState(!propMovie); // Skip loading if movie is provided.
   const [detailsDisplay, setDetailsDisplay] = useState("none");
+
+ 
 
   const fetchMovie = () => {
     setLoading(true);
@@ -24,6 +26,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover }) 
       .then((response) => response.json())
       .then((data) => {
         setMovie(data);
+        addingFunction(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -67,7 +70,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover }) 
 
   return (
     <Paper
-      onClick={() => {navigate(`/movie/${movieId}`)}}
+      onClick={() => {!!movieId ? navigate(`/movie/${movieId}`) : navigate(`/movie/${propMovie.id}`)}}
       sx={{
         aspectRatio: '2/3',
         maxHeight: "100%",

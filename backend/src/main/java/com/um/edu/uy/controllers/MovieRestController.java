@@ -140,6 +140,7 @@ public class MovieRestController {
             MoviePreviewDTO moviePreview = movieService.getPreview(id);
             String posterBase64 = Base64.getEncoder().encodeToString((byte[]) moviePreview.getPoster());
             HashMap<String,String> movie = new HashMap<>();
+            movie.put("id",""+moviePreview.getId());
             movie.put("title",moviePreview.getTitle());
             movie.put("poster","data:image/jpeg;base64,"+ posterBase64);
             movie.put("duration",moviePreview.getDuration().toString());
@@ -232,7 +233,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/genreFilter/{stringGenres}")
-    public ResponseEntity<List<MoviePreviewDTO>> showMoviesByGenre(@PathVariable List<String> stringGenres) {
+    public ResponseEntity<List<Long>> showMoviesByGenre(@PathVariable List<String> stringGenres) {
         List<Genre> genres = stringGenres.stream()
                 .map(genreName -> {
                     try {
@@ -243,7 +244,7 @@ public class MovieRestController {
                 })
                 .collect(Collectors.toList());
 
-        List<MoviePreviewDTO> moviesByGenre = movieService.getByGenre(genres);
+        List<Long> moviesByGenre = movieService.getByGenre(genres);
 
         if (moviesByGenre.isEmpty()) {
             return ResponseEntity.notFound().build();

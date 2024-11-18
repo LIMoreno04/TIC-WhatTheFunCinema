@@ -463,7 +463,7 @@ const ReservationForm = () => {
                   type="number"
                   value={tickets}
                   onChange={(e) =>
-                    setTickets(Math.max(0, Math.min(e.target.value, 10)))
+                    {setTickets(Math.max(0, Math.min(e.target.value, 10))); if (Math.max(0, Math.min(e.target.value, 10)) < selectedSeats.length){setSelectedSeats([])} }
                   }
                   fullWidth
                 />

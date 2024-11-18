@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import MovieDisplay from "../components/MovieDisplay";
 import MovieConveyorBelt from "../components/MoviesConveyorBelt";
-import ShowSnacks from "../components/ShowSnacks"
+import SnackDisplay from "../components/SnacksDisplay";
 
 export default function ShowsnackPage() {
 
@@ -13,7 +13,7 @@ export default function ShowsnackPage() {
                 }}
         >
             <Box>
-                <ShowSnacks></ShowSnacks>
+                <SnackDisplay></SnackDisplay>
             </Box>
         </Box>
     )

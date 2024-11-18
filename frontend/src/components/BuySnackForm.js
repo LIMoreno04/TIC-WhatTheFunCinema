@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Box,
   Button,
   Typography,
   Paper,
-  Select,
-  MenuItem,
   TextField,
   CircularProgress,
   Snackbar,
@@ -14,26 +11,34 @@ import {
   List,
   ListItem,
   ListItemText,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const SnackPurchase = () => {
   const [snacks, setSnacks] = useState([]);
-  const [selectedSnack, setSelectedSnack] = useState("");
+  const [selectedSnack, setSelectedSnack] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  // Fetch snacks
   useEffect(() => {
     setLoading(true);
-    axios
-      .get("http://localhost:3000/api/snacks/all") // Obtener todos los snacks
+    fetch("http://localhost:8080/api/snacks/all", {
+      method: "GET",
+      credentials: "include",
+    })
       .then((response) => {
-        setSnacks(response.data);
+        if (!response.ok) {
+          throw new Error("Failed to fetch snacks.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setSnacks(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -48,7 +53,7 @@ const SnackPurchase = () => {
       setSnackbarOpen(true);
       return;
     }
-    const snackInCart = cart.find((item) => item.snack.id === selectedSnack.id);
+    const snackInCart = cart.find((item) => item.snack.snackId === selectedSnack.snackId);
     if (snackInCart) {
       snackInCart.quantity += quantity;
       setCart([...cart]);
@@ -58,7 +63,7 @@ const SnackPurchase = () => {
     setMessage("Snack agregado al carrito.");
     setSnackbarOpen(true);
     setQuantity(1);
-    setSelectedSnack(""); // Limpiar snack seleccionado
+    setSelectedSnack(null); // Clear selected snack
   };
 
   const removeFromCart = (id) => {
@@ -73,18 +78,34 @@ const SnackPurchase = () => {
       setSnackbarOpen(true);
       return;
     }
-    axios
-      .post("http://localhost:3000/api/customer/purchaseSnacks", cart, {
-        withCredentials: true,
-      })
-      .then(() => {
+
+    const purchasePayload = cart.map((item) => ({
+      snackId: item.snack.id,
+      quantity: item.quantity,
+    }));
+
+    setLoading(true);
+    fetch("http://localhost:8080/api/customer/purchaseSnacks", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(purchasePayload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to process purchase.");
+        }
         setMessage("Compra realizada con éxito.");
-        setSnackbarOpen(true);
         setCart([]);
       })
       .catch((error) => {
         console.error("Error processing purchase:", error);
         setMessage("Error al realizar la compra. Intenta nuevamente.");
+      })
+      .finally(() => {
+        setLoading(false);
         setSnackbarOpen(true);
       });
   };
@@ -103,42 +124,31 @@ const SnackPurchase = () => {
           <CircularProgress />
         ) : (
           <>
-            {/* Campo de selección de Snack */}
-            <FormControl fullWidth variant="outlined" sx={{ marginTop: 2 }}>
-              <InputLabel id="snack-select-label">Selecciona un snack</InputLabel>
-              <Select
-                labelId="snack-select-label"
-                value={selectedSnack}
-                onChange={(e) => {
-                  const snack = snacks.find((s) => s.id === e.target.value);
-                  setSelectedSnack(snack); // Actualiza el snack seleccionado
-                }}
-                label="Selecciona un snack"
-              >
-                <MenuItem value="" disabled>
-                  Selecciona un snack
-                </MenuItem>
-                {snacks.map((snack) => (
-                  <MenuItem key={snack.id} value={snack.id}>
-                    {snack.name} {/* Solo mostramos el nombre del snack */}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {/* Autocomplete for Snack selection */}
+            <Autocomplete
+              options={snacks}
+              getOptionLabel={(option) => option.snackName}
+              onChange={(event, value) => setSelectedSnack(value)}
+              value={selectedSnack}
+              renderInput={(params) => (
+                <TextField {...params} label="Selecciona un snack" variant="outlined" />
+              )}
+              sx={{ marginTop: 2 }}
+            />
 
-            {/* Campo de cantidad */}
+            {/* Quantity Field */}
             <TextField
               type="number"
               label="Cantidad"
               value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
               inputProps={{ min: 1 }}
               variant="outlined"
               fullWidth
               sx={{ marginTop: 2 }}
             />
 
-            <Button variant="contained" onClick={addToCart} sx={{ marginTop: 2 }}>
+            <Button fullWidth variant="contained" onClick={addToCart} sx={{ marginTop: 2 }}>
               Agregar al carrito
             </Button>
 
@@ -147,9 +157,9 @@ const SnackPurchase = () => {
               {cart.length > 0 ? (
                 <List>
                   {cart.map((item) => (
-                    <ListItem key={item.snack.id} sx={{ justifyContent: "space-between" }}>
+                    <ListItem key={item.snack.snackId} sx={{ justifyContent: "space-between" }}>
                       <ListItemText
-                        primary={`${item.snack.name} x${item.quantity} - $${item.snack.price * item.quantity}`}
+                        primary={`${item.snack.snackName} x${item.quantity} - $${item.snack.price * item.quantity}`}
                       />
                       <Button onClick={() => removeFromCart(item.snack.id)} color="error">
                         Eliminar
@@ -162,7 +172,7 @@ const SnackPurchase = () => {
               )}
             </Box>
 
-            <Button variant="contained" onClick={handlePurchase} sx={{ marginTop: 2 }}>
+            <Button fullWidth variant="contained" onClick={handlePurchase} sx={{ marginTop: 2 }}>
               Finalizar compra
             </Button>
           </>

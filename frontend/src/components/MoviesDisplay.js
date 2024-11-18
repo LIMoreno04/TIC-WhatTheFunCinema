@@ -7,9 +7,9 @@ import {
   IconButton,
   ButtonGroup,
   Button,
+  TextField,
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { Close } from '@mui/icons-material';
 import MovieDisplay from './MovieDisplay'; // Import the MovieDisplay component
 
 const Overlay = styled(Box)({
@@ -26,11 +26,15 @@ const Overlay = styled(Box)({
 });
 
 const MoviesDisplay = () => {
-  const [onDisplayMovies, setOnDisplayMovies] = useState([]);
-  const [comingSoonMovies, setComingSoonMovies] = useState([]);
-  const [otherMovies, setOtherMovies] = useState([]);
+  const [onDisplayIds, setOnDisplayIds] = useState([]);
+  const [comingSoonIds, setComingSoonIds] = useState([]);
+  const [otherMoviesIds, setOtherMoviesIds] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState('all'); // 'all', 'onDisplay', 'comingSoon'
+  const [filter, setFilter] = useState('all');
+  const [moviesOnDisplay, setMoviesOnDisplay] = useState([]);
+  const [moviesComingSoon, setMoviesComingSoon] = useState([]);
+  const [otherMovies, setOtherMovies] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchMovies = async (url, setState) => {
     setLoading(true);
@@ -51,20 +55,42 @@ const MoviesDisplay = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMovies('http://localhost:8080/api/movies/allOnDisplay', setOnDisplayMovies);
-    fetchMovies('http://localhost:8080/api/movies/allComingSoon', setComingSoonMovies);
-    fetchMovies('http://localhost:8080/api/movies/allTheRest', setOtherMovies);
-  }, []);
+  const addOnDisplay = (movie) => {
+    setMoviesOnDisplay((prev) =>
+      prev.some((m) => m.id === movie.id) ? prev : [...prev, movie]
+    );
+  };
+
+  const addComingSoon = (movie) => {
+    setMoviesComingSoon((prev) =>
+      prev.some((m) => m.id === movie.id) ? prev : [...prev, movie]
+    );
+  };
+
+  const addOther = (movie) => {
+    setOtherMovies((prev) =>
+      prev.some((m) => m.id === movie.id) ? prev : [...prev, movie]
+    );
+  };
 
   const filteredMovies =
     filter === 'all'
-      ? [...onDisplayMovies, ...comingSoonMovies,...otherMovies]
+      ? [...onDisplayIds, ...comingSoonIds, ...otherMoviesIds]
       : filter === 'onDisplay'
-      ? onDisplayMovies
+      ? onDisplayIds
       : filter === 'other'
-      ? otherMovies
-      : comingSoonMovies;
+      ? otherMoviesIds
+      : comingSoonIds;
+
+  const matchesSearch = (movie) =>
+    searchTerm === '' ||
+    movie?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  useEffect(() => {
+    fetchMovies('http://localhost:8080/api/movies/allOnDisplay', setOnDisplayIds);
+    fetchMovies('http://localhost:8080/api/movies/allComingSoon', setComingSoonIds);
+    fetchMovies('http://localhost:8080/api/movies/allTheRest', setOtherMoviesIds);
+  }, []);
 
   return (
     <Box position="relative">
@@ -79,13 +105,12 @@ const MoviesDisplay = () => {
           boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
           borderRadius: '40px',
           border: '2px solid #e4b4e6',
-          justifyContent:'center',
+          justifyContent: 'center',
           py: 5,
           px: 5,
           backgroundColor: 'rgba(0,0,0,0.3)',
           width: '85vw',
           minHeight: '65vh',
-          maxHeight: '75vh',
           overflowY: 'auto',
           opacity: loading ? 0.5 : 1,
           '&::-webkit-scrollbar': {
@@ -100,9 +125,9 @@ const MoviesDisplay = () => {
           </Typography>
         </Box>
 
-        <Box display="flex" justifyContent="left" mb={7}>
+        <Box display="flex" justifyContent="space-between" mb={4}>
           <ButtonGroup>
-            {['all', 'onDisplay', 'comingSoon','other'].map((key) => (
+            {['all', 'onDisplay', 'comingSoon', 'other'].map((key) => (
               <Button
                 key={key}
                 onClick={() => setFilter(key)}
@@ -126,32 +151,132 @@ const MoviesDisplay = () => {
                   ? 'TODO'
                   : key === 'onDisplay'
                   ? 'CARTELERA'
-                  : key=== 'comingSoon'
+                  : key === 'comingSoon'
                   ? 'PRÓXIMAMENTE'
                   : 'HISTORIA'}
               </Button>
             ))}
           </ButtonGroup>
+
+          <TextField
+            variant="outlined"
+            placeholder="Buscar por título..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+              width: '20vw',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              input: { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                borderColor: '#0ff0fc',
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#0ff0fc',
+              },
+            }}
+          />
         </Box>
 
-        {filteredMovies.length > 0 ? (<Box
+        {filteredMovies.length>0 ? (
+
+        <Box
             sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 10, // Space between items
             }}
             >
-                {filteredMovies.map((movie, index) => (
+            {(filter==='onDisplay' || filter==='all') && 
+           ( moviesOnDisplay.length === onDisplayIds.length ?
+            moviesOnDisplay.filter(matchesSearch).map((movie, index) => (
+              <Box sx={{height:'360px', width:'240px'}}>
+                  <MovieDisplay
+                      onDisplay={true}
+                      key={`${index}-OnDisplay-direct`}
+                      movie={movie}
+                      detailsOnHover={true}
+                  />
+              </Box>
+              )) 
+              
+              :
+               onDisplayIds.map((movie, index) => (
                 <Box sx={{height:'360px', width:'240px'}}>
                     <MovieDisplay
-                      onDisplay={filter==='onDisplay' ? true : filter==='comingSoon' ? false : null}
-                        key={index}
+                        onDisplay={true}
+                        key={`${index}-OnDisplay-id`}
                         movieId={movie}
+                        addingFunction={addOnDisplay}
+                        detailsOnHover={true}
                     />
                 </Box>
-                ))}
-            </Box>
+                ))
+            
+            
+              )
+            }
+            
+            {(filter==='comingSoon' || filter==='all') && 
+           ( moviesComingSoon.length === comingSoonIds.length ?
+            moviesComingSoon.filter(matchesSearch).map((movie, index) => (
+              <Box sx={{height:'360px', width:'240px'}}>
+                  <MovieDisplay
+                      onDisplay={false}
+                      key={`${index}-ComingSoon-direct`}
+                      movie={movie}
+                      detailsOnHover={true}
+                  />
+              </Box>
+              )) 
+              
+              :
+               comingSoonIds.map((movie, index) => (
+                <Box sx={{height:'360px', width:'240px'}}>
+                    <MovieDisplay
+                        onDisplay={false}
+                        key={`${index}-ComingSoon-id`}
+                        movieId={movie}
+                        addingFunction={addComingSoon}
+                        detailsOnHover={true}
+                    />
+                </Box>
+                ))
+            
+            
+              )
+            }
 
+            {(filter==='other' || filter==='all') && 
+           ( otherMovies.length === otherMoviesIds.length ?
+            otherMovies.filter(matchesSearch).map((movie, index) => (
+              <Box sx={{height:'360px', width:'240px'}}>
+                  <MovieDisplay
+                      onDisplay={null}
+                      key={`${index}-other-direct`}
+                      movie={movie}
+                      detailsOnHover={true}
+                  />
+              </Box>
+              )) 
+              
+              :
+               otherMoviesIds.map((movie, index) => (
+                <Box sx={{height:'360px', width:'240px'}}>
+                    <MovieDisplay
+                        onDisplay={null}
+                        key={`${index}-other-id`}
+                        movieId={movie}
+                        addingFunction={addOther}
+                        detailsOnHover={true}
+                    />
+                </Box>
+                ))
+            
+            
+              )
+            }
+         </Box>
+         
         ) : (
           !loading && (
             <Box display="flex" justifyContent="center" mt={4}>

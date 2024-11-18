@@ -173,7 +173,7 @@ const ScreeningsBox = ({ movieId }) => {
         format="dd/MM/yyyy"
         disablePast
         sx={{
-          width:'140px',
+          width:'150px',
           position: "absolute",
           top: "15px",
           right: "15px",

@@ -129,8 +129,8 @@ public class CustomerRestController {
 
 
 
-    @DeleteMapping("/cancelReservation")
-    public ResponseEntity<String> cancelReservation(@RequestParam String email, @RequestParam Integer col, @RequestParam Integer row, @RequestBody Screening screening) {
+    @DeleteMapping("/cancelReservation/{theatre}/{roomNumber}/{date_and_time}/{row}/{col}")
+    public ResponseEntity<String> cancelReservation(HttpSession session, @PathVariable Integer col, @PathVariable Integer row, @PathVariable String theatre, @PathVariable int roomNumber, @PathVariable LocalDateTime date_and_time) {
         try {
             customerService.cancelReservation(email, col, row, screening);
             return ResponseEntity.ok("Reservation canceled successfully.");

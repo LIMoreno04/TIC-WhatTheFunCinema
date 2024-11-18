@@ -103,7 +103,7 @@ public class MovieService {
         return movieRepo.findAllComingSoon(LocalDateTime.now().minusWeeks(1)).orElse(new LinkedList<>());
     }
 
-    public List<MoviePreviewDTO> getByGenre(List<Genre> genres) {
+    public List<Long> getByGenre(List<Genre> genres) {
         return movieRepo.findByGenres(genres,genres.size()).orElse(new LinkedList<>());
     }
 

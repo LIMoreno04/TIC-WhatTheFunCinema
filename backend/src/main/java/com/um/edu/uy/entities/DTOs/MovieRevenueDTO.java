@@ -14,9 +14,9 @@ public class MovieRevenueDTO {
     private String title;
     private byte[] poster;
     private String PGRating;
-    private int revenue;
+    private long revenue;
 
-    public MovieRevenueDTO(long id, String title, byte[] poster, String PGRating, int revenue) {
+    public MovieRevenueDTO(long id, String title, byte[] poster, String PGRating, long revenue) {
         this.id = id;
         this.title = title;
         this.poster = poster;
