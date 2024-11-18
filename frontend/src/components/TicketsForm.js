@@ -490,7 +490,7 @@ const ReservationForm = ({userRole}) => {
                 }}
                 />  
             {(selectedMovie && selectedTheatre && reservationData && selectedDate &&selectedTime) && (
-              <Box sx={{display:'flex', flexDirection:'column', flexGrow:1, gap:4}}>
+              <Box sx={{display:'flex', flexDirection:'column', flexGrow:1, gap:2}}>
                 <Typography variant="h6" gutterBottom>
                   <strong>Película:</strong> {selectedMovie.movieTitle}
                 </Typography>
@@ -505,6 +505,9 @@ const ReservationForm = ({userRole}) => {
                 </Typography>
                 <Typography variant="h6" gutterBottom>
                   <strong>Hora:</strong> {selectedTime.substring(0,5)}
+                </Typography>
+                <Typography variant="h6"> 
+                  <strong>Precio:</strong> ${reservationData[4]}
                 </Typography>
                 <TextField
                   label="¿Cuántos asientos?"

@@ -86,7 +86,7 @@ public class TheatreService {
     @Transactional
     public Object[] getReservations(String theatre, int roomNumber, LocalDateTime date_and_time) throws InvalidDataException {
         Screening screening = screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time)).orElseThrow(()->new InvalidDataException("screening not found."));
-        Object[] toSend = new Object[] {screening.getRoom().getRows(),screening.getRoom().getColumns(),null,roomNumber};
+        Object[] toSend = new Object[] {screening.getRoom().getRows(),screening.getRoom().getColumns(),null,roomNumber, screening.getScreeningPrice()};
         List<ReservationDTO> reservationDTOS = new LinkedList<>();
         for(Reservation reservation : screening.getReservations()) {
             reservationDTOS.add(new ReservationDTO(theatre,roomNumber,date_and_time,reservation.getCol(),reservation.getRow()));
