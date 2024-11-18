@@ -90,6 +90,23 @@ public class TicWtfcinemaApplication {
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
 
+//		Customer customer = customerService.findCustomer("ignamoreno04@gmail.com", "Abcd1234@@");
+//		Movie movie = movieService.findById(4L);
+//
+//		//customerService.rankMovie(movie, customer, 4);
+//
+//		List<Object[]> reservations = customerService.getReservations("ignamoreno04@gmail.com");
+//
+//		for (Object[] res : reservations) {
+//			String mtitle = (String) res[3];
+//			LocalDateTime date = (LocalDateTime) res[2];
+//			int price = (int) res[6];
+//
+//			System.out.println(mtitle + date + price);
+//
+//		}
+
+
 		//prueba2();
 
 	}
