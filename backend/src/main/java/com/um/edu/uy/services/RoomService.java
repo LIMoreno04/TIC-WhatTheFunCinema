@@ -58,7 +58,7 @@ public class RoomService {
 
         room.getScreenings().add(newScreening);
         roomRepo.save(room);
-        movie.getScreenings().add(screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time)).get());
+        movie.getScreenings().add(newScreening);
         movieRepo.save(movie);
     }
 
