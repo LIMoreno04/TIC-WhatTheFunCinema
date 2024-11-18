@@ -1,16 +1,15 @@
 package com.um.edu.uy.services;
 
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
+import com.um.edu.uy.entities.DTOs.MovieRankingDTO;
+import com.um.edu.uy.entities.DTOs.MovieRevenueDTO;
 import com.um.edu.uy.entities.DTOs.ScreeningDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.MovieCustomerRank;
 import com.um.edu.uy.entities.plainEntities.Theatre;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.repository.GenreRepository;
-import com.um.edu.uy.repository.MovieCustomerRankRepository;
-import com.um.edu.uy.repository.MovieRepository;
-import com.um.edu.uy.repository.ScreeningRepository;
+import com.um.edu.uy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +35,9 @@ public class MovieService {
 
     @Autowired
     private ScreeningRepository screeningRepo;
+
+    @Autowired
+    private ReservationRepository reservationRepo;
 
     public Optional<List<Object[]>> getTitlesAndIds() {
         return movieRepo.getTitlesAndIds();
@@ -119,7 +121,7 @@ public class MovieService {
         return movieRepo.findSeenMoviesByCustomerId(email);
     }
 
-    public List<Long> getMovieRanking() throws InvalidDataException {
+    public List<MovieRankingDTO> getMovieRanking() throws InvalidDataException {
         return movieCustomerRankRepo.findBestRankedMovies();
     }
 
@@ -127,5 +129,8 @@ public class MovieService {
         return screeningRepo.findByMovie(movieId, LocalDateTime.now().minusMinutes(10)).orElse(new LinkedList<>());
     }
 
+    public List<MovieRevenueDTO> getHighestRevenue() {
+        return reservationRepo.findMoviesWithHighestRevenue();
+    }
 
 }

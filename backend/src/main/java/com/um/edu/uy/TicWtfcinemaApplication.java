@@ -90,12 +90,6 @@ public class TicWtfcinemaApplication {
 			System.out.println("Admin email: " + admin.getEmail() + "\nAdmin password: " + admin.getPassword());
 		}
 
-		Customer customer = customerService.findCustomer("guadaluperial04@gmail.com", "GuadaYaco0109#");
-		Snack snack = snackService.findById(1);
-
-		customerService.buySnack(customer, snack, 5);
-
-
 		//prueba2();
 
 	}

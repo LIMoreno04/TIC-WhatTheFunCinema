@@ -2,6 +2,8 @@ package com.um.edu.uy.controllers;
 
 import com.um.edu.uy.entities.DTOs.MovieDTO;
 import com.um.edu.uy.entities.DTOs.MoviePreviewDTO;
+import com.um.edu.uy.entities.DTOs.MovieRankingDTO;
+import com.um.edu.uy.entities.DTOs.MovieRevenueDTO;
 import com.um.edu.uy.entities.plainEntities.Genre;
 import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.Theatre;
@@ -275,12 +277,23 @@ public class MovieRestController {
 
     @GetMapping("/ranking")
     public ResponseEntity<?> ranking() throws InvalidDataException {
-        List<Long> ranking = movieService.getMovieRanking();
+        List<MovieRankingDTO> ranking = movieService.getMovieRanking();
 
         if (ranking.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(ranking);
+        }
+    }
+
+    @GetMapping("/highestRevenue")
+    public ResponseEntity<?> highestRevenue() {
+        List<MovieRevenueDTO> highestRevenue = movieService.getHighestRevenue();
+
+        if (highestRevenue.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(highestRevenue);
         }
     }
 
