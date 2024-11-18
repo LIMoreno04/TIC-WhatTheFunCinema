@@ -6,8 +6,10 @@ import com.um.edu.uy.entities.plainEntities.Movie;
 import com.um.edu.uy.entities.plainEntities.MovieCustomerRank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MovieCustomerRankRepository extends JpaRepository<MovieCustomerRank, CustomerRankID> {
 
@@ -17,4 +19,10 @@ public interface MovieCustomerRankRepository extends JpaRepository<MovieCustomer
             "GROUP BY m.movieId " +
             "ORDER BY AVG(m.rank) DESC")
     List<MovieRankingDTO> findBestRankedMovies();
+
+    @Query("SELECT AVG(m.rank) " +
+            "FROM MovieCustomerRank m " +
+            "WHERE m.movieId.Id = :movieId")
+    Optional<Double> findAverageRankByMovieId(@Param("movieId") Long movieId);
+
 }

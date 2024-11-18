@@ -133,4 +133,8 @@ public class MovieService {
         return reservationRepo.findMoviesWithHighestRevenue();
     }
 
+    public Double findAverageRankByMovieId(Long id) {
+        return movieCustomerRankRepo.findAverageRankByMovieId(id).orElse(null);
+    };
+
 }
