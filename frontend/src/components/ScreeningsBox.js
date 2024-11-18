@@ -208,7 +208,7 @@ const ScreeningsBox = ({ movieId }) => {
             </Box>
         ))
         ) : (
-        <Typography marginLeft={'5%'} marginTop={'4%'} fontSize={'1.2rem'} color="error">No tenemos funciones ese día. Lo sentimos!</Typography>
+        <Typography marginLeft={'5%'} marginTop={'12%'} fontSize={'clamp(20px,1vw,1vw)'} color="error">No tenemos funciones ese día. Lo sentimos!</Typography>
         )}
 
 

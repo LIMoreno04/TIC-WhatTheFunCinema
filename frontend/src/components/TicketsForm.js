@@ -205,12 +205,12 @@ const ReservationForm = ({userRole}) => {
 
     if (failures.length > 0) {
       alert(
-        `Some seats could not be reserved: ${failures
+        `Error haciendo la reserva de los siguientes asientos: ${failures
           .map((f) => `Row ${f.seat[0]}, Col ${f.seat[1]}`)
           .join(", ")}`
       );
     } else {
-      alert("All seats reserved successfully!");
+      alert("Reserva exitosa!");
       setSelectedSeats([]);
       setOpenSeatSelector(false);
       setOpenPaymentDialog(false); // Close payment dialog
@@ -411,11 +411,11 @@ const ReservationForm = ({userRole}) => {
       {serverError && <Typography color="error">{serverError}</Typography>}
 
       {userRole === 'customer' &&
-        <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
+        <Button sx={{width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
         Comprar
       </Button>}
       {userRole != 'customer' &&
-        <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" href="/login" disabled={loading}>
+        <Button sx={{fontSize:'1vw', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" href="/login" disabled={loading}>
         Iniciar sesión para comprar
         </Button>
       
@@ -442,7 +442,7 @@ const ReservationForm = ({userRole}) => {
         <Dialog open={openSeatSelector} onClose={() => {setOpenSeatSelector(false); setSelectedSeats([])}} maxWidth="lg">
         <DialogTitle>Selecciona tus asientos</DialogTitle>
           <DialogContent>
-            <Box sx={{display:'flex', flexDirection:'row', maxWidth:'55vw', gap:3}}>
+            <Box sx={{display:'flex', flexDirection:'row', maxWidth:'80vw', gap:3}}>
             <Box overflow={'auto'} maxWidth={'60%'}
                 sx={{overflow:'auto',
                     maxWidth:'60%',
