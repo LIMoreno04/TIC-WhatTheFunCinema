@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import SeatIcon from "@mui/icons-material/EventSeat";
 import { format } from "date-fns";
-import LoginForm from './LoginForm'
+import PaymentMethodsDisplay from "./PaymentMethodsDisplay";
 
 const ReservationForm = ({userRole}) => {
   const [movies, setMovies] = useState([]);
@@ -36,6 +36,9 @@ const ReservationForm = ({userRole}) => {
   const [reservationData, setReservationData] = useState(null);
   const [openSeatSelector, setOpenSeatSelector] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false); // Manage payment dialog visibility
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Track payment confirmation
+
 
   // Fetch movies on component mount
   useEffect(() => {
@@ -164,48 +167,66 @@ const ReservationForm = ({userRole}) => {
   };
 
   const handleReservation = async () => {
-    if (!(reservationData) ) return;
-      setLoading(true);
-      const failures = [];
-    
-      for (const [row, col] of selectedSeats) {
-        console.log(selectedTheatre);
-        console.log(reservationData[1]);
-        console.log(`${selectedDate}T${selectedTime}`);
-        const screeningDTO = {
-          theatre:selectedTheatre, 
-          roomNumber: reservationData[3],
-          date_and_time: `${selectedDate}T${selectedTime}`,
-        };
-    
-        try {
-          const response = await fetch(`http://localhost:8080/api/customer/makeReservation/${encodeURIComponent(col)}/${encodeURIComponent(row)}`, {
+    if (!(reservationData)) return;
+
+    setLoading(true);
+    const failures = [];
+
+    for (const [row, col] of selectedSeats) {
+      const screeningDTO = {
+        theatre: selectedTheatre,
+        roomNumber: reservationData[3],
+        date_and_time: `${selectedDate}T${selectedTime}`,
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/customer/makeReservation/${encodeURIComponent(
+            col
+          )}/${encodeURIComponent(row)}`,
+          {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(screeningDTO),
             credentials: "include",
-          });
-    
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.log(errorData)
-            failures.push({ seat: [row, col], error: errorData.error });
           }
-        } catch (error) {
-          failures.push({ seat: [row, col], error: "Network error" });
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          failures.push({ seat: [row, col], error: errorData.error });
         }
+      } catch (error) {
+        failures.push({ seat: [row, col], error: "Network error" });
       }
-    
-      setLoading(false);
-    
-      if (failures.length > 0) {
-        alert(`Some seats could not be reserved: ${failures.map(f => `Row ${f.seat[0]}, Col ${f.seat[1]}`).join(", ")}`);
-      } else {
-        alert("All seats reserved successfully!");
-        setSelectedSeats([]);
-        setOpenSeatSelector(false);
-      }
-    };
+    }
+
+    setLoading(false);
+
+    if (failures.length > 0) {
+      alert(
+        `Some seats could not be reserved: ${failures
+          .map((f) => `Row ${f.seat[0]}, Col ${f.seat[1]}`)
+          .join(", ")}`
+      );
+    } else {
+      alert("All seats reserved successfully!");
+      setSelectedSeats([]);
+      setOpenSeatSelector(false);
+      setOpenPaymentDialog(false); // Close payment dialog
+    }
+  };
+
+  const handlePaymentSelect = () => {
+    setIsPaymentConfirmed(true);
+  };
+
+  useEffect(() => {
+    if (isPaymentConfirmed) {
+      handleReservation();
+      setIsPaymentConfirmed(false); // Reset after handling
+    }
+  }, [isPaymentConfirmed]);
 
   const isSmallScreen = useMediaQuery('(max-width:1150px)');
 
@@ -400,6 +421,23 @@ const ReservationForm = ({userRole}) => {
       
       }
 
+        <Dialog
+          open={openPaymentDialog}
+          onClose={() => setOpenPaymentDialog(false)}
+          width='40vw'
+        >
+          <DialogTitle>Elige un método de pago</DialogTitle>
+          <DialogContent>
+            <Box width={'40vw'} padding={5}>
+            <PaymentMethodsDisplay onUpdate={handlePaymentSelect} onSelect={handlePaymentSelect} />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenPaymentDialog(false)}>Cancelar</Button>
+          </DialogActions>
+        </Dialog> 
+
+
         {/* Seat Selector Dialog */}
         <Dialog open={openSeatSelector} onClose={() => {setOpenSeatSelector(false); setSelectedSeats([])}} maxWidth="lg">
         <DialogTitle>Selecciona tus asientos</DialogTitle>
@@ -483,20 +521,21 @@ const ReservationForm = ({userRole}) => {
           </DialogContent>
           <DialogActions>
           <Button
-              onClick={()=>{setOpenSeatSelector(false); setSelectedSeats([])}}
-              disabled={selectedSeats.length !== Number(tickets)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleReservation}
-              disabled={selectedSeats.length !== Number(tickets)}
-            >
-              Reservar
-            </Button>
-          </DialogActions>
+            onClick={() => {
+              setOpenSeatSelector(false);
+              setSelectedSeats([]);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => setOpenPaymentDialog(true)} // Open payment dialog instead of direct reservation
+            disabled={selectedSeats.length !== Number(tickets)}
+          >
+            Confirmar y Pagar
+          </Button>
+        </DialogActions>
       </Dialog>
-
     </Box>
   );
 };

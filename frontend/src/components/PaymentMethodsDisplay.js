@@ -26,6 +26,22 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
     cvv: '',
   });
   const [error, setError] = useState('');
+  
+  const fetchUserData = () => {
+    fetch('http://localhost:8080/api/customer/current', {
+        method: 'GET',
+        credentials: 'include',
+    })
+    .then(response => response.json())
+    .then(data => {
+        cards = data.paymentMethods;
+    })
+    .catch(error => {
+        console.error('Error fetching user data:', error);
+    });
+};
+
+
 
   const cardTypeOptions = [
     { label: "Visa crédito", value: "VCredit" },
@@ -97,7 +113,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-      onUpdate();
+      if (!!onUpdate){onUpdate();};
       handleCloseDialog();
     } catch (error) {
       console.error('Error adding new card:', error);
@@ -130,7 +146,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
         if (!response.ok) {
           throw new Error('Failed to delete card');
         }
-        onUpdate();
+        if (!!onUpdate){onUpdate();};
         handleCloseDeleteDialog();
       } catch (error) {
         console.error('Error deleting card:', error);
@@ -166,7 +182,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
       {cards && cards.length > 0 ? (
         cards.map((card, index) => (
           <Paper 
-            onClick={()=>(!!onSelect ? onSelect(card) : null)}
+            onClick={()=>(!!onSelect ? onSelect() : null)}
             key={index}
             sx={{
               padding: 3,
