@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class Customer extends User {
     }
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "customer",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reservation> reservations;
+    private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "customerEmail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovieCustomerRank> ratings;
