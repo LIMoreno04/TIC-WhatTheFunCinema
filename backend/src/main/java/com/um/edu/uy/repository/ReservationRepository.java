@@ -16,7 +16,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Reserv
 
     List<Reservation> findAllByScreening(Screening screening);
 
-    @Query("SELECT r.screening.room.theatre.location,r.screening.room.room_number,r.screening.date_and_time,r.screening.movie.title,r.row,r.col"
+    @Query("SELECT r.screening.room.theatre.location,r.screening.room.room_number,r.screening.date_and_time,r.screening.movie.title,r.row,r.col,r.screening.screeningPrice"
             +
             " FROM Reservation r WHERE r.customer.email =:e")
     public Optional<List<Object[]>> findAllByCustomerEmail(@Param("e") String email);

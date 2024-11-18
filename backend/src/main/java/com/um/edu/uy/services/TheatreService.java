@@ -14,6 +14,7 @@ import com.um.edu.uy.repository.ScreeningRepository;
 import com.um.edu.uy.repository.TheatreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -82,6 +83,7 @@ public class TheatreService {
     }
 
 
+    @Transactional
     public Object[] getReservations(String theatre, int roomNumber, LocalDateTime date_and_time) throws InvalidDataException {
         Screening screening = screeningRepo.findById(new ScreeningID(new RoomID(theatre,roomNumber),date_and_time)).orElseThrow(()->new InvalidDataException("screening not found."));
         Object[] toSend = new Object[] {screening.getRoom().getRows(),screening.getRoom().getColumns(),null,roomNumber};

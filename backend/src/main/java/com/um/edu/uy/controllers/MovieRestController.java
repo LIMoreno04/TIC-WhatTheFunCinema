@@ -126,8 +126,12 @@ public class MovieRestController {
             movieInfo.put("description", movie.getDescription());
             movieInfo.put("releaseDate", movie.getReleaseDate());
             movieInfo.put("director", movie.getDirector());
-            movieInfo.put("genres", movie.getGenres());
-            movieInfo.put("poster", posterBase64);
+            List<String> genres = new LinkedList<>();
+            for (Genre genre : movie.getGenres()) {
+                genres.add(genre.getGenreName());
+            }
+            movieInfo.put("genres", genres);
+            movieInfo.put("poster", "data:image/jpeg;base64,"+ posterBase64);
             movieInfo.put("PGRating", movie.getPGRating());
             movieInfo.put("avgRanking", avgRanking);
 

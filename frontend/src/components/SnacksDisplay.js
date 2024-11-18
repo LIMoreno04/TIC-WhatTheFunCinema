@@ -52,7 +52,7 @@ const SnackDisplay = () => {
 
     try {
       const response = await fetch("http://localhost:8080/api/customer/buySnack", {
-        method: "POST",
+        method: "POST", credentials:'include',
         headers: {
           "Content-Type": "application/json",
         },

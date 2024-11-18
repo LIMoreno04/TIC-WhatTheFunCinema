@@ -1,5 +1,7 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -51,6 +53,7 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private List<Screening> screenings = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "movieId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovieCustomerRank> ratings;
 

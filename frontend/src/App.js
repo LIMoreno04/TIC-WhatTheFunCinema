@@ -44,6 +44,7 @@ function App() {
 
   useEffect(() => {
     fetchRole();
+    if(!userRole) {setUserRole('notLoggedIn')};
   }, []);
 
   return (
@@ -77,7 +78,7 @@ function App() {
             <Route path='/addScreening' element={userRole === "employee" ? <AddScreeningPage /> : <NotFound />} />
             <Route path='/movie/:id' element={<MoviePage />} />
             <Route path='/addSnack' element={userRole === "employee" ? <NewSnackPage /> : <NotFound />} />
-            <Route path='/makeReservation' element={userRole === "customer" ? <MakeReservationPage /> : <NotFound />}/>
+            <Route path='/makeReservation' element={userRole === "customer" ? <MakeReservationPage userRole={userRole}/> : <NotFound />}/>
             <Route path='/buySnack' element={userRole === "customer" ? <BuySnackPage /> : <NotFound />}/>
             <Route path='/purchase-history' element={userRole==='customer' ? <PurchaseHistory/> : <NotFound/>}/>
             <Route path='/snacks' element={<ShowsnackPage />} />

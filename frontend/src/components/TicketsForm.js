@@ -393,7 +393,7 @@ const ReservationForm = ({userRole}) => {
         <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
         Comprar
       </Button>}
-      {userRole === 'notLoggedIn' &&
+      {userRole != 'customer' &&
         <Button sx={{width:'85%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" href="/login" disabled={loading}>
         Iniciar sesión para comprar
         </Button>

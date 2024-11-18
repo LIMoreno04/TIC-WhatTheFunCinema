@@ -311,7 +311,6 @@ public class CustomerRestController {
     @PostMapping("/buySnack")
     public ResponseEntity<?> buySnack(@RequestBody SnackPurchaseDTO snackPurchaseDTO, HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
-
         Snack snack = snackService.findById(snackPurchaseDTO.getSnackId());
 
         SnackPurchase snackPurchase = customerService.buySnack(customer, snack, snackPurchaseDTO.getQuantity());
