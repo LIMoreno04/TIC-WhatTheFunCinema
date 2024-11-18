@@ -188,6 +188,7 @@ public class CustomerService {
                 .screening(validScreening)
                 .col(col)
                 .row(row)
+                .purchaseDate(LocalDateTime.now())
                 .build();
 
         customer.getReservations().add(reservation);
@@ -263,6 +264,7 @@ public class CustomerService {
                 .snackId(snackId)
                 .quantity(quantity)
                 .purchasePrice(quantity * (snackId.getPrice()))
+                .purchaseDate(LocalDateTime.now())
                 .build();
 
         return customerSnackRepo.save(customerSnack);

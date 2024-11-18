@@ -6,7 +6,7 @@ import com.um.edu.uy.enums.CardType;
 import com.um.edu.uy.enums.CountryCode;
 import com.um.edu.uy.enums.IdDocumentType;
 import com.um.edu.uy.exceptions.InvalidDataException;
-import com.um.edu.uy.repository.HomePageMoviesRepository;
+
 import com.um.edu.uy.services.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -45,8 +45,8 @@ public class CustomerRestController {
     @Autowired
     private SnackService snackService;
 
-    @Autowired
-    private HomePageMoviesRepository homePageMoviesRepo;
+//    @Autowired
+//    private HomePageMoviesRepository homePageMoviesRepo;
 
     @PostMapping("/signup")
     public ResponseEntity<?> customerSignUp(@Valid @RequestBody UserDTO userDTO, HttpSession session) {
@@ -307,15 +307,15 @@ public class CustomerRestController {
         return ResponseEntity.ok(snackPurchase);
     }
 
-    @PostMapping("/{oMovie}/{nMovie}")
-    public ResponseEntity<?> swapHomePageMovies(@PathVariable long oMovie, @PathVariable long nMovie) throws InvalidDataException {
-        HomePageMovies o = homePageMoviesRepo.findById(oMovie).get();
-
-        homePageMoviesRepo.delete(o);
-
-        HomePageMovies n = homePageMoviesRepo.save(new HomePageMovies(movieService.findById(nMovie)));
-
-        return ResponseEntity.ok(n);
-
-    }
+//    @PostMapping("/{oMovie}/{nMovie}")
+//    public ResponseEntity<?> swapHomePageMovies(@PathVariable long oMovie, @PathVariable long nMovie) throws InvalidDataException {
+//        HomePageMovies o = homePageMoviesRepo.findById(oMovie).get();
+//
+//        homePageMoviesRepo.delete(o);
+//
+//        HomePageMovies n = homePageMoviesRepo.save(new HomePageMovies(movieService.findById(nMovie)));
+//
+//        return ResponseEntity.ok(n);
+//
+//    }
 }

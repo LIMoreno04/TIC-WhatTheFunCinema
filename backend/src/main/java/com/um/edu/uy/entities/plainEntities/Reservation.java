@@ -1,18 +1,22 @@
 package com.um.edu.uy.entities.plainEntities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.um.edu.uy.entities.ids.ReservationId;
+import com.um.edu.uy.entities.ids.ReservationIdD;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(ReservationId.class)
+@IdClass(ReservationIdD.class)
 @Entity
 public class Reservation {
 
@@ -36,4 +40,7 @@ public class Reservation {
     @JoinColumn(name = "email")
     @JsonBackReference
     private Customer customer;
+
+    @NotNull
+    private LocalDateTime purchaseDate;
 }
