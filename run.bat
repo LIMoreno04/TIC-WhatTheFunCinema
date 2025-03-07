@@ -63,9 +63,20 @@ if not exist "node_modules/react" (
     echo React is already installed.
 )
 
-:: Check for MUI libraries
-echo Checking MUI libraries...
-call npm install @mui/material @mui/icons-material @mui/x-date-pickers date-fns --loglevel=error
+:: Check if any MUI libraries are missing
+set "MISSING_LIBS="
+if not exist "node_modules/@mui/material" set MISSING_LIBS=1
+if not exist "node_modules/@mui/icons-material" set MISSING_LIBS=1
+if not exist "node_modules/@mui/x-date-pickers" set MISSING_LIBS=1
+if not exist "node_modules/date-fns" set MISSING_LIBS=1
+
+:: Install MUI libraries if any are missing
+if defined MISSING_LIBS (
+    echo Some MUI libraries are missing. Installing now...
+    call npm install @mui/material @mui/icons-material @mui/x-date-pickers date-fns --loglevel=error
+) else (
+    echo All required MUI libraries are installed.
+)
 
 :: Verify that MUI libraries are installed correctly
 if not exist "node_modules/@mui/material" (
