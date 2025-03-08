@@ -17,9 +17,9 @@ public interface SnackRepository extends JpaRepository<Snack, Long> {
     Optional<List<Snack>> findBySnackNameContainingIgnoreCase(String name);
     Optional<List<Snack>> findByPriceLessThanEqual(int price);
 
-    @Query("SELECT new com.um.edu.uy.entities.DTOs.SnackPreviewDTO(s.snackName, s.snackPicture, s.price) " +
+    @Query("SELECT new com.um.edu.uy.entities.DTOs.FullSnackDTO(s.snackId, s.snackName, s.snackPicture, s.price, s.snackDescription) " +
             "FROM Snack s WHERE s.snackId = :id")
-    Optional<SnackPreviewDTO> getPreview(@Param("id") long id);
+    Optional<FullSnackDTO> getPreview(@Param("id") long id);
 
     @Query("SELECT new com.um.edu.uy.entities.DTOs.SnackDTO(s.snackId, s.snackName,s.price) " +
             "FROM Snack s")
@@ -28,4 +28,6 @@ public interface SnackRepository extends JpaRepository<Snack, Long> {
     @Query("SELECT new com.um.edu.uy.entities.DTOs.FullSnackDTO(s.snackId,s.snackName,s.snackPicture,s.price,s.snackDescription) FROM Snack s")
     Optional<List<FullSnackDTO>> allPreviews();
 
+    @Query("SELECT s.snackId FROM Snack s")
+    Optional<List<Long>> findAllIds();
 }

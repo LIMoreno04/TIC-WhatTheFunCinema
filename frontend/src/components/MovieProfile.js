@@ -86,13 +86,14 @@ const MovieProfile = () => {
         margin: 'auto',
         width: '70vw',
         maxWidth: '1200px',
+        minHeight:'600px',
         boxShadow: 'inset 0 0 30px #a805ad, 0 0 25px #a805ad, 0 0 35px #a805ad',
         borderRadius: '40px',
         border: `4px solid #e4b4e6`,
         backgroundColor: 'rgba(0,0,0,0.8)',
       }}
     >
-      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={4}>
+      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={4} sx={{minHeight:'600px'}}>
         {/* Movie Poster */}
         <Box
           sx={{
@@ -132,11 +133,11 @@ const MovieProfile = () => {
           </Typography>
           <Box display={'flex'} marginBottom={2} flexDirection={'row'} alignItems={'center'} justifyContent={'left'} gap={1}>
             <Typography variant="body1">
-                <strong>Restricción de edad:</strong> {movie.pgrating}
+                <strong>Restricción de edad:</strong> {movie.PGRating}
             </Typography>
             <Tooltip
                     title={
-                        <h3>{PGRatingTooltips[movie.pgrating]}</h3> || "Unknown"
+                        <h3>{PGRatingTooltips[movie.PGRating]}</h3> || "Unknown"
                     }
                     >
                     <InfoIcon

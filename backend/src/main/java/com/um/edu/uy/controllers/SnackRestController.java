@@ -117,12 +117,14 @@ public class SnackRestController {
     public ResponseEntity<?> getSnackById(@PathVariable Long snackId) {
 
         try {
-            SnackPreviewDTO snackPreview = snackService.getPreview(snackId);
-            String pictureBase64 = Base64.getEncoder().encodeToString((byte[]) snackPreview.getPicture());
+            FullSnackDTO snackPreview = snackService.getPreview(snackId);
+            String pictureBase64 = Base64.getEncoder().encodeToString((byte[]) snackPreview.getImage());
             HashMap<String,String> snack = new HashMap<>();
-            snack.put("name",snackPreview.getSnackName());
-            snack.put("picture","data:image/jpeg;base64,"+ pictureBase64);
+            snack.put("id",String.valueOf(snackPreview.getId()));
+            snack.put("name",snackPreview.getName());
+            snack.put("image","data:image/jpeg;base64,"+ pictureBase64);
             snack.put("price", String.valueOf(snackPreview.getPrice()));
+            snack.put("description",snackPreview.getDescription());
             return ResponseEntity.ok(snack);
         } catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String,String>().put("snackId","Snack con id "+snackId+" no encontrado."));
@@ -144,6 +146,12 @@ public class SnackRestController {
         }
 
         return ResponseEntity.ok(Snacks);
+    }
+
+    @GetMapping("/AllIds")
+    public ResponseEntity<?> allIds() {
+        List<Long> snackIds = snackService.allIds();
+        return ResponseEntity.ok(snackIds);
     }
 
 }

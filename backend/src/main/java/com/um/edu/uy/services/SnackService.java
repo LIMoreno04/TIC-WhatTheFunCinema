@@ -54,13 +54,15 @@ public class SnackService {
         snackRepo.delete(snack);
 
     }
-
+    public List<Long> allIds(){
+        return snackRepo.findAllIds().orElse(new LinkedList<>());
+    }
     public Snack findById(long id) {
         return snackRepo.findById(id).orElse(null);
     }
 
     @Transactional
-    public SnackPreviewDTO getPreview(long id) throws InvalidDataException {
+    public FullSnackDTO getPreview(long id) throws InvalidDataException {
         return snackRepo.getPreview(id).orElseThrow(()->new InvalidDataException("Snack not found"));
     }
 }
