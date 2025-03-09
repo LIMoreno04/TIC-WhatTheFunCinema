@@ -1,5 +1,6 @@
 package com.um.edu.uy.entities.plainEntities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.um.edu.uy.entities.ids.SnackPurchaseID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -17,10 +18,12 @@ import java.time.LocalDateTime;
 public class SnackPurchase {
 
     @Id
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customerEmail;
 
     @Id
+    @JsonIgnore
     @ManyToOne
     private Snack snackId;
 

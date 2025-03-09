@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -62,9 +65,7 @@ public class SnackRestController {
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file.");
             }
-
             Snack newSnack = snackService.addSnack(name, description, posterBytes, price);
-
             return ResponseEntity.ok("Snack agregado.");
         } else { return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sin permisos."); }
     }
@@ -152,6 +153,19 @@ public class SnackRestController {
     public ResponseEntity<?> allIds() {
         List<Long> snackIds = snackService.allIds();
         return ResponseEntity.ok(snackIds);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Collect all field validation errors
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        // Return error map with a BAD_REQUEST status
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 }

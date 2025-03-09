@@ -217,6 +217,7 @@ const NewMovieForm = () => {
         </Box>
     {error && <ErrorMessage>{error}</ErrorMessage>}
       <Box sx={{paddingY: 2, display: 'flex', gap: 2, maxWidth: 800, margin: 'auto' }}>
+        
         {/* Poster section */}
         <Box sx={{ flex: 0.75, maxWidth: '50%' }}>
             <Paper

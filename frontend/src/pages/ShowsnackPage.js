@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
-import MovieDisplay from "../components/MovieDisplay";
-import MovieConveyorBelt from "../components/MoviesConveyorBelt";
-import SnackDisplay from "../components/SnacksDisplay";
+import SnacksDisplay from "../components/SnacksDisplay";
+import SnackDisplay from "../components/SnackDisplay";
 
 export default function ShowsnackPage() {
 
@@ -10,12 +9,16 @@ export default function ShowsnackPage() {
             sx={{
                 display:'flex',
                 justifyContent:'center',
-                padding: 10,
+                paddingX: 10,
+                paddingTop:1,
                 paddingBottom:15,
                 }}
         >
             <Box>
-                <SnackDisplay></SnackDisplay>
+                <Typography variant="neonPink" fontSize={'70px'} ml={'20px'} >
+                          Snacks
+                </Typography>
+                <SnacksDisplay></SnacksDisplay>
             </Box>
         </Box>
     )

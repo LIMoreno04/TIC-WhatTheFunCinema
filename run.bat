@@ -42,6 +42,10 @@ cd ..
 echo Backend is starting in a separate window.
 echo.
 
+:: Wait for 20 seconds
+echo Waiting for backend to initialize...
+timeout /t 20 >nul
+
 echo ==============================
 echo Checking Frontend Dependencies...
 echo ==============================

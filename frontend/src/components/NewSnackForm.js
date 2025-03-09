@@ -6,21 +6,53 @@ import {
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { styled } from '@mui/system';
+import ImageIcon from '@mui/icons-material/Image';
 
 const ErrorMessage = styled(Typography)({
-  color: 'pink',
+  color: '#fc7d7d',
   fontWeight: 'bold',
-  textShadow: '0 0 5px cyan',
+  textShadow: '0 0 10px#ca1e1e, 0 0 10px #b44545, 0 0 10px #ff6666',
   marginBottom: '10px',
 });
 
 const NewSnackForm = () => {
+  const MAX_FILE_SIZE = 16 * 1024 * 1024; // 16MB in bytes
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files ? e.target.files[0] : e.dataTransfer.files[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError('El archivo de imagen no puede exceder los 16Mb.');
+        setImage(null);
+        return;
+      }
+      setImage(file);
+      setError('');
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFileChange(e);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +70,7 @@ const NewSnackForm = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("picture", image); // Cambiado a "picture"
+      formData.append("picture", image);
 
       const response = await fetch('http://localhost:8080/api/snacks/addSnack', {
         method: 'POST',
@@ -61,11 +93,6 @@ const NewSnackForm = () => {
     }
 
     setLoading(false);
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files ? e.target.files[0] : null;
-    if (file) setImage(file);
   };
 
   const allFieldsFilled = name && description && price && image;
@@ -105,7 +132,7 @@ const NewSnackForm = () => {
                 variant="h5"
                 fontSize="50px"
                 sx={{
-                  color: '#fff', 
+                  color: '#fff',
                   textShadow: '0 0 10px #ff66b2, 0 0 20px #ff66b2',
                   fontWeight: 'bold',
                 }}
@@ -120,7 +147,7 @@ const NewSnackForm = () => {
                 <Paper
                   elevation={3}
                   sx={{
-                    border: '2px dashed #ff66b2',
+                    border: isDragging ? '2px dashed #e4b4e6' : '2px solid #e4b4e6',
                     p: 3,
                     textAlign: 'center',
                     cursor: 'pointer',
@@ -129,9 +156,14 @@ const NewSnackForm = () => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    backgroundColor: isDragging ? 'rgba(228, 180, 230, 0.1)' : 'transparent',
                   }}
                   onClick={() => document.getElementById('file-input').click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
                 >
+                  <ImageIcon fontSize="large" />
                   <Typography variant="subtitle1">
                     {image ? image.name : 'Arrastre o elija el archivo de la imagen'}
                   </Typography>
