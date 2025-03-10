@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 
-export default function LoginForm() {
+export default function LoginForm({fetchRole, reloadOnLogin=true, onLogin}) {
   const paperStyle = { padding: '40px 30px', width: 400, margin: '20px auto'};
   const navigate = useNavigate();
 
@@ -65,7 +65,12 @@ export default function LoginForm() {
 
 
       if (response.ok) {
-        window.location.reload();
+        if (!!onLogin) {
+          onLogin();
+        }
+        if (reloadOnLogin) {
+          window.location.reload();
+        }
       } else if (response.status === 401) {
         const responseBody = await response.json();
         if (responseBody.error === 'email') {
@@ -88,6 +93,7 @@ export default function LoginForm() {
       console.error('Error during login:', error);
     } finally {
       setLoading(false); // Stop loading
+      fetchRole();
     }
   };
 

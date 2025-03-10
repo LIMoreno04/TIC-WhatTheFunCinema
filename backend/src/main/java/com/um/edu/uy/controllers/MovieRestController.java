@@ -196,17 +196,18 @@ public class MovieRestController {
             return ResponseEntity.ok(moviesOnDisplay);
         }
     }
-    @GetMapping("/allOnDisplayWithTitles")
-    public ResponseEntity<?> showAllMoviesOnDisplayWithTitles() {
-        List<Object[]> moviesOnDisplay = movieService.findAllMoviesOnDisplayWithTitles();
+
+    @GetMapping("/comingNextWeekWithTitles")
+    public ResponseEntity<?> showAllMoviesComingNextWeekWithTitles() {
+        List<Object[]> moviesComingNextWeek = movieService.findAllMoviesComingNextWeekWithTitles();
         List<HashMap<String,Object>> movies = new LinkedList<>();
-        for (Object[] movie : moviesOnDisplay) {
+        for (Object[] movie : moviesComingNextWeek) {
             HashMap<String,Object> moviee = new HashMap<>();
             moviee.put("movieId",movie[0]);
             moviee.put("movieTitle",movie[1]);
             movies.add(moviee);
         }
-        if (moviesOnDisplay.isEmpty()) {
+        if (moviesComingNextWeek.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(movies);

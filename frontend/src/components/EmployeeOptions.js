@@ -1,7 +1,7 @@
 import { Box, Button, Typography, useMediaQuery } from "@mui/material";
 
 const EmployeeOptions = () => {
-    const isSmallScreen = useMediaQuery('(max-width:1150px)');
+    const isSmallScreen = useMediaQuery('(max-width:1230px)');
 
     return (
         <Box
@@ -28,40 +28,40 @@ const EmployeeOptions = () => {
 
           <Button href="/addScreening" variant="outlined" sx={{
             border:'2px solid #0ff0fc',
-            fontSize: '1vw',
-            height:'3vw', 
+            fontSize: isSmallScreen ? 'clamp(10px,5vw,20px)' : '1vw',
+            height: isSmallScreen ? '15%' : '3vw', 
             marginBottom:'1vw', width:'95%'
           }}>
             Agregar una función
           </Button>
           <Button href="/addMovie" variant="outlined" sx={{
             border:'2px solid #0ff0fc',
-            fontSize: '1vw',
-            height:'3vw', 
+            fontSize: isSmallScreen ? 'clamp(10px,5vw,20px)' : '1vw',
+            height: isSmallScreen ? '15%' : '3vw', 
             marginBottom:'1vw', width:'95%'
           }}>
             Agregar una película
           </Button>
           <Button href="/addSnack" variant="outlined" sx={{
             border:'2px solid #0ff0fc',
-            fontSize: '1vw',
-            height:'3vw', 
+            fontSize: isSmallScreen ? 'clamp(10px,5vw,20px)' : '1vw',
+            height: isSmallScreen ? '15%' : '3vw', 
             marginBottom:'1vw', width:'95%'
           }}>
             Agregar una snack
           </Button>
           <Button href="/addTheatre" variant="outlined" sx={{
             border:'2px solid #0ff0fc',
-            fontSize: '1vw',
-            height:'3vw', 
+            fontSize: isSmallScreen ? 'clamp(10px,5vw,20px)' : '1vw',
+            height: isSmallScreen ? '15%' : '3vw',  
             marginBottom:'1vw', width:'95%'
           }}>
             Agregar una sucursal
           </Button>
           <Button href="/addEmployee" variant="outlined" sx={{
             border:'2px solid #0ff0fc',
-            fontSize: '1vw',
-            height:'3vw', 
+            fontSize: isSmallScreen ? 'clamp(10px,5vw,20px)' : '1vw',
+            height: isSmallScreen ? '15%' : '3vw',  
             marginBottom:'1vw', width:'95%'
           }}>
             Agregar un empleado

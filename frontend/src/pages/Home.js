@@ -9,15 +9,15 @@ import EmployeeOptions from '../components/EmployeeOptions';
 
 
 
-const HomePage = ({userRole}) => {
-  const isSmallScreen = useMediaQuery('(max-width:1150px)');
-  const isMediumScreen = false;
-  const conveyorBeltHeight = isSmallScreen ? 600 : 500;
+const HomePage = ({userRole,fetchRole}) => {
+  const isSmallScreen = useMediaQuery('(max-width:1230px)');
+  const conveyorBeltHeight = 600;
+  const conveyorBeltPostersPadding = 240;
   return (
     <Box mt={-17} mb={'-60px'}
     sx={{
       position: 'relative',
-      minHeight: isSmallScreen ? '150vh' : isMediumScreen ? '891px' : 'calc(99vw*(1620/1920))', 
+      minHeight: isSmallScreen ? '150vh' : 'calc(99vw*(1620/1920))', 
       minWidth: 'auto',
       width: 'auto',
       height:'auto',
@@ -62,33 +62,35 @@ const HomePage = ({userRole}) => {
       <Paper
         sx={{
           position:'relative',
-          marginTop: isSmallScreen ? 20 : isMediumScreen ? 'calc(1280px * (220/1920))' : 'calc(100vw * (220/1920))',
+          marginTop: isSmallScreen ? 20 : 'calc(100vw * (220/1920))',
           marginRight: isSmallScreen ? 'auto' : 'none',
-          marginLeft: isSmallScreen ? 'auto' : isMediumScreen ? 'calc(1280px * (40/1920))' : 'calc(100vw * (40/1920))',
-          maxWidth: isSmallScreen ? '90vw' : isMediumScreen ? 'calc(1280px * (410/1920))' : 'calc(100vw * (410/1920))',
-          height: isSmallScreen ? '70vh' : isMediumScreen ? 'calc(1280px * (575/1920))' : 'calc(100vw * (575/1920))',
+          marginLeft: isSmallScreen ? 'auto' : 'calc(100vw * (40/1920))',
+          maxWidth: isSmallScreen ? '90vw' : 'calc(100vw * (410/1920))',
+          height: isSmallScreen ? 'auto' : 'calc(100vw * (575/1920))',
           backgroundColor: 'rgba(0, 0, 0, 0.9)',
           boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
           borderRadius: '40px',
           border: `2px solid #e4b4e6`,
           }}
       >
-        { userRole==='employee' ? 
-            <EmployeeOptions/>
-          :
-            <TicketsForm userRole={userRole}/> 
-        }
+        
+        <>
+          <div style={{ display: userRole === 'employee' ? 'none' : 'block' }}>
+            <TicketsForm userRole={userRole} fetchRole={fetchRole} />
+          </div>
+          {userRole === 'employee' && <EmployeeOptions />}
+        </>
 
       </Paper>
           <Box sx={{
             display:'flex',
             position:'relative', 
             width:'100%',
-            height: isMediumScreen ? `calc(1280px * (${conveyorBeltHeight}/1920)/0.8)` : `calc(100vw * (${conveyorBeltHeight}/1920)/0.8)`,
-            marginTop: isSmallScreen ? 10 : isMediumScreen ? 'calc(1280px  * (20/1920))' : 'calc(100vw * (20/1920))'
+            height: `clamp(500px,calc(100vw * (${conveyorBeltHeight}/1920)),calc(100vw * (${conveyorBeltHeight}/1920)))`,
+            marginTop: isSmallScreen ? 10 : 'calc(100vw * (20/1920))'
 
              }}>
-              <MovieConveyorBelt itemHeightInFHD={conveyorBeltHeight-70}></MovieConveyorBelt>
+              <MovieConveyorBelt itemHeightInFHD={conveyorBeltHeight} itemPadding={conveyorBeltPostersPadding}></MovieConveyorBelt>
           </Box>
           
 

@@ -4,59 +4,68 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import MovieDisplay from "./MovieDisplay";
 
-const MovieConveyorBelt = ({itemHeightInFHD}) => {
-  const isSmallScreen = useMediaQuery('(max-width:1150px)');
-  const isMediumScreen = useMediaQuery('(max-width:1280px)');
+const MovieConveyorBelt = ({itemHeightInFHD, itemPadding}) => {
   const [onDisplayIds, setOnDisplayIds] = useState([]);
   const [comingSoonIds, setComingSoonIds] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isMediumScreen = useMediaQuery('(max-width:1280px)');
 
   const glowColor = "#0ff0fc";
-  const itemHeight = isMediumScreen ? `calc(1280px  * (${itemHeightInFHD}/1920) - clamp(40px,3vw,3vw))` : `calc(100vw * (${itemHeightInFHD}/1920) - clamp(40px,3vw,3vw))`;
+  const itemHeight = `clamp(300px, calc(100vw * (${itemHeightInFHD} - ${itemPadding})/1920), calc(100vw * (${itemHeightInFHD} - ${itemPadding})/1920))`;
+  const itemWidth = `calc((2/3)*${itemHeight})`;
   const [visibleCount, setVisibleCount] = useState(0);
   const [filter, setFilter] = useState("all"); // 'all', 'onDisplay', 'comingSoon'
+  const [translationAmount,setTranslationAmount] = useState(0);
 
-  const totalMovies = filter==='onDisplay' ? onDisplayIds.length : filter==='comingSoon' ? comingSoonIds.length : onDisplayIds.length + comingSoonIds.length
+
+  const totalMovies = filter==='onDisplay'
+    ? onDisplayIds.length
+    : filter==='comingSoon'
+      ? comingSoonIds.length
+      : onDisplayIds.length + comingSoonIds.length
+
+  useEffect(() => {
+    console.log("index: ", currentIndex);
+    console.log("total movies: ", totalMovies);
+    console.log("visibles: ", visibleCount);
+  }, [currentIndex, totalMovies, visibleCount])
+
+  useEffect(()=>{
+    setTranslationAmount(`calc(-${currentIndex}*(${itemWidth}))`)
+    console.log("aaaaaaaaaaaaaaaaaaaaa:",translationAmount)
+  },[currentIndex])
+
 
 
   useEffect(() => {
-    const calculateItemHeight = () => {
-      const tempDiv = document.createElement('div');
-      tempDiv.style.height = isMediumScreen
-        ? 'calc(1280px * (400/1920) - clamp(40px,3vw,3vw))'
-        : 'calc(100vw * (400/1920) - clamp(40px,3vw,3vw))';
-      document.body.appendChild(tempDiv);
-      const resolvedHeight = parseFloat(window.getComputedStyle(tempDiv).height);
-      document.body.removeChild(tempDiv);
-      return resolvedHeight;
-    };
-
-    const calculateClampValue = () => {
-      const tempDiv = document.createElement('div');
-      tempDiv.style.height = 'clamp(25px, 2vw, 2vw)';
-      document.body.appendChild(tempDiv);
-      const resolvedClamp = parseFloat(window.getComputedStyle(tempDiv).height);
-      document.body.removeChild(tempDiv);
-      return resolvedClamp;
-    };
-
     const updateVisibleCount = () => {
-      const itemHeight = calculateItemHeight();
-      const clampValue = calculateClampValue();
-      const containerWidth = window.innerWidth * 0.95; // 95vw
+      const viewportWidth = window.innerWidth;
+
+      // Compute item height similar to CSS clamp: choose the candidate value, but not less than 300px.
+      const candidateHeight = (viewportWidth * (itemHeightInFHD - itemPadding)) / 1920;
+      const computedItemHeight = Math.max(300, candidateHeight);
+
+      // Compute item width as 2/3 of the computed height.
+      const computedItemWidth = (2 / 3) * computedItemHeight;
+
+      // Compute the spacing from clamp(25px, 4vw, 4vw):
+      // 4vw in pixels is (viewportWidth * 0.04). Ensure it is at least 25px.
+      const spacing = Math.max(30, viewportWidth * 0.045);
+
+      // Calculate visible count:
+      const count = (0.95 * viewportWidth) / (spacing + computedItemWidth);
       
-      const calculatedCount = containerWidth / ((2 / 3) * itemHeight + clampValue);
-      setVisibleCount(Math.floor(calculatedCount));
+      // Optionally round down if you want a whole number of items.
+      setVisibleCount(Math.floor(count));
+
+      console.log("visible count updated: ", Math.floor(count));
     };
 
-    // Initial calculation
+    // Run on mount and add resize listener.
     updateVisibleCount();
-
-    // Recalculate on resize
-    window.addEventListener('resize', updateVisibleCount);
-    return () => window.removeEventListener('resize', updateVisibleCount);
-  }, [isMediumScreen]);
-
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, [itemHeightInFHD, itemPadding]);
   
   const fetchOnDisplayIds = () => {
     fetch("http://localhost:8080/api/movies/allOnDisplay")
@@ -87,12 +96,12 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
   }, []);
 
   const handleLeftClick = () => {
-    setCurrentIndex((prevIndex) => Math.max(prevIndex - 3, 0));
+    setCurrentIndex((prevIndex) => Math.max(prevIndex - Math.ceil(visibleCount/2), 0));
   };
 
   const handleRightClick = () => {
     setCurrentIndex((prevIndex) =>
-      Math.min(prevIndex + 3, totalMovies - Math.floor(visibleCount) + 1)
+      Math.min(prevIndex + Math.ceil(visibleCount/2), totalMovies - Math.floor(visibleCount))
     );
   };
 
@@ -193,14 +202,16 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
             display: "flex",
             alignItems:'center',
             gap:'clamp(25px,4vw,4vw)',
-            transform: `translateX(calc(-${currentIndex}*(2/3)*${itemHeight}))`, // Slide horizontally
+            transform: `translateX(${translationAmount})`, // Slide horizontally
             transition: "transform 0.5s ease-in-out", // Smooth sliding animation
             width: `calc((${totalMovies} - 1)*clamp(25px,4vw,4vw) + ${totalMovies}*(2/3)*${itemHeight})`, // Dynamic width based on movie count
           }}
         >
           { filter!='comingSoon' && (
           onDisplayIds.map((id) => (
-            <Box sx={{
+            <Box 
+            key={`onDisplay-${id}`}
+            sx={{
               marginTop:'clamp(-1vw,-1vw,-15px)',
               display:'flex',
               flexDirection:'column',
@@ -208,7 +219,7 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
               alignItems:'center',
               gap:'clamp(5px,0.5vw,0.5vw)'
             }}>
-              <Typography gutterBottom fontFamily={'InfinityRegular'} fontSize={'clamp(20px,1.4vw,1.4vw)'} variant="neonCyan">
+              <Typography gutterBottom fontFamily={'InfinityRegular'} fontSize={'clamp(23px,1.4vw,1.4vw)'} variant="neonCyan">
                 EN CARTELERA
               </Typography>
               <Box
@@ -226,7 +237,9 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
         }
           { filter!='onDisplay' && (
           comingSoonIds.map((id) => (
-            <Box sx={{
+            <Box 
+            key={`comingSoon-${id}`}
+            sx={{
               marginTop:'clamp(-1vw,-1vw,-15px)',
               display:'flex',
               flexDirection:'column',
@@ -234,7 +247,7 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
               alignItems:'center',
               gap:'clamp(5px,0.5vw,0.5vw)'
             }}>
-              <Typography gutterBottom fontFamily={'InfinityRegular'} fontSize={'clamp(20px,1.4vw,1.4vw)'} variant="neonPink">
+              <Typography gutterBottom fontFamily={'InfinityRegular'} fontSize={'clamp(23px,1.4vw,1.4vw)'} variant="neonPink">
                 PRÓXIMAMENTE
               </Typography>
               <Box
@@ -272,7 +285,7 @@ const MovieConveyorBelt = ({itemHeightInFHD}) => {
               color: glowColor,
               "&:hover": { color: "#c40249" },
             }}
-            disabled={currentIndex >= totalMovies - Math.floor(visibleCount)+1}
+            disabled={currentIndex >= totalMovies - Math.floor(visibleCount)}
           >
             <ArrowForwardIosIcon sx={{ fontSize: "3rem" }} />
           </IconButton>

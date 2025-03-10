@@ -42,11 +42,11 @@ public class RoomRestController {
 
 
             if (!Pattern.matches("^(Inglés|Español)$", language)) {
-                errors.put("language", "Lenguaje invalido.");
+                errors.put("language", "Lenguaje inválido.");
             }
 
             if (date_and_time.isBefore(LocalDateTime.now())) {
-                errors.put("dateAndTime", "Fecha invalida. Debe ser una fecha a futuro.");
+                errors.put("dateAndTime", "Fecha y hora inválidas. Debe ser una fecha a futuro.");
             }
 
             if (screeningDTO.getScreeningPrice() < 0) {

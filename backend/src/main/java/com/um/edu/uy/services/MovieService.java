@@ -91,8 +91,8 @@ public class MovieService {
         return movieRepo.findAllOnDisplay(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
-    public List<Object[]> findAllMoviesOnDisplayWithTitles() {
-        return movieRepo.findAllOnDisplayWithTitles(LocalDateTime.now().minusWeeks(1), LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
+    public List<Object[]> findAllMoviesComingNextWeekWithTitles() {
+        return movieRepo.findAllBuyable(LocalDateTime.now().plusWeeks(1)).orElse(new LinkedList<>());
     }
 
     public List<Long> findAllOtherMovies() {

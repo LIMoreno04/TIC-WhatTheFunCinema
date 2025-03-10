@@ -37,7 +37,10 @@ function App() {
         if (!response.ok) throw new Error('Network response was not ok');
         return response.text(); // Expecting a string response for the role
       })
-      .then((role) => setUserRole(role))
+      .then((role) => {
+        setUserRole(role);
+        console.log("User role fetched: ",role)
+      })
       .catch((error) => console.error('Error fetching user role:', error));
   };
 
@@ -64,10 +67,10 @@ function App() {
           }}
         >
           <Routes>
-            <Route path='/home' element={<HomePage userRole={userRole} />} /> 
+            <Route path='/home' element={<HomePage userRole={userRole} fetchRole={fetchRole}/>} /> 
             <Route path='/' element={<HomePage />} />
             <Route path='/signup' element={<SignupPage />} />
-            <Route path='/login' element={<LoginPage />} />
+            <Route path='/login' element={<LoginPage fetchRole={fetchRole}/>} />
             <Route path='/movies' element={<MoviesPage />} />
             <Route path='/account' element={<MyAccountPage userRole={userRole} />} />
             <Route path='/theatres' element={<TheatresPage userRole={userRole} />} />

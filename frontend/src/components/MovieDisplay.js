@@ -12,7 +12,7 @@ const PGRatingTooltips = {
   "NC-17": "+18. No se le permite la entrada a menores de 17 bajo ningún término.",
 };
 
-const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover,addToCategory }) => {
+const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover, addToCategory }) => {
   const navigate = useNavigate();
   const [movie, setMovie] = useState(propMovie || null);
   const [loading, setLoading] = useState(!propMovie); // Skip loading if movie is provided.
@@ -26,7 +26,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover,add
       .then((response) => response.json())
       .then((data) => {
         setMovie(data);
-        addToCategory(data);
+        if(!!addToCategory) {addToCategory(data);}
         setLoading(false);
       })
       .catch((error) => {
@@ -136,7 +136,7 @@ const MovieDisplay = ({ movieId, movie: propMovie, onDisplay, detailsOnHover,add
             >
               <Typography
                 variant="neonCyan"
-                fontSize="clamp(20px, 170%, 170%)"
+                fontSize="clamp(20px, 5vw, 1.2vw)"
                 sx={{ marginBottom: "clamp(3px, 3%, 3%)", marginTop:'clamp(-2%,-2%,-3px)'}}
               >
                 {movie.title.length > 16 ? `${movie.title.slice(0, 15)}...` : movie.title}

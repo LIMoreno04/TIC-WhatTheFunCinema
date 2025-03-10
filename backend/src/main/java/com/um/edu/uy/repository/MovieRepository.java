@@ -38,12 +38,11 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query("SELECT m.Id, m.title FROM Movie m " +
             "JOIN m.screenings s " +
-            "WHERE s.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP " +
-            "OR s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek " +
+            "WHERE s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek " +
             "GROUP BY m.Id " +
-            "HAVING COUNT(CASE WHEN s.date_and_time BETWEEN :previousWeek AND CURRENT_TIMESTAMP THEN 1 END) > 0 " +
-            "AND COUNT(CASE WHEN s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0")
-    Optional<List<Object[]>> findAllOnDisplayWithTitles(LocalDateTime previousWeek, LocalDateTime nextWeek);
+            "HAVING COUNT(CASE WHEN s.date_and_time BETWEEN CURRENT_TIMESTAMP AND :nextWeek THEN 1 END) > 0")
+    Optional<List<Object[]>> findAllBuyable(LocalDateTime nextWeek);
+
 
     @Query(" SELECT DISTINCT m.Id FROM Movie m " +
             "WHERE m.Id NOT IN (" +

@@ -24,7 +24,7 @@ const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar({userRole, onUpdate}) {
   const isSmallScreen = useMediaQuery('(max-width:1200px)');
-  const TOOLBAR_HEIGHT_PERCENT = '11vh';
+  const TOOLBAR_HEIGHT_PERCENT = '6vw';
   const TOOLBAR_MIN_HEIGHT = '90px';
   const MARGIN_TOP = '-1.5vh';
   const MIN_MARGIN_TOP = '-30px';

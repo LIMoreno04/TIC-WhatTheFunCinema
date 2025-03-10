@@ -16,10 +16,12 @@ import {
   Divider
 } from "@mui/material";
 import SeatIcon from "@mui/icons-material/EventSeat";
+import CloseIcon from '@mui/icons-material/Close';
 import { format } from "date-fns";
 import PaymentMethodsDisplay from "./PaymentMethodsDisplay";
+import LoginForm from "./LoginForm";
 
-const ReservationForm = ({userRole}) => {
+const ReservationForm = ({userRole,fetchRole}) => {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [screenings, setScreenings] = useState([]);
@@ -38,11 +40,26 @@ const ReservationForm = ({userRole}) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [openPaymentDialog, setOpenPaymentDialog] = useState(false); // Manage payment dialog visibility
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Track payment confirmation
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
 
+  useEffect(() => {
+    console.log("TicketsForm mounted");
+
+    return () => {
+      console.log("TicketsForm unmounted");
+    };
+  }, []);
+
+  const handleLoginOpen = () => setOpenLoginDialog(true);
+  const handleLoginClose = () => setOpenLoginDialog(false);
+
+  useEffect(()=>{
+    console.log("Seat selector state changed, openSeatSelector = ",openSeatSelector)
+  },[openSeatSelector])
 
   // Fetch movies on component mount
-  useEffect(() => {
-    fetch("http://localhost:8080/api/movies/allOnDisplayWithTitles")
+    useEffect(() => {
+    fetch("http://localhost:8080/api/movies/comingNextWeekWithTitles")
       .then((response) => response.json())
       .then((data) => {setMovies(data)})
       .catch((error) => console.error("Error fetching movies:", error));
@@ -122,8 +139,6 @@ const ReservationForm = ({userRole}) => {
         screening.theatre === selectedTheatre &&
         screening.date_and_time === `${selectedDate}T${selectedTime}`
     );
-    console.log(selectedScreening.roomNumber);
-    console.log("aaaaaaaa");
 
     try {
       const response = await fetch(
@@ -228,11 +243,11 @@ const ReservationForm = ({userRole}) => {
     }
   }, [isPaymentConfirmed]);
 
-  const isSmallScreen = useMediaQuery('(max-width:1150px)');
+  const isSmallScreen = useMediaQuery('(max-width:1230px)');
 
 
   return (
-    <Box component="form" onSubmit={handleSubmit} 
+    <Box component="form" onSubmit={userRole==='customer' ? handleSubmit : undefined} 
     sx={{
       boxSizing:'border-box',
       padding: isSmallScreen ? '30px' : '1.5vw', width: "100%",
@@ -285,15 +300,15 @@ const ReservationForm = ({userRole}) => {
             label="Película"
             required
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
               "& .MuiInputBase-root": {
-                fontSize: isSmallScreen ? "auto" : "1vw",
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
             }}
           />
         )}
         sx={{
-          marginBottom: "1vw",
+          marginBottom: isSmallScreen ? '3%' : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -302,8 +317,9 @@ const ReservationForm = ({userRole}) => {
 
       <Autocomplete
         fullWidth
+        disabled={!selectedMovie}
         options={theatres}
-        value={selectedTheatre}
+        value={!!selectedMovie ? selectedTheatre : ""}
         onChange={(e, newValue) => setSelectedTheatre(newValue)}
         renderInput={(params) => (
           <TextField
@@ -312,15 +328,15 @@ const ReservationForm = ({userRole}) => {
             required
             disabled={!selectedMovie}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
               "& .MuiInputBase-root": {
-                fontSize: isSmallScreen ? "auto" : "1vw",
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
             }}
           />
         )}
         sx={{
-          marginBottom: "1vw",
+          marginBottom: isSmallScreen ? '3%' : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -329,8 +345,9 @@ const ReservationForm = ({userRole}) => {
 
       <Autocomplete
         fullWidth
+        disabled={!selectedTheatre}
         options={availableDates}
-        value={selectedDate}
+        value={!!selectedTheatre ? selectedDate : ""}
         onChange={(e, newValue) => setSelectedDate(newValue)}
         renderInput={(params) => (
           <TextField
@@ -339,15 +356,15 @@ const ReservationForm = ({userRole}) => {
             required
             disabled={!selectedTheatre}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
               "& .MuiInputBase-root": {
-                fontSize: isSmallScreen ? "auto" : "1vw",
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
             }}
           />
         )}
         sx={{
-          marginBottom: "1vw",
+          marginBottom: isSmallScreen ? '3%' : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -356,8 +373,9 @@ const ReservationForm = ({userRole}) => {
 
       <Autocomplete
         fullWidth
+        disabled={!selectedDate}
         options={availableTimes}
-        value={selectedTime}
+        value={!!selectedDate ? selectedTime : ""}
         onChange={(e, newValue) => setSelectedTime(newValue)}
         getOptionLabel={(option) => option.slice(0, 5)} // Display only the first 5 characters
         renderInput={(params) => (
@@ -367,15 +385,15 @@ const ReservationForm = ({userRole}) => {
             required
             disabled={!selectedDate}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
               "& .MuiInputBase-root": {
-                fontSize: isSmallScreen ? "auto" : "1vw",
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
             }}
           />
         )}
         sx={{
-          marginBottom: "1vw",
+          marginBottom: isSmallScreen ? '3%' : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -397,7 +415,7 @@ const ReservationForm = ({userRole}) => {
           required
           disabled={!selectedTime}
           sx={{
-            marginBottom: "1vw",
+            marginBottom: isSmallScreen ? '7%' : "1vw",
             "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
             "& .MuiInputBase-root": {
               height: isSmallScreen ? "auto" : "3vw",
@@ -411,16 +429,38 @@ const ReservationForm = ({userRole}) => {
       {serverError && <Typography color="error">{serverError}</Typography>}
 
       {userRole === 'customer' &&
-        <Button sx={{width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
-        Comprar
-      </Button>}
-      {userRole != 'customer' &&
-        <Button sx={{fontSize:'1vw', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" href="/login" disabled={loading}>
-        Iniciar sesión para comprar
-        </Button>
-      
+        <Button sx={{fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : 'auto', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
+          Comprar
+        </Button>}
+        {userRole != 'customer' &&
+          <Button sx={{fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : '1vw', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" onClick={handleLoginOpen} disabled={loading}>
+            Iniciar sesión para comprar
+          </Button>
       }
+          {/* Dialog that opens the LoginForm */}
+        <Dialog 
+          open={openLoginDialog} 
+          onClose={handleLoginClose} 
+          maxWidth="sm" 
+        >
+            <IconButton
+              aria-label="close"
+              onClick={handleLoginClose}
+              sx={{
+                position: 'absolute',
+                right: 2,
+                top: 2,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon sx={{fontSize:'30px'}}/>
+            </IconButton>
+          <DialogContent dividers>
+            <LoginForm fetchRole={fetchRole} reloadOnLogin={false} onLogin={handleLoginClose} />
+          </DialogContent>
+        </Dialog>
 
+        {/*Dialog for payment methods*/}
         <Dialog
           open={openPaymentDialog}
           onClose={() => setOpenPaymentDialog(false)}
