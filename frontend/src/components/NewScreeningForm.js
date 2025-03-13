@@ -125,6 +125,8 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
           const errorData = await response.json();
           console.error("Error:", errorData);
           setFormErrors(errorData);
+          console.log(formErrors);
+          console.log(!!formErrors.room);
         } else if(response.status===403) {
           setServerError('Acceso denegado.')
         } 
@@ -187,82 +189,119 @@ const NewScreeningForm = ({ initialRoom, initialMovieId }) => {
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ paddingTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-            {!initialRoom && (
-              <Autocomplete
-                options={theatres}
-                value={theatre}
-                error={!!formErrors.room}
-                helperText={formErrors.room}
-                onChange={(e, newValue) => setTheatre(newValue)}
-                renderInput={(params) => <TextField {...params} label="Sucursal" required />}
-              />
-            )}
+          
+          {!initialMovieId && (
+            <Autocomplete
+              options={movieOptions}
+              value={selectedMovieTitle}
+              onChange={(e, newValue) => setSelectedMovieTitle(newValue)}
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  label="Película" 
+                  required
+                  error={!!formErrors.movieId}
+                  helperText={formErrors.movieId}
+                />
+              )}
+            />
+          )}
 
-            {theatre && (
-              <Autocomplete
+          {!initialRoom && (
+            <Autocomplete
+              options={theatres}
+              value={theatre}
+              onChange={(e, newValue) => setTheatre(newValue)}
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  label="Sucursal" 
+                  required
+                  error={!!formErrors.room}
+                  helperText={formErrors.room}
+                />
+              )}
+            />
+          )}
+
+          {theatre && (
+            <Autocomplete
               options={rooms}
               value={roomNumber}
-              error={!!formErrors.room}
-              helperText={formErrors.room}
               onChange={(e, newValue) => setRoomNumber(newValue)}
               getOptionLabel={(option) => (option ? String(option) : "")} // Ensure a string is returned
-              renderInput={(params) => <TextField {...params} label="Sala" required />}
-            />            
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  label="Sala" 
+                  required
+                  error={!!formErrors.room}
+                  helperText={formErrors.room}
+                />
+              )}
+            />
+          )}
+
+          <DatePicker
+            label="Fecha"
+            format="dd/MM/yyyy"
+            dayOfWeekFormatter={(date) => (
+              <Typography fontSize={"0.8rem"} color="#0ff0fc">
+                {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].at(date.getDay())}
+              </Typography>
             )}
+            value={date}
+            onChange={(newValue) => setDate(newValue)}
+            renderInput={(params) => <TextField {...params} required />}
+          />
+          {!!formErrors.dateAndTime && (
+            <Typography marginLeft={2} variant="b1" fontSize={"0.75rem"} fontFamily={"InfinityThin"} color="error">
+              {formErrors.dateAndTime}
+            </Typography>
+          )}
 
-            <DatePicker
-              label="Fecha"
-              format="dd/MM/yyyy"
-              dayOfWeekFormatter={(date) => <Typography fontSize={'0.8rem'} color='#0ff0fc'>{['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].at(date.getDay())}</Typography>}
-              value={date}
-              onChange={(newValue) => setDate(newValue)}
-              renderInput={(params) => <TextField {...params} required />}
-            />
-            {!!formErrors.dateAndTime && (<Typography marginLeft={2} variant="b1" fontSize={'0.75rem'} fontFamily={'InfinityThin'} color='error'>{formErrors.dateAndTime}</Typography>)}
+          <TimePicker
+            label="Horario"
+            value={time}
+            onChange={(newValue) => setTime(newValue)}
+            renderInput={(params) => <TextField {...params} required />}
+          />
+          {!!formErrors.dateAndTime && (
+            <Typography marginLeft={2} variant="b1" fontSize={"0.75rem"} fontFamily={"InfinityThin"} color="error">
+              {formErrors.dateAndTime}
+            </Typography>
+          )}
 
-
-            <TimePicker
-              label="Horario"
-              value={time}
-              onChange={(newValue) => setTime(newValue)}
-              renderInput={(params) => <TextField {...params} required />}
-            />
-
-            {!!formErrors.dateAndTime && (<Typography marginLeft={2} variant="b1" fontSize={'0.75rem'} fontFamily={'InfinityThin'} color='error'>{formErrors.dateAndTime}</Typography>)}
-
-            {!initialMovieId && (
-              <Autocomplete
-                options={movieOptions}
-                error={!!formErrors.movieId}
-                helperText={formErrors.movieId}
-                value={selectedMovieTitle}
-                onChange={(e, newValue) => setSelectedMovieTitle(newValue)}
-                renderInput={(params) => <TextField {...params} label="Película" required />}
+          <Autocomplete
+            options={languages}
+            value={language}
+            onChange={(e, newValue) => setLanguage(newValue)}
+            renderInput={(params) => (
+              <TextField 
+                {...params} 
+                label="Lenguaje" 
+                required 
               />
             )}
+          />
 
-            <Autocomplete
-              options={languages}
-              value={language}
-              onChange={(e, newValue) => setLanguage(newValue)}
-              renderInput={(params) => <TextField {...params} label="Lenguaje" required />}
-            />
+          <TextField
+            label="Precio"
+            type="number"
+            value={screeningPrice}
+            onChange={(e) => setScreeningPrice(e.target.value)}
+            required
+            error={!!formErrors.screeningPrice}
+            helperText={formErrors.screeningPrice}
+          />
+          
+          {serverError && <Typography color="error">{serverError}</Typography>}
 
-            <TextField
-              label="Precio"
-              type="number"
-              value={screeningPrice}
-              onChange={(e) => setScreeningPrice(e.target.value)}
-              required
-              error={!!formErrors.screeningPrice}
-              helperText={formErrors.screeningPrice}
-            />
-            {serverError && <Typography color="error">{serverError}</Typography>}
+          <Button variant="contained" type="submit" disabled={!isFormValid || loading}>
+            Submit
+          </Button>
+        </Box>
 
-            <Button variant="contained" type="submit" disabled={!isFormValid || loading}>
-              Submit
-            </Button>
-          </Box>
         </Paper>
       </Box>
     </LocalizationProvider>

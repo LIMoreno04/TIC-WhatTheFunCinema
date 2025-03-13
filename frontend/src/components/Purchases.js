@@ -102,6 +102,7 @@ const Purchases = () => {
           borderRadius: '40px',
           boxShadow: 'inset 0 0 18px #a805ad, 0 0 15px #a805ad, 0 0 20px #a805ad',
           width: '80vw',
+          minWidth:'550px',
           height: '70vh',
           overflowY: 'auto',
           '&::-webkit-scrollbar': {
@@ -154,13 +155,15 @@ const Purchases = () => {
 
                 {/* Cancel Button */}
                 {isCancelable(purchase.date_and_time) && (
-                  <Grid item xs={1} display="flex" justifyContent="flex-end">
+                  <Grid item xs={3} display="flex" justifyContent="flex-end">
                     <Button
                       onClick={() => handleCancelClick(purchase)}
                       sx={{
+                        width:'100%',
                         backgroundColor: '#a805ad',
                         color: '#fff',
                         '&:hover': {
+                          color:'#a805ad',
                           backgroundColor: '#00ffff',
                         },
                       }}

@@ -106,7 +106,6 @@ const NewMovieForm = () => {
 
       formData.append("poster", poster);
       formData.append("PGRating", PGRating);
-      console.log(formData)
       const response = await fetch('http://localhost:8080/api/movies/addMovie', {
         method: 'POST',
         body: formData,

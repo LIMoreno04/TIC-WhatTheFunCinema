@@ -1,6 +1,6 @@
 import './App.css';
 import { ThemeProvider } from '@mui/material/styles';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import ResponsiveAppBar from './components/Appbar';
 import HomePage from './pages/Home';
 import SignupPage from './pages/Signup';
@@ -68,7 +68,7 @@ function App() {
         >
           <Routes>
             <Route path='/home' element={<HomePage userRole={userRole} fetchRole={fetchRole}/>} /> 
-            <Route path='/' element={<HomePage />} />
+            <Route path='/' element={<HomePage userRole={userRole} fetchRole={fetchRole}/>} />
             <Route path='/signup' element={<SignupPage />} />
             <Route path='/login' element={<LoginPage fetchRole={fetchRole}/>} />
             <Route path='/movies' element={<MoviesPage />} />

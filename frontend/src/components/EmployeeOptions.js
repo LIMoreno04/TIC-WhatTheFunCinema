@@ -1,7 +1,7 @@
 import { Box, Button, Typography, useMediaQuery } from "@mui/material";
 
 const EmployeeOptions = () => {
-    const isSmallScreen = useMediaQuery('(max-width:1230px)');
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
 
     return (
         <Box

@@ -8,15 +8,14 @@ const MovieConveyorBelt = ({itemHeightInFHD, itemPadding}) => {
   const [onDisplayIds, setOnDisplayIds] = useState([]);
   const [comingSoonIds, setComingSoonIds] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isMediumScreen = useMediaQuery('(max-width:1280px)');
 
   const glowColor = "#0ff0fc";
   const itemHeight = `clamp(300px, calc(100vw * (${itemHeightInFHD} - ${itemPadding})/1920), calc(100vw * (${itemHeightInFHD} - ${itemPadding})/1920))`;
   const itemWidth = `calc((2/3)*${itemHeight})`;
   const [visibleCount, setVisibleCount] = useState(0);
   const [filter, setFilter] = useState("all"); // 'all', 'onDisplay', 'comingSoon'
-  const [translationAmount,setTranslationAmount] = useState(0);
-
+  const translationAmount = `calc(-${currentIndex}*(2/3)*${itemHeight} - ${currentIndex}*clamp(25px,4vw,4vw))`;
+  
 
   const totalMovies = filter==='onDisplay'
     ? onDisplayIds.length
@@ -24,16 +23,6 @@ const MovieConveyorBelt = ({itemHeightInFHD, itemPadding}) => {
       ? comingSoonIds.length
       : onDisplayIds.length + comingSoonIds.length
 
-  useEffect(() => {
-    console.log("index: ", currentIndex);
-    console.log("total movies: ", totalMovies);
-    console.log("visibles: ", visibleCount);
-  }, [currentIndex, totalMovies, visibleCount])
-
-  useEffect(()=>{
-    setTranslationAmount(`calc(-${currentIndex}*(${itemWidth}))`)
-    console.log("aaaaaaaaaaaaaaaaaaaaa:",translationAmount)
-  },[currentIndex])
 
 
 
@@ -58,7 +47,6 @@ const MovieConveyorBelt = ({itemHeightInFHD, itemPadding}) => {
       // Optionally round down if you want a whole number of items.
       setVisibleCount(Math.floor(count));
 
-      console.log("visible count updated: ", Math.floor(count));
     };
 
     // Run on mount and add resize listener.

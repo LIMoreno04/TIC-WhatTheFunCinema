@@ -23,7 +23,6 @@ const employeeSettings = ['Agregar función', 'Agregar película','Agregar snack
 const loggedOutSettings = ['INICIAR SESIÓN', 'REGISTRARSE'];
 
 function ResponsiveAppBar({userRole, onUpdate}) {
-  const isSmallScreen = useMediaQuery('(max-width:1200px)');
   const TOOLBAR_HEIGHT_PERCENT = '6vw';
   const TOOLBAR_MIN_HEIGHT = '90px';
   const MARGIN_TOP = '-1.5vh';
@@ -33,19 +32,19 @@ function ResponsiveAppBar({userRole, onUpdate}) {
   const LOGO_MIN_HEIGHT = '108px';
   const LOGO_MARGIN_LEFT = '-3vw';
   const MIN_LOGO_MARGIN_LEFT = '-60px'
-  const LOGO_MARGIN_RIGHT = '-2vw';
+  const LOGO_MARGIN_RIGHT = '-0.5vw';
   const MIN_LOGO_MARGIN_RIGHT = '-100px'
   const LOGO_MARGIN_TOP = '-2.5vw';
   const MIN_LOGO_MARGIN_TOP = '-105px';
 
-  const BUTTON_MARGIN_X_PERCENT = '2.4vw';
+  const BUTTON_MARGIN_X_PERCENT = '1.4vw';
   const BUTTON_MARGIN_Y_PERCENT = '1vh';
   const ACCOUNT_BUTTONS_MARGIN_TOP = '-1.5vh';
   const SMALL_ACCOUNT_BUTTONS_MARGIN_TOP = '-3.5vh'
   const ACCOUNT_BUTTONS_MARGIN_X = '1vw';
 
   const TEXT_SIZE_PERCENT = '1.2vw';
-  const MIN_TEXT_SIZE = '18px';
+  const MIN_TEXT_SIZE = '14px';
   const SPECIAL_TEXT_SIZE_PERCENT = '0.8vw';
   const MIN_SPECIAL_TEXT_SIZE = '10px';
 
@@ -195,7 +194,7 @@ function ResponsiveAppBar({userRole, onUpdate}) {
                   handleCloseNavMenu();
                   navigate(paths[index]);
                 }}
-                sx={{padding:'2px 4px', fontSize: `clamp(${MIN_TEXT_SIZE}, ${TEXT_SIZE_PERCENT}, ${TEXT_SIZE_PERCENT})`, my: BUTTON_MARGIN_Y_PERCENT, mx: BUTTON_MARGIN_X_PERCENT }}
+                sx={{padding:'2px 4px', fontSize: `clamp(${MIN_TEXT_SIZE}, ${TEXT_SIZE_PERCENT}, ${TEXT_SIZE_PERCENT})`, my: BUTTON_MARGIN_Y_PERCENT, mx: BUTTON_MARGIN_X_PERCENT, ml:'2vw'}}
               >
                 {page}
               </Button>

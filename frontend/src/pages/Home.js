@@ -6,37 +6,39 @@ import MovieConveyorBelt from '../components/MoviesConveyorBelt';
 import Footer from '../components/Footer';
 import MovieDisplay from '../components/MovieDisplay';
 import EmployeeOptions from '../components/EmployeeOptions';
+import { useEffect, useRef, useState } from "react";
 
 
 
-const HomePage = ({userRole,fetchRole}) => {
-  const isSmallScreen = useMediaQuery('(max-width:1230px)');
+const HomePage = ({ userRole, fetchRole }) => {
+  const isSmallScreen = useMediaQuery("(max-width:1000px)");
   const conveyorBeltHeight = 600;
   const conveyorBeltPostersPadding = 240;
-  return (
-    <Box mt={-17} mb={'-60px'}
-    sx={{
-      position: 'relative',
-      minHeight: isSmallScreen ? '150vh' : 'calc(99vw*(1620/1920))', 
-      minWidth: 'auto',
-      width: 'auto',
-      height:'auto',
-      overflowY: 'hidden', 
-      overflowX: 'hidden',
-      
-    }}
 
+  return (
+    <Box
+      mt={-17}
+      mb="-60px"
+      sx={{
+        position: 'relative',
+        minHeight: isSmallScreen ? '150vh' : 'calc(99vw*(1620/1920))', 
+        paddingBottom:'5vh',
+        minWidth: 'auto',
+        width: 'auto',
+        overflowY: 'hidden', 
+        overflowX: 'hidden',
+      }}
     >
       <Box
-      sx={{
-        position:'absolute',
-        width:'100%',
-        height:'100%',
-        backgroundImage: isSmallScreen ? 'none' : `url(${background})`,
-        backgroundPosition: 'top left', 
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-      }}
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: isSmallScreen ? "100%" : 'calc(99vw*(1620/1920))',
+          backgroundImage: isSmallScreen ? "none" : `url(${background})`,
+          backgroundPosition: "top left",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
       >
         <Box sx={{
           display: isSmallScreen ? 'none' : '',

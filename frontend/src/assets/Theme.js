@@ -6,7 +6,7 @@ const neonTheme = createTheme({
     breakpoints: {
       values: {
         xs: 0,      // Extra-small screens (e.g., mobile)
-        md: 1150,    // Medium screens (customized)
+        md: 1000,    // Medium screens (customized)
       },
     },
     palette: {

@@ -13,15 +13,15 @@ import {
   Grid,
   IconButton,
   useMediaQuery,
-  Divider
+  Divider,
 } from "@mui/material";
 import SeatIcon from "@mui/icons-material/EventSeat";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { format } from "date-fns";
 import PaymentMethodsDisplay from "./PaymentMethodsDisplay";
 import LoginForm from "./LoginForm";
 
-const ReservationForm = ({userRole,fetchRole}) => {
+const ReservationForm = ({ userRole, fetchRole }) => {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [screenings, setScreenings] = useState([]);
@@ -38,45 +38,35 @@ const ReservationForm = ({userRole,fetchRole}) => {
   const [reservationData, setReservationData] = useState(null);
   const [openSeatSelector, setOpenSeatSelector] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [openPaymentDialog, setOpenPaymentDialog] = useState(false); // Manage payment dialog visibility
-  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Track payment confirmation
+  const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
 
-  useEffect(() => {
-    console.log("TicketsForm mounted");
-
-    return () => {
-      console.log("TicketsForm unmounted");
-    };
-  }, []);
+  const isSmallScreen = useMediaQuery("(max-width:1000px)");
 
   const handleLoginOpen = () => setOpenLoginDialog(true);
   const handleLoginClose = () => setOpenLoginDialog(false);
 
-  useEffect(()=>{
-    console.log("Seat selector state changed, openSeatSelector = ",openSeatSelector)
-  },[openSeatSelector])
-
-  // Fetch movies on component mount
-    useEffect(() => {
+  // Fetch movies on mount
+  useEffect(() => {
     fetch("http://localhost:8080/api/movies/comingNextWeekWithTitles")
       .then((response) => response.json())
-      .then((data) => {setMovies(data)})
+      .then((data) => setMovies(data))
       .catch((error) => console.error("Error fetching movies:", error));
   }, []);
 
-  // Fetch screenings when a movie is selected
+  // Fetch screenings when a movie is selected and clear dependent selections when deselected
   useEffect(() => {
     if (selectedMovie) {
       fetch(`http://localhost:8080/api/movies/screenings/${selectedMovie.movieId}`)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setScreenings(data);
           const uniqueTheatres = [
             ...new Set(data.map((screening) => screening.theatre)),
           ];
           setTheatres(uniqueTheatres);
+          // Clear dependent states
           setSelectedTheatre(null);
           setAvailableDates([]);
           setSelectedDate(null);
@@ -84,10 +74,18 @@ const ReservationForm = ({userRole,fetchRole}) => {
           setSelectedTime(null);
         })
         .catch((error) => console.error("Error fetching screenings:", error));
+    } else {
+      setScreenings([]);
+      setTheatres([]);
+      setSelectedTheatre(null);
+      setAvailableDates([]);
+      setSelectedDate(null);
+      setAvailableTimes([]);
+      setSelectedTime(null);
     }
   }, [selectedMovie]);
 
-  // Filter dates when a theatre is selected
+  // When a theatre is selected (or cleared), update dates and clear dependent selections
   useEffect(() => {
     if (selectedTheatre) {
       const filteredDates = [
@@ -98,13 +96,15 @@ const ReservationForm = ({userRole,fetchRole}) => {
         ),
       ];
       setAvailableDates(filteredDates);
-      setSelectedDate(null);
-      setAvailableTimes([]);
-      setSelectedTime(null);
+    } else {
+      setAvailableDates([]);
     }
+    setSelectedDate(null);
+    setAvailableTimes([]);
+    setSelectedTime(null);
   }, [selectedTheatre, screenings]);
 
-  // Filter times when a date is selected
+  // When a date is selected (or cleared), update times and clear selected time
   useEffect(() => {
     if (selectedDate) {
       const filteredTimes = screenings
@@ -115,18 +115,16 @@ const ReservationForm = ({userRole,fetchRole}) => {
         )
         .map((screening) => screening.date_and_time.split("T")[1]);
       setAvailableTimes(filteredTimes);
-      setSelectedTime(null);
+    } else {
+      setAvailableTimes([]);
     }
+    setSelectedTime(null);
   }, [selectedDate, selectedTheatre, screenings]);
 
   // Validate form
   useEffect(() => {
     const allFieldsFilled =
-      selectedMovie &&
-      selectedTheatre &&
-      selectedDate &&
-      selectedTime &&
-      tickets;
+      selectedMovie && selectedTheatre && selectedDate && selectedTime && tickets;
     setIsFormValid(allFieldsFilled);
   }, [selectedMovie, selectedTheatre, selectedDate, selectedTime, tickets]);
 
@@ -172,7 +170,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
       // Select seat
       setSelectedSeats((prevSeats) => {
         const newSeats = [...prevSeats, [row, col]];
-        // If too many seats selected, remove oldest
+        // If too many seats selected, remove the oldest
         if (newSeats.length > tickets) {
           newSeats.shift();
         }
@@ -182,7 +180,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
   };
 
   const handleReservation = async () => {
-    if (!(reservationData)) return;
+    if (!reservationData) return;
 
     setLoading(true);
     const failures = [];
@@ -243,22 +241,21 @@ const ReservationForm = ({userRole,fetchRole}) => {
     }
   }, [isPaymentConfirmed]);
 
-  const isSmallScreen = useMediaQuery('(max-width:1230px)');
-
-
   return (
-    <Box component="form" onSubmit={userRole==='customer' ? handleSubmit : undefined} 
-    sx={{
-      boxSizing:'border-box',
-      padding: isSmallScreen ? '30px' : '1.5vw', width: "100%",
-      display:'flex',
-      flexDirection:'column',
-      alignItems:'center', 
-      overflowY:'auto', 
-      height:'100%',
-      }}>
-
-
+    <Box
+      component="form"
+      onSubmit={userRole === "customer" ? handleSubmit : undefined}
+      sx={{
+        boxSizing: "border-box",
+        padding: isSmallScreen ? "30px" : "1.5vw",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        overflowY: "auto",
+        height: "100%",
+      }}
+    >
       {loading && (
         <Box
           sx={{
@@ -277,15 +274,14 @@ const ReservationForm = ({userRole,fetchRole}) => {
         </Box>
       )}
 
-
       <Typography
-          variant="neonCyan"
-          sx={{
-            marginBottom: isSmallScreen ? '20px' : '1vw',
-            fontSize: isSmallScreen ? 'clamp(20px,8vw,40px)' : '2vw',
-          }}
-          >
-          Comprar entradas
+        variant="neonCyan"
+        sx={{
+          marginBottom: isSmallScreen ? "20px" : "1vw",
+          fontSize: isSmallScreen ? "clamp(20px,8vw,40px)" : "2vw",
+        }}
+      >
+        Comprar entradas
       </Typography>
 
       <Autocomplete
@@ -300,7 +296,9 @@ const ReservationForm = ({userRole,fetchRole}) => {
             label="Película"
             required
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
+              "& .MuiInputLabel-root": {
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
+              },
               "& .MuiInputBase-root": {
                 fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
@@ -308,7 +306,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
           />
         )}
         sx={{
-          marginBottom: isSmallScreen ? '3%' : "1vw",
+          marginBottom: isSmallScreen ? "3%" : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -319,7 +317,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
         fullWidth
         disabled={!selectedMovie}
         options={theatres}
-        value={!!selectedMovie ? selectedTheatre : ""}
+        value={selectedTheatre}
         onChange={(e, newValue) => setSelectedTheatre(newValue)}
         renderInput={(params) => (
           <TextField
@@ -328,7 +326,9 @@ const ReservationForm = ({userRole,fetchRole}) => {
             required
             disabled={!selectedMovie}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
+              "& .MuiInputLabel-root": {
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
+              },
               "& .MuiInputBase-root": {
                 fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
@@ -336,7 +336,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
           />
         )}
         sx={{
-          marginBottom: isSmallScreen ? '3%' : "1vw",
+          marginBottom: isSmallScreen ? "3%" : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -347,7 +347,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
         fullWidth
         disabled={!selectedTheatre}
         options={availableDates}
-        value={!!selectedTheatre ? selectedDate : ""}
+        value={selectedDate}
         onChange={(e, newValue) => setSelectedDate(newValue)}
         renderInput={(params) => (
           <TextField
@@ -356,7 +356,9 @@ const ReservationForm = ({userRole,fetchRole}) => {
             required
             disabled={!selectedTheatre}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
+              "& .MuiInputLabel-root": {
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
+              },
               "& .MuiInputBase-root": {
                 fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
@@ -364,7 +366,7 @@ const ReservationForm = ({userRole,fetchRole}) => {
           />
         )}
         sx={{
-          marginBottom: isSmallScreen ? '3%' : "1vw",
+          marginBottom: isSmallScreen ? "3%" : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
@@ -375,9 +377,9 @@ const ReservationForm = ({userRole,fetchRole}) => {
         fullWidth
         disabled={!selectedDate}
         options={availableTimes}
-        value={!!selectedDate ? selectedTime : ""}
+        value={selectedTime}
         onChange={(e, newValue) => setSelectedTime(newValue)}
-        getOptionLabel={(option) => option.slice(0, 5)} // Display only the first 5 characters
+        getOptionLabel={(option) => option.slice(0, 5)}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -385,7 +387,9 @@ const ReservationForm = ({userRole,fetchRole}) => {
             required
             disabled={!selectedDate}
             sx={{
-              "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw" },
+              "& .MuiInputLabel-root": {
+                fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
+              },
               "& .MuiInputBase-root": {
                 fontSize: isSmallScreen ? "clamp(10px,5vw,20px)" : "1vw",
               },
@@ -393,176 +397,214 @@ const ReservationForm = ({userRole,fetchRole}) => {
           />
         )}
         sx={{
-          marginBottom: isSmallScreen ? '3%' : "1vw",
+          marginBottom: isSmallScreen ? "3%" : "1vw",
           "& .MuiInputBase-root": {
             height: isSmallScreen ? "auto" : "3vw",
           },
         }}
       />
 
-
-        <TextField
-          fullWidth
-          label="¿Cuántas entradas?"
-          type="number"
-          value={tickets}
-          onChange={(e) => {
-            // Allow only positive integers
-            const value = e.target.value;
-            const positiveInteger = value === "" ? "" : Math.max(0, Math.floor(Number(value)));
-            setTickets(positiveInteger);
-          }}
-          required
-          disabled={!selectedTime}
-          sx={{
-            marginBottom: isSmallScreen ? '7%' : "1vw",
-            "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
-            "& .MuiInputBase-root": {
-              height: isSmallScreen ? "auto" : "3vw",
-              fontSize: isSmallScreen ? "auto" : "1vw",
-            },
-          }}
-        />
-
-
+      <TextField
+        fullWidth
+        label="¿Cuántas entradas?"
+        type="number"
+        value={tickets}
+        onChange={(e) => {
+          // Allow only positive integers
+          const value = e.target.value;
+          const positiveInteger = value === "" ? "" : Math.max(0, Math.floor(Math.min(Number(value),20)));
+          setTickets(positiveInteger);
+        }}
+        required
+        disabled={!selectedTime}
+        sx={{
+          marginBottom: isSmallScreen ? "7%" : "1vw",
+          "& .MuiInputLabel-root": { fontSize: isSmallScreen ? "auto" : "1vw" },
+          "& .MuiInputBase-root": {
+            height: isSmallScreen ? "auto" : "3vw",
+            fontSize: isSmallScreen ? "auto" : "1vw",
+          },
+        }}
+      />
 
       {serverError && <Typography color="error">{serverError}</Typography>}
 
-      {userRole === 'customer' &&
-        <Button sx={{fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : 'auto', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" type="submit" disabled={!isFormValid || loading}>
-          Comprar
-        </Button>}
-        {userRole != 'customer' &&
-          <Button sx={{fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : '1vw', width:'90%', height: isSmallScreen ? 'auto' : '3vw'}} variant="superFancy" onClick={handleLoginOpen} disabled={loading}>
-            Iniciar sesión para comprar
-          </Button>
-      }
-          {/* Dialog that opens the LoginForm */}
-        <Dialog 
-          open={openLoginDialog} 
-          onClose={handleLoginClose} 
-          maxWidth="sm" 
+      {userRole === "customer" ? (
+        <Button
+          sx={{
+            fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : "auto",
+            width: "90%",
+            height: isSmallScreen ? "auto" : "3vw",
+          }}
+          variant="superFancy"
+          type="submit"
+          disabled={!isFormValid || loading}
         >
-            <IconButton
-              aria-label="close"
-              onClick={handleLoginClose}
+          Comprar
+        </Button>
+      ) : (
+        <Button
+          sx={{
+            fontSize: isSmallScreen ? "clamp(15px,6vw,30px)" : "1vw",
+            width: "90%",
+            height: isSmallScreen ? "auto" : "3vw",
+          }}
+          variant="superFancy"
+          onClick={handleLoginOpen}
+          disabled={loading}
+        >
+          Iniciar sesión para comprar
+        </Button>
+      )}
+
+      {/* Login Dialog */}
+      <Dialog open={openLoginDialog} onClose={handleLoginClose} maxWidth="sm">
+        <IconButton
+          aria-label="close"
+          onClick={handleLoginClose}
+          sx={{
+            position: "absolute",
+            right: 2,
+            top: 2,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon sx={{ fontSize: "30px" }} />
+        </IconButton>
+        <DialogContent dividers>
+          <LoginForm fetchRole={fetchRole} reloadOnLogin={false} onLogin={handleLoginClose} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Methods Dialog */}
+      <Dialog
+        open={openPaymentDialog}
+        onClose={() => setOpenPaymentDialog(false)}
+        width="40vw"
+      >
+        <DialogTitle>Elige un método de pago</DialogTitle>
+        <DialogContent>
+          <Box width={"40vw"} padding={5}>
+            <PaymentMethodsDisplay
+              onUpdate={handlePaymentSelect}
+              onSelect={handlePaymentSelect}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenPaymentDialog(false)}>Cancelar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Seat Selector Dialog */}
+      <Dialog
+        open={openSeatSelector}
+        onClose={() => {
+          setOpenSeatSelector(false);
+          setSelectedSeats([]);
+        }}
+        maxWidth="lg"
+      >
+        <DialogTitle fontSize={'40px'}>Elija sus asientos</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "row", gap: 3 }}>
+            {/* Container for seat grid using CSS Grid */}
+            <Box
               sx={{
-                position: 'absolute',
-                right: 2,
-                top: 2,
-                color: (theme) => theme.palette.grey[500],
+                overflow: "auto",
+                display: "grid",
+                // Use reservationData[1] (number of columns) to set grid columns.
+                gridTemplateColumns: reservationData
+                  ? `repeat(${reservationData[1]}, 40px)`
+                  : "none",
+                // Each row will have a fixed height equal to seat size.
+                gridAutoRows: "40px",
+                // Adjust gap (spacing between seats) as needed.
+                gap: '0px',
               }}
             >
-              <CloseIcon sx={{fontSize:'30px'}}/>
-            </IconButton>
-          <DialogContent dividers>
-            <LoginForm fetchRole={fetchRole} reloadOnLogin={false} onLogin={handleLoginClose} />
-          </DialogContent>
-        </Dialog>
-
-        {/*Dialog for payment methods*/}
-        <Dialog
-          open={openPaymentDialog}
-          onClose={() => setOpenPaymentDialog(false)}
-          width='40vw'
-        >
-          <DialogTitle>Elige un método de pago</DialogTitle>
-          <DialogContent>
-            <Box width={'40vw'} padding={5}>
-            <PaymentMethodsDisplay onUpdate={handlePaymentSelect} onSelect={handlePaymentSelect} />
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenPaymentDialog(false)}>Cancelar</Button>
-          </DialogActions>
-        </Dialog> 
-
-
-        {/* Seat Selector Dialog */}
-        <Dialog open={openSeatSelector} onClose={() => {setOpenSeatSelector(false); setSelectedSeats([])}} maxWidth="lg">
-        <DialogTitle>Selecciona tus asientos</DialogTitle>
-          <DialogContent>
-            <Box sx={{display:'flex', flexDirection:'row', maxWidth:'80vw', gap:3}}>
-            <Box overflow={'auto'} maxWidth={'60%'}
-                sx={{overflow:'auto',
-                    maxWidth:'60%',
-                }}>
-            <Grid container spacing={1}>
               {reservationData &&
-                Array.from({ length: reservationData[0] }).map((_, row) => (
-                  <Grid key={row} container>
-                    {Array.from({ length: reservationData[1] }).map((_, col) => {
-                      const isReserved = reservationData[2].some(
-                        (seat) => seat.row === row && seat.col === col
-                      );
-                      const isSelected = selectedSeats.some(
-                        (seat) => seat[0] === row && seat[1] === col
-                      );
-                      return (
-                        <IconButton
-                          key={`${row}-${col}`}
-                          onClick={() =>
-                            !isReserved && toggleSeatSelection(row, col)
-                          }
-                          disabled={isReserved}
-                          sx={{
-                            color: isReserved
-                              ? "red"
-                              : isSelected
-                              ? "green"
-                              : "gray", '&:disabled':{color:'red'}
-                          }}
-                        >
-                          <SeatIcon />
-                        </IconButton>
-                      );
-                    })}
-                  </Grid>
-                ))}
-            </Grid>
+                Array.from({ length: reservationData[0] }).map((_, row) =>
+                  Array.from({ length: reservationData[1] }).map((_, col) => {
+                    const isReserved = reservationData[2].some(
+                      (seat) => seat.row === row && seat.col === col
+                    );
+                    const isSelected = selectedSeats.some(
+                      (seat) => seat[0] === row && seat[1] === col
+                    );
+                    return (
+                      <IconButton
+                        key={`${row}-${col}`}
+                        onClick={() =>
+                          !isReserved && toggleSeatSelection(row, col)
+                        }
+                        disabled={isReserved}
+                        sx={{
+                          width: 40, // fixed seat icon width
+                          height: 40, // fixed seat icon height
+                          color: isReserved ? "red" : isSelected ? "green" : "gray",
+                          "&:disabled": { color: "red" },
+                        }}
+                      >
+                        <SeatIcon />
+                      </IconButton>
+                    );
+                  })
+                )}
             </Box>
             <Divider
-                sx={{
-                    width: '2px',
-                    backgroundColor: '#ffffff', // Neon cyan color
-                    boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff', // Neon glow effect
-                    marginLeft:-3,
-                }}
-                />  
-            {(selectedMovie && selectedTheatre && reservationData && selectedDate &&selectedTime) && (
-              <Box sx={{display:'flex', flexDirection:'column', flexGrow:1, gap:2}}>
-                <Typography variant="h6" gutterBottom>
-                  <strong>Película:</strong> {selectedMovie.movieTitle}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                  <strong>Sucursal:</strong> {selectedTheatre}
+              sx={{
+                width: "2px",
+                backgroundColor: "#ffffff",
+                boxShadow: "0 0 5px #00ffff, 0 0 10px #00ffff",
+              }}
+            />
+            {selectedMovie &&
+              selectedTheatre &&
+              reservationData &&
+              selectedDate &&
+              selectedTime && (
+                <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, gap: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    <strong>Película:</strong> {selectedMovie.movieTitle}
                   </Typography>
                   <Typography variant="h6" gutterBottom>
-                  <strong>Sala:</strong> {reservationData[3]}
+                    <strong>Sucursal:</strong> {selectedTheatre}
                   </Typography>
-                <Typography variant="h6" gutterBottom>
-                  <strong>Fecha:</strong> {format(new Date(selectedDate.substring(0,10) + 'T00:00:00'),"dd/MM/yyyy")}
-                </Typography>
-                <Typography variant="h6" gutterBottom>
-                  <strong>Hora:</strong> {selectedTime.substring(0,5)}
-                </Typography>
-                <Typography variant="h6"> 
-                  <strong>Precio:</strong> ${reservationData[4]}
-                </Typography>
-                <TextField
-                  label="¿Cuántos asientos?"
-                  type="number"
-                  value={tickets}
-                  onChange={(e) =>
-                    {setTickets(Math.max(0, Math.min(e.target.value, 10))); if (Math.max(0, Math.min(e.target.value, 10)) < selectedSeats.length){setSelectedSeats([])} }
-                  }
-                  fullWidth
-                />
-              </Box>
-            )}
-            </Box>
-          </DialogContent>
-          <DialogActions>
+                  <Typography variant="h6" gutterBottom>
+                    <strong>Sala:</strong> {reservationData[3]}
+                  </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    <strong>Fecha:</strong>{" "}
+                    {format(
+                      new Date(selectedDate.substring(0, 10) + "T00:00:00"),
+                      "dd/MM/yyyy"
+                    )}
+                  </Typography>
+                  <Typography variant="h6" gutterBottom>
+                    <strong>Hora:</strong> {selectedTime.substring(0, 5)}
+                  </Typography>
+                  <Typography variant="h6">
+                    <strong>Precio:</strong> ${reservationData[4]} x{tickets}  =  ${Number(reservationData[4])*tickets}
+                  </Typography>
+                  <TextField
+                    label="¿Cuántos asientos?"
+                    type="number"
+                    value={tickets}
+                    onChange={(e) => {
+                      const newTickets = Math.max(1, Math.min(e.target.value, 20));
+                      setTickets(newTickets);
+                      if (newTickets < selectedSeats.length) {
+                        setSelectedSeats([]);
+                      }
+                    }}
+                    fullWidth
+                  />
+                </Box>
+              )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
           <Button
             onClick={() => {
               setOpenSeatSelector(false);
@@ -572,13 +614,15 @@ const ReservationForm = ({userRole,fetchRole}) => {
             Cancelar
           </Button>
           <Button
-            onClick={() => setOpenPaymentDialog(true)} // Open payment dialog instead of direct reservation
+            onClick={() => setOpenPaymentDialog(true)}
             disabled={selectedSeats.length !== Number(tickets)}
           >
             Confirmar y Pagar
           </Button>
         </DialogActions>
       </Dialog>
+
+
     </Box>
   );
 };
