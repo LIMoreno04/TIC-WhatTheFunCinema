@@ -8,14 +8,11 @@ export default function MoviesPage() {
     return (
         <Box
             sx={{
-                padding: 10,
-                paddingTop:1,
-                paddingBottom:15,
-                }}
+                display:'flex',
+                justifyContent:'center'
+            }}
         >
-            <Box>
                 <MoviesDisplay></MoviesDisplay>
-            </Box>
         </Box>
     )
 
