@@ -260,6 +260,7 @@ const ReservationForm = ({ userRole, fetchRole }) => {
         <Box
           sx={{
             position: "fixed",
+            zIndex:99999999,
             top: 0,
             left: 0,
             right: 0,
@@ -482,9 +483,9 @@ const ReservationForm = ({ userRole, fetchRole }) => {
         onClose={() => setOpenPaymentDialog(false)}
         width="40vw"
       >
-        <DialogTitle>Elige un método de pago</DialogTitle>
+        <DialogTitle>Elija un método de pago</DialogTitle>
         <DialogContent>
-          <Box width={"40vw"} padding={5}>
+          <Box flex={1} display={'flex'} flexDirection={'column'} sx={{maxHeight:'60vh', width:'40vw', padding:5}}>
             <PaymentMethodsDisplay
               onUpdate={handlePaymentSelect}
               onSelect={handlePaymentSelect}

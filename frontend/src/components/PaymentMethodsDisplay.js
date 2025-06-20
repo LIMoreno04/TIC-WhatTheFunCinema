@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Paper,
@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
+const PaymentMethodsDisplay = ({ cards: propCards, onUpdate, onSelect }) => {
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -26,6 +26,7 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
     cvv: '',
   });
   const [error, setError] = useState('');
+  const [cards, setCards] = useState(propCards || null);
   
   const fetchUserData = () => {
     fetch('http://localhost:8080/api/customer/current', {
@@ -34,14 +35,21 @@ const PaymentMethodsDisplay = ({ cards, onUpdate, onSelect }) => {
     })
     .then(response => response.json())
     .then(data => {
-        cards = data.paymentMethods;
+      setCards(data.paymentMethods);
     })
     .catch(error => {
         console.error('Error fetching user data:', error);
     });
 };
 
-
+useEffect(() => {
+    if (!propCards) {
+      setCards(null);
+      fetchUserData();
+    } else if (propCards) {
+      setCards(propCards);
+    }
+  }, [propCards]);
 
   const cardTypeOptions = [
     { label: "Visa crédito", value: "VCredit" },

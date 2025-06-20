@@ -102,6 +102,8 @@ public class CustomerService {
                 cardRepo.save(card);
                 return card;
             }
+        } else if (cardRepo.existsById(cardNumber)) {
+            throw new InvalidDataException("Invalid card data.");
         } else {
             List<Customer> customerList = new LinkedList<>();
             Card card = Card.builder()
