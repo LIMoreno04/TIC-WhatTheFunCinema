@@ -26,6 +26,7 @@ Solo la cuenta administrador es capaz de agregar instancias de funciones, pelíc
 Las credenciales de la cuenta administrador son:
 - email: admin@admin.com
 - contraseña: Admin@admin777
+
 Un usuario creado mediante la interacción de "Registrarse" será de tipo "customer" y tendrá acceso a su pantalla de perfil donde podrá editar su información personal y agregar métodos de pago (solo se verifica que el número de tarjeta sean 16 dígitos).  
 Como usuario "customer" se podrá comprar entradas a funciones y snacks, compras que pueden ser visitadas en el historial de compras del burger menu, y pueden ser canceladas hasta 2 horas antes de que comience la función.  
 Todos los datos son persistentes entre sesiones.
@@ -42,6 +43,7 @@ Only the administrator account can add screening instances, movies, cinemas, or 
 Administrator account credentials are:
 - email: admin@admin.com
 - password: Admin@admin777
+
 A user created via the "Registrarse" flow will be of type `customer` and will have access to their profile screen where they can edit personal information and add payment methods (only the card number is validated to be 16 digits).  
 As a `customer` you can purchase tickets and snacks; purchases can be viewed in the purchase history within the burger menu, and can be canceled up to 2 hours before the screening starts.  
 All data is persistent across sessions.
