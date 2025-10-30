@@ -6,19 +6,13 @@
 ---
 
 ## Como ejecutar / How to run
-### ESP
-Si se está en Windows, ejecutar run.bat. En Mac o Linux ejecutar run.sh.
-Se instalarán todas las dependencias y se ejecutarán las aplicaciones de Backend y Frontend por separado. No se deben cerrar las ventanas emergentes.
-Al finalizar las instalaciones, la aplicación web se abrirá por defecto en el puerto 3000.
 
-## Como ejecutar / How to run
-
-### ESP
+#### ESP
 Si se está en Windows, ejecutar `run.bat`. En Mac o Linux ejecutar `run.sh`.  
 Se instalarán todas las dependencias y se ejecutarán las aplicaciones de Backend y Frontend por separado. No se deben cerrar las ventanas emergentes.  
 Al finalizar las instalaciones, la aplicación web se abrirá por defecto en el puerto 3000.
 
-### ENG
+#### ENG
 If you're on Windows, run `run.bat`. On macOS or Linux run `run.sh`.  
 All dependencies will be installed and the Backend and Frontend applications will be started separately. Do not close the pop-up windows.  
 When the installations finish, the web application will open by default on port 3000.
@@ -27,7 +21,7 @@ When the installations finish, the web application will open by default on port 
 
 ## Como usar / How to use
 
-### ESP
+#### ESP
 Solo la cuenta administrador es capaz de agregar instancias de funciones, películas, cines, o snacks, tanto desde el burger menu como desde el panel de la pantalla principal.  
 Las credenciales de la cuenta administrador son:
 - email: admin@admin.com
@@ -43,7 +37,7 @@ Detalle a notar: Las películas están separadas en 3 categorías:
 
 Se motiva la experiencia de esta funcionalidad mediante la creación de una función (en la cuenta administrador) asignada a un futuro cercano (próximos 5 minutos), y otra función asignada a un futuro un poco posterior (próximos 10 minutos), para de esta manera ver en tiempo real como la película comienza en rojo (próximamente), en 5 minutos cambia a celeste (en cartelera), y 5 minutos después cambia a violeta (histórica).
 
-### ENG
+#### ENG
 Only the administrator account can add screening instances, movies, cinemas, or snacks—either from the burger menu or from the main screen panel.  
 Administrator account credentials are:
 - email: admin@admin.com
